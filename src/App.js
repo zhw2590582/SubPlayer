@@ -1,21 +1,29 @@
 import React from 'react';
-import styled from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
+import Header from './Header';
+import Main from './Main';
 
-const Title = styled.h1`
-    font-size: 1.5em;
-    text-align: center;
-    color: palevioletred;
-`;
+const GlobalStyle = createGlobalStyle`
+    html,
+    body,
+    #root {
+        height: 100%;
+    }
 
-const Wrapper = styled.section`
-    padding: 4em;
-    background: papayawhip;
+    #root {
+        display: flex;
+        flex-direction: column;
+        color: #ccc;
+        background: rgb(16, 17, 19);
+    }
 `;
 
 export default function App() {
     return (
-        <Wrapper>
-            <Title>Hello World, this is my first styled component!</Title>
-        </Wrapper>
+        <React.Fragment>
+            <GlobalStyle />
+            <Header />
+            <Main />
+        </React.Fragment>
     );
 }
