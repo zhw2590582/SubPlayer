@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { checkTime, checkDuration, notice } from '../utils';
 
 const Wrapper = styled.div`
     flex: 1;
@@ -8,12 +9,33 @@ const Wrapper = styled.div`
     table {
         width: 100%;
         background: #24292d;
-
-        th,
-        td {
+        tr {
             background: #1c2022;
-            text-align: center;
-            padding: 10px 0;
+            th,
+            td {
+                background: #1c2022;
+                text-align: center;
+                padding: 10px;
+            }
+
+            .input,
+            .textarea {
+                border: none;
+                padding: 5px;
+                min-height: 30px;
+                font-size: 13px;
+                color: #fff;
+                background-color: #3a3a3a;
+            }
+
+            .textarea {
+                resize: vertical;
+            }
+
+            p {
+                line-height: 1;
+                margin: 0;
+            }
         }
     }
 
@@ -25,37 +47,152 @@ const Wrapper = styled.div`
             cursor: pointer;
             font-size: 16px;
         }
+
+        .icon-ok {
+            color: #4caf50;
+        }
+    }
+
+    .edit {
+        display: none;
+        width: 100%;
+        height: 100%;
+    }
+
+    .onedit {
+        .noedit {
+            display: none;
+        }
+        .edit {
+            display: block;
+        }
     }
 `;
 
 export default class Subtitle extends React.Component {
-    state = {};
+    state = {
+        editIndex: -1,
+        editSubtitle: {},
+    };
+
+    checkSubtitle() {
+        const { editIndex, editSubtitle } = this.state;
+        if (editIndex !== -1) {
+            if (!checkTime(editSubtitle.start)) {
+                notice(`Start time format needs to match like: [00:00:00.000]`);
+                return false;
+            }
+            if (!checkTime(editSubtitle.end)) {
+                notice(`End time format needs to match like: [00:00:00.000]`);
+                return false;
+            }
+            if (!checkDuration(editSubtitle.duration)) {
+                notice(`Duration time format needs to match like: [00.000]`);
+                return false;
+            }
+            if (!editSubtitle.text.trim().length) {
+                notice('Text cannot be empty');
+                return false;
+            }
+        }
+        return true;
+    }
+
+    onEdit(index) {
+        if (this.checkSubtitle()) {
+            this.setState({
+                editIndex: index,
+                editSubtitle: {
+                    ...this.props.subtitles[index],
+                },
+            });
+            this.props.onEdit(index);
+        }
+    }
+
+    onUpdate() {
+        if (this.checkSubtitle()) {
+            const { editIndex, editSubtitle } = this.state;
+            this.props.onUpdate(editIndex, editSubtitle);
+            this.setState({
+                editIndex: -1,
+                editSubtitle: {},
+            });
+        }
+    }
+
+    onChange(name, value) {
+        this.setState({
+            editSubtitle: {
+                ...this.state.editSubtitle,
+                [name]: value,
+            },
+        });
+    }
 
     render() {
         const { subtitles, onRemove } = this.props;
+        const { editSubtitle } = this.state;
         return (
             <Wrapper>
                 <table border="0" cellSpacing="1" cellPadding="0">
                     <thead>
                         <tr>
                             <th width="50">#</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>Duration</th>
+                            <th width="120">Start</th>
+                            <th width="120">End</th>
+                            <th width="120">Duration</th>
                             <th>Text</th>
                             <th width="100">Operation</th>
                         </tr>
                     </thead>
                     <tbody>
                         {subtitles.map((item, index) => (
-                            <tr key={index}>
+                            <tr key={index} className={item.$edit ? 'onedit' : ''}>
                                 <td>{index + 1}</td>
-                                <td>{item.start}</td>
-                                <td>{item.end}</td>
-                                <td>{item.duration}</td>
-                                <td>{item.text}</td>
+                                <td>
+                                    <span className="noedit">{item.start}</span>
+                                    <input
+                                        maxLength={20}
+                                        className="input edit"
+                                        defaultValue={editSubtitle.start}
+                                        onChange={e => this.onChange('start', e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <span className="noedit">{item.end}</span>
+                                    <input
+                                        maxLength={20}
+                                        className="input edit"
+                                        defaultValue={editSubtitle.end}
+                                        onChange={e => this.onChange('end', e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <span className="noedit">{item.duration}</span>
+                                    <input
+                                        maxLength={20}
+                                        className="input edit"
+                                        defaultValue={editSubtitle.duration}
+                                        onChange={e => this.onChange('duration', e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <span className="noedit">
+                                        {item.text.split(/\r?\n/).map((item, index) => (
+                                            <p key={index}>{item}</p>
+                                        ))}
+                                    </span>
+                                    <textarea
+                                        maxLength={500}
+                                        className="textarea edit"
+                                        value={editSubtitle.text}
+                                        onChange={e => this.onChange('text', e.target.value)}
+                                    />
+                                </td>
                                 <td className="operation">
-                                    <i className="icon-edit"></i>
+                                    <i className="icon-pencil noedit" onClick={() => this.onEdit(index)}></i>
+                                    <i className="icon-ok edit" onClick={() => this.onUpdate(index)}></i>
                                     <i className="icon-trash-empty" onClick={() => onRemove(index)}></i>
                                 </td>
                             </tr>

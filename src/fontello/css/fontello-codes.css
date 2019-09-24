@@ -2,4 +2,5 @@
 .icon-upload:before { content: '\e800'; } /* '' */
 .icon-download:before { content: '\e801'; } /* '' */
 .icon-trash-empty:before { content: '\e802'; } /* '' */
-.icon-edit:before { content: '\e803'; } /* '' */
+.icon-ok:before { content: '\e803'; } /* '' */
+.icon-pencil:before { content: '\e804'; } /* '' */
