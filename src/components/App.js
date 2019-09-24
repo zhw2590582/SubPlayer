@@ -158,11 +158,18 @@ export default class App extends React.Component {
         });
     }
 
+    initSubtitles(subtitles) {
+        this.setState({
+            subtitles,
+        });
+    }
+
     render() {
         return (
             <React.Fragment>
                 <GlobalStyle />
                 <Header
+                    onInitSubtitles={this.initSubtitles.bind(this)}
                     onUpdateSubtitleUrl={this.updateSubtitleUrl.bind(this)}
                     onUpdateVideoUrl={this.updateVideoUrl.bind(this)}
                 />
