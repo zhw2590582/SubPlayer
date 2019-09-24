@@ -6,7 +6,7 @@ const Wrapper = styled.header`
     justify-content: space-between;
     align-items: center;
     height: 50px;
-    border-bottom: 1px solid rgb(17, 21, 24);
+    border-bottom: 1px solid rgb(36, 41, 45);
     background-color: rgb(28, 32, 34);
 
     .left {
