@@ -49,6 +49,7 @@ export default class App extends React.Component {
         subtitles: [
             {
                 $edit: false,
+                $highlight: false,
                 start: '0:00:01.981',
                 end: '0:00:04.682',
                 duration: '2.701',
@@ -56,6 +57,7 @@ export default class App extends React.Component {
             },
             {
                 $edit: false,
+                $highlight: true,
                 start: '0:00:01.981',
                 end: '0:00:04.682',
                 duration: '2.701',

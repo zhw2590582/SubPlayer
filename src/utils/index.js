@@ -10,6 +10,12 @@ export function sleep(ms = 0) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export function timeToSecond(time) {
+    const fractional = `0.${time.split('.')[1]}`;
+    const integerArr = time.split('.')[0].split(':');
+    return Number(integerArr[0]) * 60 * 60 + Number(integerArr[1]) * 60 + Number(integerArr[2]) + Number(fractional);
+}
+
 export function debounce(func, wait, context) {
     let timeout;
     return function fn(...args) {
