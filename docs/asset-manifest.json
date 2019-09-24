@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.94fec00b.chunk.css",
-    "main.js": "/static/js/main.b8ade6cd.chunk.js",
-    "main.js.map": "/static/js/main.b8ade6cd.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.439e6b80.js",
-    "runtime-main.js.map": "/static/js/runtime-main.439e6b80.js.map",
-    "static/css/2.6dd65212.chunk.css": "/static/css/2.6dd65212.chunk.css",
-    "static/js/2.a7b26130.chunk.js": "/static/js/2.a7b26130.chunk.js",
-    "static/js/2.a7b26130.chunk.js.map": "/static/js/2.a7b26130.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.dec8025192a034422807026f836b28f7.js": "/precache-manifest.dec8025192a034422807026f836b28f7.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/2.6dd65212.chunk.css.map": "/static/css/2.6dd65212.chunk.css.map",
-    "static/css/main.94fec00b.chunk.css.map": "/static/css/main.94fec00b.chunk.css.map",
-    "static/media/fontello.css": "/static/media/fontello.997d13c8.woff2"
+    "main.css": "/SubPlayer/static/css/main.7e5abde8.chunk.css",
+    "main.js": "/SubPlayer/static/js/main.ce38abc8.chunk.js",
+    "main.js.map": "/SubPlayer/static/js/main.ce38abc8.chunk.js.map",
+    "runtime-main.js": "/SubPlayer/static/js/runtime-main.fb386181.js",
+    "runtime-main.js.map": "/SubPlayer/static/js/runtime-main.fb386181.js.map",
+    "static/css/2.6dd65212.chunk.css": "/SubPlayer/static/css/2.6dd65212.chunk.css",
+    "static/js/2.cffbd8fa.chunk.js": "/SubPlayer/static/js/2.cffbd8fa.chunk.js",
+    "static/js/2.cffbd8fa.chunk.js.map": "/SubPlayer/static/js/2.cffbd8fa.chunk.js.map",
+    "index.html": "/SubPlayer/index.html",
+    "precache-manifest.b916b25237963604a15c6f5a487e3904.js": "/SubPlayer/precache-manifest.b916b25237963604a15c6f5a487e3904.js",
+    "service-worker.js": "/SubPlayer/service-worker.js",
+    "static/css/2.6dd65212.chunk.css.map": "/SubPlayer/static/css/2.6dd65212.chunk.css.map",
+    "static/css/main.7e5abde8.chunk.css.map": "/SubPlayer/static/css/main.7e5abde8.chunk.css.map",
+    "static/media/fontello.css": "/SubPlayer/static/media/fontello.997d13c8.woff2"
   }
 }
