@@ -17,42 +17,52 @@ const Wrapper = styled.div`
         }
     }
 
-    .icon-trash-empty {
-        cursor: pointer;
-        color: #b30303;
-        font-size: 16px;
+    .operation {
+        display: flex;
+        justify-content: center;
+        i {
+            width: 30px;
+            cursor: pointer;
+            font-size: 16px;
+        }
     }
 `;
 
-export default function Subtitle({ subtitle }) {
-    return (
-        <Wrapper>
-            <table border="0" cellSpacing="1" cellPadding="0">
-                <thead>
-                    <tr>
-                        <th width="50">#</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Duration</th>
-                        <th>Text</th>
-                        <th width="70">Remove</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {subtitle.map((item, index) => (
-                        <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>{item.start}</td>
-                            <td>{item.end}</td>
-                            <td>{item.duration}</td>
-                            <td>{item.text}</td>
-                            <td>
-                                <i className="icon-trash-empty"></i>
-                            </td>
+export default class Subtitle extends React.Component {
+    state = {};
+
+    render() {
+        const { subtitles, onRemove } = this.props;
+        return (
+            <Wrapper>
+                <table border="0" cellSpacing="1" cellPadding="0">
+                    <thead>
+                        <tr>
+                            <th width="50">#</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Duration</th>
+                            <th>Text</th>
+                            <th width="100">Operation</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-        </Wrapper>
-    );
+                    </thead>
+                    <tbody>
+                        {subtitles.map((item, index) => (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{item.start}</td>
+                                <td>{item.end}</td>
+                                <td>{item.duration}</td>
+                                <td>{item.text}</td>
+                                <td className="operation">
+                                    <i className="icon-edit"></i>
+                                    <i className="icon-trash-empty" onClick={() => onRemove(index)}></i>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </Wrapper>
+        );
+    }
 }

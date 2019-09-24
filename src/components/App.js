@@ -29,7 +29,7 @@ const Main = styled.div`
 export default class App extends React.Component {
     state = {
         mainHeight: 100,
-        subtitle: [
+        subtitles: [
             {
                 start: '0:00:01.981',
                 end: '0:00:04.682',
@@ -55,6 +55,14 @@ export default class App extends React.Component {
         });
     }
 
+    removeSubtitle(index) {
+        const subtitles = this.state.subtitles.slice();
+        subtitles.splice(index, 1);
+        this.setState({
+            subtitles,
+        });
+    }
+
     render() {
         return (
             <React.Fragment>
@@ -65,7 +73,7 @@ export default class App extends React.Component {
                         height: `${this.state.mainHeight}px`,
                     }}
                 >
-                    <Subtitle subtitle={this.state.subtitle} />
+                    <Subtitle subtitles={this.state.subtitles} onRemove={this.removeSubtitle.bind(this)} />
                     <Player />
                 </Main>
                 <Timeline />
