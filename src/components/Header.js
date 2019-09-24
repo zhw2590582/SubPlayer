@@ -72,6 +72,20 @@ const File = styled.input`
     opacity: 0;
 `;
 
+function readSubtitleFromFile(file, type) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            console.log(reader.result);
+            // resolve(reader.result);
+        };
+        reader.onerror = error => {
+            reject(error);
+        };
+        reader.readAsText(file);
+    });
+}
+
 export default class Header extends React.Component {
     $subtitle = React.createRef();
     $video = React.createRef();
@@ -84,7 +98,14 @@ export default class Header extends React.Component {
                 .pop()
                 .toLowerCase();
             if (type === 'vtt' || type === 'srt') {
-                console.log(type);
+                readSubtitleFromFile(file, type)
+                    .then(data => {
+                        this.props.onUpdateSubtitleUrl(data.url);
+                        this.props.onInitSubtitles(data.subtitles);
+                    })
+                    .catch(error => {
+                        notice(error.message);
+                    });
             } else {
                 notice('Only the following subtitle formats are supported: .vtt, .srt');
             }
