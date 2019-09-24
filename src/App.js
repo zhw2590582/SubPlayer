@@ -1,26 +1,40 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { createGlobalStyle } from 'styled-components';
+import Header from './Header';
+import Table from './Table';
+import Timeline from './Timeline';
+import Player from './Player';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const GlobalStyle = createGlobalStyle`
+    html,
+    body,
+    #root {
+        height: 100%;
+    }
+
+    #root {
+        display: flex;
+        flex-direction: column;
+        font-size: 14px;
+        color: #ccc;
+        background: rgb(16, 17, 19);
+    }
+
+    .main {
+        display: flex;
+    }
+`;
+
+export default function App() {
+    return (
+        <React.Fragment>
+            <GlobalStyle />
+            <Header />
+            <div className="main">
+                <Table />
+                <Player />
+            </div>
+            <Timeline />
+        </React.Fragment>
+    );
 }
-
-export default App;
