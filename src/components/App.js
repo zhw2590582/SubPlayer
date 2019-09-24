@@ -46,6 +46,8 @@ const Main = styled.div`
 export default class App extends React.Component {
     state = {
         mainHeight: 100,
+        videoUrl: 'https://zhw2590582.github.io/assets-cdn/video/one-more-time-one-more-chance-480p.mp4',
+        subtitleUrl: 'https://zhw2590582.github.io/assets-cdn/subtitle/one-more-time-one-more-chance.srt',
         subtitles: [
             {
                 $edit: false,
@@ -160,7 +162,7 @@ export default class App extends React.Component {
                         onUpdate={this.onUpdate.bind(this)}
                         onRemove={this.onRemove.bind(this)}
                     />
-                    <Player />
+                    <Player videoUrl={this.state.videoUrl} subtitleUrl={this.state.subtitleUrl} />
                 </Main>
                 <Timeline />
             </React.Fragment>

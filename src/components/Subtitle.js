@@ -164,7 +164,7 @@ export default class Subtitle extends React.Component {
                                 <th width="50">#</th>
                                 <th width="120">Start</th>
                                 <th width="120">End</th>
-                                <th width="120">Duration</th>
+                                <th width="100">Duration</th>
                                 <th>Text</th>
                                 <th width="100">Operation</th>
                             </tr>

@@ -11,8 +11,9 @@ const VideoWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 400px;
+    height: 70%;
     padding: 20px;
+    border-bottom: 1px solid rgb(36, 41, 45);
 
     video {
         height: 100%;
@@ -20,26 +21,47 @@ const VideoWrapper = styled.div`
 `;
 
 export default class Player extends React.Component {
-    option = {
-        url: 'https://zhw2590582.github.io/assets-cdn/video/one-more-time-one-more-chance-480p.mp4',
+    state = {
+        art: null,
     };
 
-    art = null;
+    static getDerivedStateFromProps(props, state) {
+        if (state.art) {
+            const videoUrl = state.art.option.url;
+            const subtitleUrl = state.art.template.$track.src;
+            if (props.videoUrl !== videoUrl) {
+                state.art.player.switchUrl(props.videoUrl);
+            }
+            if (props.subtitleUrl !== subtitleUrl) {
+                state.art.subtitle.init(props.subtitleUrl);
+            }
+        }
+        return null;
+    }
 
     render() {
         return (
             <Wrapper>
                 <VideoWrapper>
-                    <ArtplayerComponent
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                        }}
-                        option={this.option}
-                        getInstance={art => {
-                            this.art = art;
-                        }}
-                    />
+                    {this.props.videoUrl && this.props.subtitleUrl ? (
+                        <ArtplayerComponent
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                            }}
+                            option={{
+                                url: this.props.videoUrl,
+                                subtitle: {
+                                    url: this.props.subtitleUrl,
+                                },
+                            }}
+                            getInstance={art => {
+                                this.setState({
+                                    art,
+                                });
+                            }}
+                        />
+                    ) : null}
                 </VideoWrapper>
             </Wrapper>
         );
