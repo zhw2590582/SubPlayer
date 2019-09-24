@@ -1655,6 +1655,13 @@ arrify@^1.0.1:
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
   integrity sha1-iYUI2iIm84DfkEcoRWhJwVAaSw0=
 
+artplayer-react@^3.1.15:
+  version "3.1.15"
+  resolved "https://registry.yarnpkg.com/artplayer-react/-/artplayer-react-3.1.15.tgz#e7564d9a5fa3f2ac840e08c00394a122dc255114"
+  integrity sha512-uic2HD2baizrAUbi3j2lB0bDy/lsGBJCHt5b1NCNjbGqF1IKCEWAbnA/jv2LThgmVicO8IJKgci6oDvEV/6OlA==
+  dependencies:
+    react latest
+
 asap@~2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.6.tgz#e50347611d7e690943208bbdafebcbc2fb866d46"
@@ -8121,7 +8128,7 @@ react-scrollbar@^0.5.6:
     line-height "^0.1.1"
     react-motion "^0.5.2"
 
-react@^16.9.0:
+react@^16.9.0, react@latest:
   version "16.9.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.9.0.tgz#40ba2f9af13bc1a38d75dbf2f4359a5185c4f7aa"
   integrity sha512-+7LQnFBwkiw+BobzOF6N//BdoNw0ouwmSJTEm9cglOOmsg/TMiFHZLe2sEoN5M7LgJTj9oHH0gxklfnQe66S1w==

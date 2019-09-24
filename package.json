@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "artplayer-react": "^3.1.15",
     "normalize.css": "^8.0.1",
     "react": "^16.9.0",
     "react-custom-scrollbars": "^4.2.1",
