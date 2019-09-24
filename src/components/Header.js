@@ -86,7 +86,7 @@ export default class Header extends React.Component {
             if (type === 'vtt' || type === 'srt') {
                 console.log(type);
             } else {
-                notice(`This subtitle format is not supported: ${type}`);
+                notice('Only the following subtitle formats are supported: .vtt, .srt');
             }
         }
     }
