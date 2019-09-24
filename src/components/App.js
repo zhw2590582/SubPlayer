@@ -116,7 +116,7 @@ export default class App extends React.Component {
         });
     }
 
-    onRemove(index) {
+    removeSubtitle(index) {
         const subtitles = this.state.subtitles.slice();
         subtitles.splice(index, 1);
         this.setState({
@@ -124,7 +124,7 @@ export default class App extends React.Component {
         });
     }
 
-    onEdit(index) {
+    editSubtitle(index) {
         const subtitles = this.state.subtitles.slice().map(item => {
             item.$edit = false;
             return item;
@@ -135,7 +135,7 @@ export default class App extends React.Component {
         });
     }
 
-    onUpdate(index, subtitle) {
+    updateSubtitle(index, subtitle) {
         const subtitles = this.state.subtitles.slice().map(item => {
             item.$edit = false;
             return item;
@@ -146,11 +146,26 @@ export default class App extends React.Component {
         });
     }
 
+    updateVideoUrl(videoUrl) {
+        this.setState({
+            videoUrl,
+        });
+    }
+
+    updateSubtitleUrl(subtitleUrl) {
+        this.setState({
+            subtitleUrl,
+        });
+    }
+
     render() {
         return (
             <React.Fragment>
                 <GlobalStyle />
-                <Header />
+                <Header
+                    onUpdateSubtitleUrl={this.updateSubtitleUrl.bind(this)}
+                    onUpdateVideoUrl={this.updateVideoUrl.bind(this)}
+                />
                 <Main
                     style={{
                         height: `${this.state.mainHeight}px`,
@@ -158,9 +173,9 @@ export default class App extends React.Component {
                 >
                     <Subtitle
                         subtitles={this.state.subtitles}
-                        onEdit={this.onEdit.bind(this)}
-                        onUpdate={this.onUpdate.bind(this)}
-                        onRemove={this.onRemove.bind(this)}
+                        onEdit={this.editSubtitle.bind(this)}
+                        onUpdate={this.updateSubtitle.bind(this)}
+                        onRemove={this.removeSubtitle.bind(this)}
                     />
                     <Player videoUrl={this.state.videoUrl} subtitleUrl={this.state.subtitleUrl} />
                 </Main>
