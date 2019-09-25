@@ -11,27 +11,22 @@ const Wrapper = styled.div`
     table {
         width: 100%;
         background: #24292d;
+
         tr {
             background: #1c2022;
-            th,
-            td {
-                text-align: center;
-                padding: 10px;
-                background: #1c2022;
-            }
 
             &.odd {
                 background: #2e3140;
-                td {
-                    background: #2e3140;
-                }
             }
 
             &.onhighlight {
                 background-color: #607d8b;
-                td {
-                    background-color: #607d8b;
-                }
+            }
+
+            th,
+            td {
+                text-align: center;
+                padding: 10px;
             }
 
             .input,
@@ -49,7 +44,7 @@ const Wrapper = styled.div`
             }
 
             p {
-                line-height: 1;
+                line-height: 1.5;
                 margin: 0;
             }
         }
@@ -58,6 +53,7 @@ const Wrapper = styled.div`
     .operation {
         display: flex;
         justify-content: center;
+
         i {
             width: 30px;
             cursor: pointer;
@@ -79,6 +75,7 @@ const Wrapper = styled.div`
         .noedit {
             display: none;
         }
+
         .edit {
             display: block;
         }
@@ -124,7 +121,7 @@ export default class Subtitle extends React.Component {
                     ...this.props.subtitles[index],
                 },
             });
-            this.props.onEdit(index);
+            this.props.editSubtitle(index);
         }
     }
 
@@ -132,7 +129,7 @@ export default class Subtitle extends React.Component {
         if (this.checkSubtitle()) {
             const { editIndex, editSubtitle } = this.state;
             const duration = timeToSecond(editSubtitle.end) - timeToSecond(editSubtitle.start);
-            this.props.onUpdate(editIndex, {
+            this.props.updateSubtitle(editIndex, {
                 ...editSubtitle,
                 duration: duration.toFixed(3),
             });
@@ -153,7 +150,7 @@ export default class Subtitle extends React.Component {
     }
 
     render() {
-        const { subtitles, onRemove } = this.props;
+        const { subtitles, removeSubtitle } = this.props;
         const { editSubtitle } = this.state;
         return (
             <Wrapper>
@@ -226,7 +223,7 @@ export default class Subtitle extends React.Component {
                                     <td className="operation">
                                         <i className="icon-pencil noedit" onClick={() => this.onEdit(index)}></i>
                                         <i className="icon-ok edit" onClick={() => this.onUpdate(index)}></i>
-                                        <i className="icon-trash-empty" onClick={() => onRemove(index)}></i>
+                                        <i className="icon-trash-empty" onClick={() => removeSubtitle(index)}></i>
                                     </td>
                                 </tr>
                             ))}

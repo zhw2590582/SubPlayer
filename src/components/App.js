@@ -36,6 +36,10 @@ const GlobalStyle = createGlobalStyle`
         background: #e0271a;
         padding: 7px 20px;
         border-radius: 3px;
+
+        &.success {
+            background: rgb(18, 206, 67);
+        }
     }
 `;
 
@@ -48,56 +52,7 @@ export default class App extends React.Component {
         mainHeight: 100,
         videoUrl: 'https://zhw2590582.github.io/assets-cdn/video/one-more-time-one-more-chance-480p.mp4',
         subtitleUrl: 'https://zhw2590582.github.io/assets-cdn/subtitle/one-more-time-one-more-chance.srt',
-        subtitles: [
-            {
-                $edit: false,
-                $highlight: false,
-                start: '0:00:01.981',
-                end: '0:00:04.682',
-                duration: '2.701',
-                text: `We're quite content to be the odd browser out.`,
-            },
-            {
-                $edit: false,
-                $highlight: false,
-                start: '0:00:01.981',
-                end: '0:00:04.682',
-                duration: '2.701',
-                text: `We're quite content to be the odd browser out.`,
-            },
-            {
-                $edit: false,
-                $highlight: false,
-                start: '0:00:01.981',
-                end: '0:00:04.682',
-                duration: '2.701',
-                text: `We're quite content to be the odd browser out.`,
-            },
-            {
-                $edit: false,
-                $highlight: false,
-                start: '0:00:01.981',
-                end: '0:00:04.682',
-                duration: '2.701',
-                text: `We're quite content to be the odd browser out.`,
-            },
-            {
-                $edit: false,
-                $highlight: false,
-                start: '0:00:01.981',
-                end: '0:00:04.682',
-                duration: '2.701',
-                text: `We're quite content to be the odd browser out.`,
-            },
-            {
-                $edit: false,
-                $highlight: false,
-                start: '0:00:01.981',
-                end: '0:00:04.682',
-                duration: '2.701',
-                text: `We're quite content to be the odd browser out.`,
-            },
-        ],
+        subtitles: [],
     };
 
     componentDidMount() {
@@ -158,35 +113,36 @@ export default class App extends React.Component {
         });
     }
 
-    initSubtitles(subtitles) {
+    updateSubtitles(subtitles) {
         this.setState({
             subtitles,
         });
     }
 
     render() {
+        const functions = {
+            ...this.state,
+            removeSubtitle: this.removeSubtitle.bind(this),
+            editSubtitle: this.editSubtitle.bind(this),
+            updateSubtitle: this.updateSubtitle.bind(this),
+            updateSubtitles: this.updateSubtitles.bind(this),
+            updateVideoUrl: this.updateVideoUrl.bind(this),
+            updateSubtitleUrl: this.updateSubtitleUrl.bind(this),
+        };
+
         return (
             <React.Fragment>
                 <GlobalStyle />
-                <Header
-                    onInitSubtitles={this.initSubtitles.bind(this)}
-                    onUpdateSubtitleUrl={this.updateSubtitleUrl.bind(this)}
-                    onUpdateVideoUrl={this.updateVideoUrl.bind(this)}
-                />
+                <Header {...functions} />
                 <Main
                     style={{
                         height: `${this.state.mainHeight}px`,
                     }}
                 >
-                    <Subtitle
-                        subtitles={this.state.subtitles}
-                        onEdit={this.editSubtitle.bind(this)}
-                        onUpdate={this.updateSubtitle.bind(this)}
-                        onRemove={this.removeSubtitle.bind(this)}
-                    />
-                    <Player videoUrl={this.state.videoUrl} subtitleUrl={this.state.subtitleUrl} />
+                    <Subtitle {...functions} />
+                    <Player {...functions} />
                 </Main>
-                <Timeline />
+                <Timeline {...functions} />
             </React.Fragment>
         );
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { notice } from '../utils';
+import { notice, readSubtitleFromFile, urlToArr, vttToUrl } from '../utils';
 
 const Wrapper = styled.header`
     display: flex;
@@ -72,20 +72,6 @@ const File = styled.input`
     opacity: 0;
 `;
 
-function readSubtitleFromFile(file, type) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            console.log(reader.result);
-            // resolve(reader.result);
-        };
-        reader.onerror = error => {
-            reject(error);
-        };
-        reader.readAsText(file);
-    });
-}
-
 export default class Header extends React.Component {
     $subtitle = React.createRef();
     $video = React.createRef();
@@ -100,8 +86,12 @@ export default class Header extends React.Component {
             if (type === 'vtt' || type === 'srt') {
                 readSubtitleFromFile(file, type)
                     .then(data => {
-                        this.props.onUpdateSubtitleUrl(data.url);
-                        this.props.onInitSubtitles(data.subtitles);
+                        const subtitleUrl = vttToUrl(data);
+                        this.props.updateSubtitleUrl(subtitleUrl);
+                        urlToArr(subtitleUrl).then(subtitles => {
+                            this.props.updateSubtitles(subtitles);
+                            notice('Successfully loaded subtitles', true);
+                        });
                     })
                     .catch(error => {
                         notice(error.message);
@@ -119,7 +109,7 @@ export default class Header extends React.Component {
             const canPlayType = $video.canPlayType(file.type);
             if (canPlayType === 'maybe' || canPlayType === 'probably') {
                 const url = URL.createObjectURL(file);
-                this.props.onUpdateVideoUrl(url);
+                this.props.updateVideoUrl(url);
             } else {
                 notice(`This video format is not supported: ${file.type}`);
             }
