@@ -1,22 +1,41 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Scrollbars } from 'react-custom-scrollbars';
 import toastr from 'toastr';
 import { checkTime } from '../utils';
+import { Table } from 'react-virtualized';
 
 const Wrapper = styled.div`
     flex: 1;
     border-right: 1px solid rgb(36, 41, 45);
     overflow-y: hidden;
     overflow-x: hidden;
-    table {
+    .ReactVirtualized__Table {
         width: 100%;
         background: #24292d;
 
-        tr {
-            background: #1c2022;
+        .ReactVirtualized__Table__Grid {
+            outline: none;
+        }
 
-            &.odd {
+        .ReactVirtualized__Table__headerRow {
+            background: #1c2022;
+            border-bottom: 1px solid rgb(36, 41, 45);
+
+            .row {
+                padding: 10px;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 14px;
+                text-align: center;
+                text-transform: none;
+            }
+        }
+
+        .ReactVirtualized__Table__row {
+            background: #1c2022;
+            border-bottom: 1px solid rgb(36, 41, 45);
+
+            &:nth-child(odd) {
                 background: #2e3140;
             }
 
@@ -24,30 +43,29 @@ const Wrapper = styled.div`
                 background-color: #2196f3;
             }
 
-            th,
-            td {
-                text-align: center;
+            .row {
                 padding: 10px;
+                text-align: center;
             }
+        }
 
-            .input,
-            .textarea {
-                border: none;
-                padding: 5px;
-                min-height: 30px;
-                font-size: 13px;
-                color: #fff;
-                background-color: #3a3a3a;
-            }
+        .input,
+        .textarea {
+            border: none;
+            padding: 5px;
+            min-height: 30px;
+            font-size: 13px;
+            color: #fff;
+            background-color: #3a3a3a;
+        }
 
-            .textarea {
-                resize: vertical;
-            }
+        .textarea {
+            resize: vertical;
+        }
 
-            p {
-                line-height: 1.5;
-                margin: 0;
-            }
+        p {
+            line-height: 1.5;
+            margin: 0;
         }
     }
 
@@ -80,20 +98,18 @@ const Wrapper = styled.div`
 `;
 
 export default class Subtitle extends React.Component {
-    $scrollbars = React.createRef();
-
     state = {
         lastCurrentIndex: -1,
         editIndex: -1,
         editSubtitle: {},
-        $scrollbars: this.$scrollbars,
+        $table: this.$table,
     };
 
     static getDerivedStateFromProps(props, state) {
-        if (state.$scrollbars.current && props.currentIndex !== state.lastCurrentIndex) {
-            const $subtitle = state.$scrollbars.current.container.querySelector('.subtitleTable .onhighlight');
+        if (props.currentIndex !== state.lastCurrentIndex) {
+            const $subtitle = document.querySelector('.ReactVirtualized__Grid__innerScrollContainer .onhighlight');
             if ($subtitle) {
-                state.$scrollbars.current.scrollTop($subtitle.offsetTop);
+                document.querySelector('.ReactVirtualized__Table__Grid').scrollTop = $subtitle.offsetTop;
             }
         }
 
@@ -160,86 +176,108 @@ export default class Subtitle extends React.Component {
     }
 
     render() {
-        const { subtitles } = this.props;
-        const { editSubtitle } = this.state;
+        const { subtitles, mainHeight, mainWidth } = this.props;
+        const { editSubtitle, lastCurrentIndex } = this.state;
         return (
             <Wrapper>
-                <Scrollbars ref={this.$scrollbars} style={{ height: '100%' }}>
-                    <table border="0" cellSpacing="1" cellPadding="0" className="subtitleTable">
-                        <thead>
-                            <tr>
-                                <th width="50">#</th>
-                                <th width="120">Start</th>
-                                <th width="120">End</th>
-                                <th width="100">Duration</th>
-                                <th>Text</th>
-                                <th width="100">Operation</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {subtitles.map((item, index) => (
-                                <tr
-                                    key={index}
-                                    className={[
-                                        item.$edit ? 'onedit' : '',
-                                        index % 2 === 0 ? 'even' : 'odd',
-                                        item.$highlight ? 'onhighlight' : '',
-                                    ]
-                                        .join(' ')
-                                        .trim()}
-                                >
-                                    <td>{index + 1}</td>
-                                    <td>
-                                        <span className="noedit">{item.start}</span>
-                                        <input
-                                            maxLength={20}
-                                            className="input edit"
-                                            defaultValue={editSubtitle.start}
-                                            onChange={e => this.onChange('start', e.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <span className="noedit">{item.end}</span>
-                                        <input
-                                            maxLength={20}
-                                            className="input edit"
-                                            defaultValue={editSubtitle.end}
-                                            onChange={e => this.onChange('end', e.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <span className="noedit">{item.duration}</span>
-                                        <input
-                                            disabled
-                                            maxLength={20}
-                                            className="input edit"
-                                            defaultValue={editSubtitle.duration}
-                                            onChange={e => this.onChange('duration', e.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <span className="noedit">
-                                            {item.text.split(/\r?\n/).map((item, index) => (
-                                                <p key={index}>{item}</p>
-                                            ))}
-                                        </span>
-                                        <textarea
-                                            maxLength={500}
-                                            className="textarea edit"
-                                            value={editSubtitle.text}
-                                            onChange={e => this.onChange('text', e.target.value)}
-                                        />
-                                    </td>
-                                    <td className="operation">
-                                        <i className="icon-pencil noedit" onClick={() => this.onEdit(index)}></i>
-                                        <i className="icon-ok edit" onClick={() => this.onUpdate(index)}></i>
-                                        <i className="icon-trash-empty" onClick={() => this.onRemove(index)}></i>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </Scrollbars>
+                <Table
+                    headerHeight={40}
+                    width={mainWidth / 2}
+                    height={mainHeight}
+                    rowHeight={60}
+                    scrollToIndex={lastCurrentIndex}
+                    rowCount={subtitles.length}
+                    rowGetter={({ index }) => subtitles[index]}
+                    headerRowRenderer={() => {
+                        return (
+                            <div className="ReactVirtualized__Table__headerRow">
+                                <div className="row" style={{ width: 50 }} width="50">
+                                    #
+                                </div>
+                                <div className="row" style={{ width: 120 }} width="120">
+                                    Start
+                                </div>
+                                <div className="row" style={{ width: 120 }} width="120">
+                                    End
+                                </div>
+                                <div className="row" style={{ width: 100 }} width="100">
+                                    Duration
+                                </div>
+                                <div className="row" style={{ flex: 1 }}>
+                                    Text
+                                </div>
+                                <div className="row" style={{ width: 100 }} width="100">
+                                    Operation
+                                </div>
+                            </div>
+                        );
+                    }}
+                    rowRenderer={props => {
+                        return (
+                            <div
+                                key={props.index}
+                                className={[
+                                    props.className,
+                                    props.rowData.$edit ? 'onedit' : '',
+                                    props.rowData.$highlight ? 'onhighlight' : '',
+                                ]
+                                    .join(' ')
+                                    .trim()}
+                                style={props.style}
+                            >
+                                <div className="row" style={{ width: 50 }}>
+                                    {props.index + 1}
+                                </div>
+                                <div className="row" style={{ width: 120 }}>
+                                    <span className="noedit">{props.rowData.start}</span>
+                                    <input
+                                        maxLength={20}
+                                        className="input edit"
+                                        defaultValue={editSubtitle.start}
+                                        onChange={e => this.onChange('start', e.target.value)}
+                                    />
+                                </div>
+                                <div className="row" style={{ width: 120 }}>
+                                    <span className="noedit">{props.rowData.end}</span>
+                                    <input
+                                        maxLength={20}
+                                        className="input edit"
+                                        defaultValue={editSubtitle.end}
+                                        onChange={e => this.onChange('end', e.target.value)}
+                                    />
+                                </div>
+                                <div className="row" style={{ width: 100 }}>
+                                    <span className="noedit">{props.rowData.duration}</span>
+                                    <input
+                                        disabled
+                                        maxLength={20}
+                                        className="input edit"
+                                        defaultValue={editSubtitle.duration}
+                                        onChange={e => this.onChange('duration', e.target.value)}
+                                    />
+                                </div>
+                                <div className="row" style={{ flex: 1 }}>
+                                    <span className="noedit">
+                                        {props.rowData.text.split(/\r?\n/).map((item, index) => (
+                                            <p key={index}>{item}</p>
+                                        ))}
+                                    </span>
+                                    <textarea
+                                        maxLength={500}
+                                        className="textarea edit"
+                                        value={editSubtitle.text}
+                                        onChange={e => this.onChange('text', e.target.value)}
+                                    />
+                                </div>
+                                <div className="row operation" style={{ width: 100 }}>
+                                    <i className="icon-pencil noedit" onClick={() => this.onEdit(props.index)}></i>
+                                    <i className="icon-ok edit" onClick={() => this.onUpdate(props.index)}></i>
+                                    <i className="icon-trash-empty" onClick={() => this.onRemove(props.index)}></i>
+                                </div>
+                            </div>
+                        );
+                    }}
+                ></Table>
             </Wrapper>
         );
     }

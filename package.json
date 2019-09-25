@@ -10,9 +10,9 @@
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
     "react": "^16.9.0",
-    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.9.0",
     "react-scripts": "3.1.2",
+    "react-virtualized": "^9.21.1",
     "styled-components": "^4.3.2",
     "toastr": "^2.1.4"
   },

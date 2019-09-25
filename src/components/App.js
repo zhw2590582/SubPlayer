@@ -26,6 +26,18 @@ const GlobalStyle = createGlobalStyle`
         background: rgb(16, 17, 19);
     }
 
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background-color: #666;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #ccc;
+    }
+
     .notice {
         position: fixed;
         z-index: 99;
@@ -53,6 +65,7 @@ let defaultSubtitleUrl = 'https://zhw2590582.github.io/assets-cdn/subtitle/one-m
 export default class App extends React.Component {
     state = {
         mainHeight: 100,
+        mainWidth: 100,
         videoUrl: '',
         subtitleUrl: '',
         currentTime: -1,
@@ -61,10 +74,10 @@ export default class App extends React.Component {
     };
 
     componentDidMount() {
-        this.uddateMainHeight();
+        this.uddateMainSize();
 
         const resizeDebounce = debounce(() => {
-            this.uddateMainHeight();
+            this.uddateMainSize();
         }, 500);
 
         window.addEventListener('resize', resizeDebounce);
@@ -88,9 +101,10 @@ export default class App extends React.Component {
             });
     }
 
-    uddateMainHeight() {
+    uddateMainSize() {
         this.setState({
             mainHeight: document.body.clientHeight - 250,
+            mainWidth: document.body.clientWidth,
         });
     }
 

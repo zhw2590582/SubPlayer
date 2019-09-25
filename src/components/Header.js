@@ -93,7 +93,7 @@ export default class Header extends React.Component {
 
     uploadSubtitle() {
         if (this.$subtitle.current && this.$subtitle.current.files[0]) {
-            NProgress.start();
+            NProgress.start().set(0.5);
             const file = this.$subtitle.current.files[0];
             const type = file.name
                 .split('.')
@@ -123,7 +123,7 @@ export default class Header extends React.Component {
 
     uploadVideo() {
         if (this.$video.current && this.$video.current.files[0]) {
-            NProgress.start();
+            NProgress.start().set(0.5);
             const file = this.$video.current.files[0];
             const $video = document.createElement('video');
             const canPlayType = $video.canPlayType(file.type);

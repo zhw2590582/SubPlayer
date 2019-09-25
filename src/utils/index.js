@@ -60,10 +60,11 @@ export function urlToArr(url) {
         $track.kind = 'metadata';
         $video.appendChild($track);
         $track.onload = () => {
-            const arr = Array.from($track.track.cues).map(item => {
+            const arr = Array.from($track.track.cues).map((item, index) => {
                 return {
                     $edit: false,
                     $highlight: false,
+                    id: index,
                     start: secondToTime(item.startTime),
                     end: secondToTime(item.endTime),
                     text: item.text,

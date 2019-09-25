@@ -6,6 +6,7 @@ import './fontello/css/fontello.css';
 import 'toastr/build/toastr.css';
 import toastr from 'toastr';
 import 'nprogress/nprogress.css';
+import 'react-virtualized/styles.css';
 import * as serviceWorker from './serviceWorker';
 
 toastr.options.timeOut = 3000;
