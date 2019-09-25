@@ -114,6 +114,7 @@ export function srtToVtt(srtText) {
             .replace(/\{([ibu])\}/g, '<$1>')
             .replace(/\{\/([ibu])\}/g, '</$1>')
             .replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, '$1.$2')
+            .replace(/{[\s\S]*?}/g, '')
             .concat('\r\n\r\n'),
     );
 }
@@ -131,7 +132,7 @@ export function readSubtitleFromFile(file) {
             } else if (type === 'ass') {
                 resolve(assToVtt(reader.result));
             } else {
-                resolve(reader.result);
+                resolve(reader.result.replace(/{[\s\S]*?}/g, ''));
             }
         };
         reader.onerror = error => {

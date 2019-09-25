@@ -42,7 +42,7 @@ export default function assToVtt(ass) {
                     start: fixTime(m[1].trim()),
                     end: fixTime(m[2].trim()),
                     text: m[5]
-                        .replace(/{[\s\S]*}/g, '')
+                        .replace(/{[\s\S]*?}/g, '')
                         .replace(/(\\N)/g, '\n')
                         .trim()
                         .split(/\r?\n/)
