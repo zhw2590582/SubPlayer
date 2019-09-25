@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://zhw2590582.github.io/SubPlayer/",
   "dependencies": {
-    "artplayer-react": "^3.1.15",
+    "artplayer-react": "^3.1.16",
     "moment": "^2.24.0",
     "moment-duration-format": "^2.3.2",
     "normalize.css": "^8.0.1",

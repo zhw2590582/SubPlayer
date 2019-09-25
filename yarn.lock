@@ -1655,10 +1655,10 @@ arrify@^1.0.1:
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
   integrity sha1-iYUI2iIm84DfkEcoRWhJwVAaSw0=
 
-artplayer-react@^3.1.15:
-  version "3.1.15"
-  resolved "https://registry.yarnpkg.com/artplayer-react/-/artplayer-react-3.1.15.tgz#e7564d9a5fa3f2ac840e08c00394a122dc255114"
-  integrity sha512-uic2HD2baizrAUbi3j2lB0bDy/lsGBJCHt5b1NCNjbGqF1IKCEWAbnA/jv2LThgmVicO8IJKgci6oDvEV/6OlA==
+artplayer-react@^3.1.16:
+  version "3.1.16"
+  resolved "https://registry.yarnpkg.com/artplayer-react/-/artplayer-react-3.1.16.tgz#fa4c1b837a7efb8ebb566ed08d74f8f815a7f8eb"
+  integrity sha512-GZiaguuEaDRV76CdlTgNWTievJ3wIC9Bsy5wB8ZP4jwRFQ7FkC8N2lOlMjhvy/sZ4B5KxVuM6JvWVjHzMs9sDw==
   dependencies:
     react latest
 
