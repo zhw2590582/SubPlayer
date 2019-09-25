@@ -94,6 +94,7 @@ export default class Header extends React.Component {
                     })
                     .catch(error => {
                         notice(error.message);
+                        throw error;
                     });
             } else {
                 notice('Only the following subtitle formats are supported: .vtt, .srt');

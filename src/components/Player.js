@@ -15,8 +15,8 @@ const VideoWrapper = styled.div`
     padding: 20px;
     border-bottom: 1px solid rgb(36, 41, 45);
 
-    video {
-        height: 100%;
+    .artplayer-video-player .artplayer-subtitle {
+        background-color: rgba(0, 0, 0, 0.5);
     }
 `;
 

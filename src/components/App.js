@@ -4,7 +4,7 @@ import Header from './Header';
 import Subtitle from './Subtitle';
 import Timeline from './Timeline';
 import Player from './Player';
-import { debounce, arrToVtt, vttToUrl, notice } from '../utils';
+import { debounce, arrToVtt, vttToUrl, notice, readSubtitleFromUrl, urlToArr } from '../utils';
 
 const GlobalStyle = createGlobalStyle`
     html,
@@ -47,11 +47,13 @@ const Main = styled.div`
     display: flex;
 `;
 
+let defaultVideoUrl = 'https://zhw2590582.github.io/assets-cdn/video/one-more-time-one-more-chance-480p.mp4';
+let defaultSubtitleUrl = 'https://zhw2590582.github.io/assets-cdn/subtitle/one-more-time-one-more-chance.srt';
 export default class App extends React.Component {
     state = {
         mainHeight: 100,
-        videoUrl: 'https://zhw2590582.github.io/assets-cdn/video/one-more-time-one-more-chance-480p.mp4',
-        subtitleUrl: 'https://zhw2590582.github.io/assets-cdn/subtitle/one-more-time-one-more-chance.srt',
+        videoUrl: '',
+        subtitleUrl: '',
         subtitles: [],
     };
 
@@ -63,6 +65,24 @@ export default class App extends React.Component {
         }, 500);
 
         window.addEventListener('resize', resizeDebounce);
+
+        const locationUrl = new URL(window.location.href);
+        const subtitleUrl = decodeURIComponent(locationUrl.searchParams.get('subtitle') || '') || defaultSubtitleUrl;
+        const videoUrl = decodeURIComponent(locationUrl.searchParams.get('video') || '') || defaultVideoUrl;
+
+        readSubtitleFromUrl(subtitleUrl)
+            .then(data => {
+                const subtitleUrl = vttToUrl(data);
+                this.updateSubtitleUrl(subtitleUrl);
+                this.updateVideoUrl(videoUrl);
+                urlToArr(subtitleUrl).then(subtitles => {
+                    this.updateSubtitles(subtitles);
+                });
+            })
+            .catch(error => {
+                notice(error.message);
+                throw error;
+            });
     }
 
     uddateMainHeight() {

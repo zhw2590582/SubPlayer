@@ -125,3 +125,22 @@ export function readSubtitleFromFile(file) {
         reader.readAsText(file);
     });
 }
+
+export function readSubtitleFromUrl(url) {
+    let type;
+    return fetch(url)
+        .then(response => {
+            type = response.headers.get('Content-Type');
+            return response.text();
+        })
+        .then(text => {
+            if (/x-subrip/gi.test(type)) {
+                return srtToVtt(text);
+            }
+            return text;
+        })
+        .catch(error => {
+            notice(error.message);
+            throw error;
+        });
+}
