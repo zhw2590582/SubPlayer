@@ -95,7 +95,7 @@ export default class App extends React.Component {
     }
 
     removeSubtitle(index) {
-        const subtitles = this.state.subtitles.slice();
+        const subtitles = this.state.subtitles;
         subtitles.splice(index, 1);
         this.setState({
             subtitles,
@@ -104,7 +104,7 @@ export default class App extends React.Component {
     }
 
     editSubtitle(index) {
-        const subtitles = this.state.subtitles.slice().map(item => {
+        const subtitles = this.state.subtitles.map(item => {
             item.$highlight = false;
             item.$edit = false;
             return item;
@@ -117,7 +117,7 @@ export default class App extends React.Component {
     }
 
     highlightSubtitle(index) {
-        const subtitles = this.state.subtitles.slice().map(item => {
+        const subtitles = this.state.subtitles.map(item => {
             item.$highlight = false;
             return item;
         });
@@ -128,7 +128,7 @@ export default class App extends React.Component {
     }
 
     updateSubtitle(index, subtitle) {
-        const subtitles = this.state.subtitles.slice().map(item => {
+        const subtitles = this.state.subtitles.map(item => {
             item.$edit = false;
             return item;
         });
