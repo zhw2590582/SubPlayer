@@ -5,7 +5,7 @@ import Header from './Header';
 import Subtitle from './Subtitle';
 import Timeline from './Timeline';
 import Player from './Player';
-import { debounce, arrToVtt, vttToUrl, readSubtitleFromUrl, urlToArr, timeToSecond } from '../utils';
+import { debounce, arrToVtt, vttToUrl, readSubtitleFromUrl, urlToArr, timeToSecond, downloadFile } from '../utils';
 
 const GlobalStyle = createGlobalStyle`
     html,
@@ -192,6 +192,10 @@ export default class App extends React.Component {
         });
     }
 
+    downloadSubtitles() {
+        downloadFile(vttToUrl(arrToVtt(this.state.subtitles)), `${Date.now()}.vtt`);
+    }
+
     render() {
         const functions = {
             ...this.state,
@@ -203,6 +207,7 @@ export default class App extends React.Component {
             updateVideoUrl: this.updateVideoUrl.bind(this),
             updateSubtitleUrl: this.updateSubtitleUrl.bind(this),
             updateCurrentTime: this.updateCurrentTime.bind(this),
+            downloadSubtitles: this.downloadSubtitles.bind(this),
         };
 
         return (

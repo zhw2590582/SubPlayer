@@ -1,5 +1,7 @@
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
+import assToVtt from './assToVtt';
+
 momentDurationFormatSetup(moment);
 
 export function checkTime(time) {
@@ -95,7 +97,9 @@ export function arrToVtt(arr) {
         'WEBVTT\n\n' +
         arr
             .map((item, index) => {
-                return index + '\n' + secondToTime(item.start) + ' -->' + secondToTime(item.end) + '\n' + item.text;
+                return (
+                    index + 1 + '\n' + secondToTime(item.start) + ' --> ' + secondToTime(item.end) + '\n' + item.text
+                );
             })
             .join('\n\n')
     );
@@ -123,6 +127,8 @@ export function readSubtitleFromFile(file) {
         reader.onload = () => {
             if (type === 'srt') {
                 resolve(srtToVtt(reader.result));
+            } else if (type === 'ass') {
+                resolve(assToVtt(reader.result));
             } else {
                 resolve(reader.result);
             }
@@ -151,4 +157,14 @@ export function readSubtitleFromUrl(url) {
             notice(error.message);
             throw error;
         });
+}
+
+export function downloadFile(url, name) {
+    const elink = document.createElement('a');
+    elink.style.display = 'none';
+    elink.href = url;
+    elink.download = name;
+    document.body.appendChild(elink);
+    elink.click();
+    document.body.removeChild(elink);
 }

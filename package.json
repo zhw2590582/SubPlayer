@@ -8,6 +8,7 @@
     "moment": "^2.24.0",
     "moment-duration-format": "^2.3.2",
     "normalize.css": "^8.0.1",
+    "nprogress": "^0.2.0",
     "react": "^16.9.0",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.9.0",
