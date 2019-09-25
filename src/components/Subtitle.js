@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Scrollbars } from 'react-custom-scrollbars';
 import toastr from 'toastr';
-import { checkTime, checkDuration } from '../utils';
+import { checkTime } from '../utils';
 
 const Wrapper = styled.div`
     flex: 1;
@@ -21,7 +21,7 @@ const Wrapper = styled.div`
             }
 
             &.onhighlight {
-                background-color: #607d8b;
+                background-color: #2196f3;
             }
 
             th,
@@ -60,10 +60,6 @@ const Wrapper = styled.div`
             cursor: pointer;
             font-size: 16px;
         }
-
-        .icon-ok {
-            color: #4caf50;
-        }
     }
 
     .edit {
@@ -84,12 +80,27 @@ const Wrapper = styled.div`
 `;
 
 export default class Subtitle extends React.Component {
+    $scrollbars = React.createRef();
+
     state = {
+        lastCurrentIndex: -1,
         editIndex: -1,
         editSubtitle: {},
+        $scrollbars: this.$scrollbars,
     };
 
-    $scrollbars = React.createRef();
+    static getDerivedStateFromProps(props, state) {
+        if (state.$scrollbars.current && props.currentIndex !== state.lastCurrentIndex) {
+            const $subtitle = state.$scrollbars.current.container.querySelector('.subtitleTable .onhighlight');
+            if ($subtitle) {
+                state.$scrollbars.current.scrollTop($subtitle.offsetTop);
+            }
+        }
+
+        return {
+            lastCurrentIndex: props.currentIndex,
+        };
+    }
 
     checkSubtitle() {
         const { editIndex, editSubtitle } = this.state;
@@ -100,14 +111,6 @@ export default class Subtitle extends React.Component {
             }
             if (!checkTime(editSubtitle.end)) {
                 toastr.error(`End time format needs to match like: [00:00:00.000]`);
-                return false;
-            }
-            if (!checkDuration(editSubtitle.duration)) {
-                toastr.error(`Duration time format needs to match like: [00.000]`);
-                return false;
-            }
-            if (!editSubtitle.text.trim().length) {
-                toastr.error('Text cannot be empty');
                 return false;
             }
         }
@@ -148,13 +151,21 @@ export default class Subtitle extends React.Component {
         });
     }
 
+    onRemove(index) {
+        this.props.removeSubtitle(index);
+        this.setState({
+            editIndex: -1,
+            editSubtitle: {},
+        });
+    }
+
     render() {
-        const { subtitles, removeSubtitle } = this.props;
+        const { subtitles } = this.props;
         const { editSubtitle } = this.state;
         return (
             <Wrapper>
                 <Scrollbars ref={this.$scrollbars} style={{ height: '100%' }}>
-                    <table border="0" cellSpacing="1" cellPadding="0">
+                    <table border="0" cellSpacing="1" cellPadding="0" className="subtitleTable">
                         <thead>
                             <tr>
                                 <th width="50">#</th>
@@ -222,7 +233,7 @@ export default class Subtitle extends React.Component {
                                     <td className="operation">
                                         <i className="icon-pencil noedit" onClick={() => this.onEdit(index)}></i>
                                         <i className="icon-ok edit" onClick={() => this.onUpdate(index)}></i>
-                                        <i className="icon-trash-empty" onClick={() => removeSubtitle(index)}></i>
+                                        <i className="icon-trash-empty" onClick={() => this.onRemove(index)}></i>
                                     </td>
                                 </tr>
                             ))}

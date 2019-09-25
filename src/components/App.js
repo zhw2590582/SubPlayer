@@ -55,7 +55,8 @@ export default class App extends React.Component {
         mainHeight: 100,
         videoUrl: '',
         subtitleUrl: '',
-        currentTime: 0,
+        currentTime: -1,
+        currentIndex: -1,
         subtitles: [],
     };
 
@@ -113,6 +114,17 @@ export default class App extends React.Component {
         });
     }
 
+    highlightSubtitle(index) {
+        const subtitles = this.state.subtitles.slice().map(item => {
+            item.$highlight = false;
+            return item;
+        });
+        subtitles[index].$highlight = true;
+        this.setState({
+            subtitles,
+        });
+    }
+
     updateSubtitle(index, subtitle) {
         const subtitles = this.state.subtitles.slice().map(item => {
             item.$edit = false;
@@ -165,8 +177,17 @@ export default class App extends React.Component {
     }
 
     updateCurrentTime(currentTime) {
+        const currentIndex = this.state.subtitles.length
+            ? this.state.subtitles.findIndex(item => {
+                  return item.startTime <= currentTime && item.endTime >= currentTime;
+              })
+            : -1;
+        if (currentIndex !== -1) {
+            this.highlightSubtitle(currentIndex);
+        }
         this.setState({
             currentTime,
+            currentIndex,
         });
     }
 
@@ -175,6 +196,7 @@ export default class App extends React.Component {
             ...this.state,
             removeSubtitle: this.removeSubtitle.bind(this),
             editSubtitle: this.editSubtitle.bind(this),
+            highlightSubtitle: this.highlightSubtitle.bind(this),
             updateSubtitle: this.updateSubtitle.bind(this),
             updateSubtitles: this.updateSubtitles.bind(this),
             updateVideoUrl: this.updateVideoUrl.bind(this),
