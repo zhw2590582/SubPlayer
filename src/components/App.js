@@ -105,12 +105,14 @@ export default class App extends React.Component {
 
     editSubtitle(index) {
         const subtitles = this.state.subtitles.slice().map(item => {
+            item.$highlight = false;
             item.$edit = false;
             return item;
         });
         subtitles[index].$edit = true;
         this.setState({
             subtitles,
+            currentTime: subtitles[index].startTime + 0.001,
         });
     }
 
@@ -186,7 +188,6 @@ export default class App extends React.Component {
             this.highlightSubtitle(currentIndex);
         }
         this.setState({
-            currentTime,
             currentIndex,
         });
     }

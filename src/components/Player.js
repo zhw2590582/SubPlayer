@@ -29,12 +29,16 @@ export default class Player extends React.Component {
         if (state.art) {
             const videoUrl = state.art.option.url;
             const subtitleUrl = state.art.template.$track.src;
+            const currentTime = state.art.currentTime;
             if (props.videoUrl !== videoUrl) {
                 state.art.player.switchUrl(props.videoUrl);
             }
             if (props.subtitleUrl !== subtitleUrl) {
                 state.art.template.$subtitle.innerHTML = '';
                 state.art.subtitle.init(props.subtitleUrl);
+            }
+            if (!state.art.playing && props.currentTime !== currentTime) {
+                state.art.currentTime = props.currentTime;
             }
         }
         return null;
@@ -58,7 +62,9 @@ export default class Player extends React.Component {
                             }}
                             getInstance={art => {
                                 art.on('video:timeupdate', () => {
-                                    this.props.updateCurrentTime(art.currentTime);
+                                    if (art.playing) {
+                                        this.props.updateCurrentTime(art.currentTime);
+                                    }
                                 });
 
                                 this.setState({
