@@ -64,8 +64,16 @@ export function urlToArr(url) {
                     $highlight: false,
                     start: secondToTime(item.startTime),
                     end: secondToTime(item.endTime),
-                    duration: (item.endTime - item.startTime).toFixed(3),
                     text: item.text,
+                    get startTime() {
+                        return timeToSecond(this.start);
+                    },
+                    get endTime() {
+                        return timeToSecond(this.end);
+                    },
+                    get duration() {
+                        return (this.endTime - this.startTime).toFixed(3);
+                    },
                 };
             });
             resolve(arr);

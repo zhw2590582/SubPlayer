@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { notice, readSubtitleFromFile, urlToArr, vttToUrl } from '../utils';
+import toastr from 'toastr';
+import { readSubtitleFromFile, urlToArr, vttToUrl } from '../utils';
 
 const Wrapper = styled.header`
     display: flex;
@@ -93,11 +94,11 @@ export default class Header extends React.Component {
                         });
                     })
                     .catch(error => {
-                        notice(error.message);
+                        toastr.error(error.message);
                         throw error;
                     });
             } else {
-                notice('Only the following subtitle formats are supported: .vtt, .srt');
+                toastr.error('Only the following subtitle formats are supported: .vtt, .srt');
             }
         }
     }
@@ -111,7 +112,7 @@ export default class Header extends React.Component {
                 const url = URL.createObjectURL(file);
                 this.props.updateVideoUrl(url);
             } else {
-                notice(`This video format is not supported: ${file.type}`);
+                toastr.error(`This video format is not supported: ${file.type}`);
             }
         }
     }

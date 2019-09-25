@@ -1,10 +1,11 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import toastr from 'toastr';
 import Header from './Header';
 import Subtitle from './Subtitle';
 import Timeline from './Timeline';
 import Player from './Player';
-import { debounce, arrToVtt, vttToUrl, notice, readSubtitleFromUrl, urlToArr } from '../utils';
+import { debounce, arrToVtt, vttToUrl, readSubtitleFromUrl, urlToArr, timeToSecond } from '../utils';
 
 const GlobalStyle = createGlobalStyle`
     html,
@@ -54,6 +55,7 @@ export default class App extends React.Component {
         mainHeight: 100,
         videoUrl: '',
         subtitleUrl: '',
+        currentTime: 0,
         subtitles: [],
     };
 
@@ -80,7 +82,7 @@ export default class App extends React.Component {
                 });
             })
             .catch(error => {
-                notice(error.message);
+                toastr.error(error.message);
                 throw error;
             });
     }
@@ -116,7 +118,18 @@ export default class App extends React.Component {
             item.$edit = false;
             return item;
         });
-        subtitles[index] = subtitle;
+        subtitles[index] = {
+            ...subtitle,
+            get startTime() {
+                return timeToSecond(this.start);
+            },
+            get endTime() {
+                return timeToSecond(this.end);
+            },
+            get duration() {
+                return (this.endTime - this.startTime).toFixed(3);
+            },
+        };
         this.setState({
             subtitles,
         });
@@ -129,7 +142,7 @@ export default class App extends React.Component {
                 videoUrl,
             },
             () => {
-                notice('Update video successfully', true);
+                toastr.success('Update video successfully');
             },
         );
     }
@@ -140,20 +153,21 @@ export default class App extends React.Component {
                 subtitleUrl,
             },
             () => {
-                notice('Update subtitles successfully', true);
+                toastr.success('Update subtitles successfully');
             },
         );
     }
 
     updateSubtitles(subtitles) {
-        this.setState(
-            {
-                subtitles,
-            },
-            () => {
-                notice('Update subtitles successfully', true);
-            },
-        );
+        this.setState({
+            subtitles,
+        });
+    }
+
+    updateCurrentTime(currentTime) {
+        this.setState({
+            currentTime,
+        });
     }
 
     render() {
@@ -165,6 +179,7 @@ export default class App extends React.Component {
             updateSubtitles: this.updateSubtitles.bind(this),
             updateVideoUrl: this.updateVideoUrl.bind(this),
             updateSubtitleUrl: this.updateSubtitleUrl.bind(this),
+            updateCurrentTime: this.updateCurrentTime.bind(this),
         };
 
         return (

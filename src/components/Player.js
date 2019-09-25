@@ -57,6 +57,10 @@ export default class Player extends React.Component {
                                 },
                             }}
                             getInstance={art => {
+                                art.on('video:timeupdate', () => {
+                                    this.props.updateCurrentTime(art.currentTime);
+                                });
+
                                 this.setState({
                                     art,
                                 });

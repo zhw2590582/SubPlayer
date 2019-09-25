@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { checkTime, checkDuration, notice, timeToSecond } from '../utils';
+import toastr from 'toastr';
+import { checkTime, checkDuration } from '../utils';
 
 const Wrapper = styled.div`
     flex: 1;
@@ -94,19 +95,19 @@ export default class Subtitle extends React.Component {
         const { editIndex, editSubtitle } = this.state;
         if (editIndex !== -1) {
             if (!checkTime(editSubtitle.start)) {
-                notice(`Start time format needs to match like: [00:00:00.000]`);
+                toastr.error(`Start time format needs to match like: [00:00:00.000]`);
                 return false;
             }
             if (!checkTime(editSubtitle.end)) {
-                notice(`End time format needs to match like: [00:00:00.000]`);
+                toastr.error(`End time format needs to match like: [00:00:00.000]`);
                 return false;
             }
             if (!checkDuration(editSubtitle.duration)) {
-                notice(`Duration time format needs to match like: [00.000]`);
+                toastr.error(`Duration time format needs to match like: [00.000]`);
                 return false;
             }
             if (!editSubtitle.text.trim().length) {
-                notice('Text cannot be empty');
+                toastr.error('Text cannot be empty');
                 return false;
             }
         }
@@ -128,10 +129,8 @@ export default class Subtitle extends React.Component {
     onUpdate() {
         if (this.checkSubtitle()) {
             const { editIndex, editSubtitle } = this.state;
-            const duration = timeToSecond(editSubtitle.end) - timeToSecond(editSubtitle.start);
             this.props.updateSubtitle(editIndex, {
                 ...editSubtitle,
-                duration: duration.toFixed(3),
             });
             this.setState({
                 editIndex: -1,
