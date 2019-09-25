@@ -4,7 +4,7 @@ import Header from './Header';
 import Subtitle from './Subtitle';
 import Timeline from './Timeline';
 import Player from './Player';
-import { debounce } from '../utils';
+import { debounce, arrToVtt, vttToUrl, notice } from '../utils';
 
 const GlobalStyle = createGlobalStyle`
     html,
@@ -77,6 +77,7 @@ export default class App extends React.Component {
         this.setState({
             subtitles,
         });
+        this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
     }
 
     editSubtitle(index) {
@@ -99,24 +100,40 @@ export default class App extends React.Component {
         this.setState({
             subtitles,
         });
+        this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
     }
 
     updateVideoUrl(videoUrl) {
-        this.setState({
-            videoUrl,
-        });
+        this.setState(
+            {
+                videoUrl,
+            },
+            () => {
+                notice('Update video successfully', true);
+            },
+        );
     }
 
     updateSubtitleUrl(subtitleUrl) {
-        this.setState({
-            subtitleUrl,
-        });
+        this.setState(
+            {
+                subtitleUrl,
+            },
+            () => {
+                notice('Update subtitles successfully', true);
+            },
+        );
     }
 
     updateSubtitles(subtitles) {
-        this.setState({
-            subtitles,
-        });
+        this.setState(
+            {
+                subtitles,
+            },
+            () => {
+                notice('Update subtitles successfully', true);
+            },
+        );
     }
 
     render() {

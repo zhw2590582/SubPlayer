@@ -90,7 +90,6 @@ export default class Header extends React.Component {
                         this.props.updateSubtitleUrl(subtitleUrl);
                         urlToArr(subtitleUrl).then(subtitles => {
                             this.props.updateSubtitles(subtitles);
-                            notice('Successfully loaded subtitles', true);
                         });
                     })
                     .catch(error => {

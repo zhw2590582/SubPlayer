@@ -33,6 +33,7 @@ export default class Player extends React.Component {
                 state.art.player.switchUrl(props.videoUrl);
             }
             if (props.subtitleUrl !== subtitleUrl) {
+                state.art.template.$subtitle.innerHTML = '';
                 state.art.subtitle.init(props.subtitleUrl);
             }
         }

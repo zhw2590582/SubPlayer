@@ -60,6 +60,8 @@ export function urlToArr(url) {
         $track.onload = () => {
             const arr = Array.from($track.track.cues).map(item => {
                 return {
+                    $edit: false,
+                    $highlight: false,
                     start: secondToTime(item.startTime),
                     end: secondToTime(item.endTime),
                     duration: (item.endTime - item.startTime).toFixed(3),
@@ -77,6 +79,17 @@ export function vttToUrl(vttText) {
         new Blob([vttText], {
             type: 'text/vtt',
         }),
+    );
+}
+
+export function arrToVtt(arr) {
+    return (
+        'WEBVTT\n\n' +
+        arr
+            .map((item, index) => {
+                return index + '\n' + secondToTime(item.start) + ' -->' + secondToTime(item.end) + '\n' + item.text;
+            })
+            .join('\n\n')
     );
 }
 
