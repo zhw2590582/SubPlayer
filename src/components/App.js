@@ -250,7 +250,7 @@ export default class App extends React.Component {
             id: index,
             start: previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.000',
             end: previous ? secondToTime(previous.endTime + 0.002) : '00:00:00.000',
-            text: escapeHTML('<Subtitle Text>'),
+            text: 'Your Subtitle Text',
             get startTime() {
                 return timeToSecond(this.start);
             },
