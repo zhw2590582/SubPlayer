@@ -45,7 +45,7 @@ export default class Player extends React.Component {
     render() {
         return (
             <Wrapper>
-                <Button onClick={() => this.props.addSubtitle()}>
+                <Button onClick={() => this.props.addSubtitle(this.props.subtitles.length)}>
                     <i className="icon-doc-new"></i>Add Subtitle
                 </Button>
                 <Button>

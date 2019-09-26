@@ -239,11 +239,10 @@ export default class App extends React.Component {
         );
     }
 
-    addSubtitle(addIndex) {
+    addSubtitle(index) {
         const subtitles = this.state.subtitles;
-        const index = this.state.subtitles.length;
         const previous = subtitles[index - 1];
-        this.state.subtitles.push({
+        subtitles.splice(index, 0, {
             editing: false,
             highlight: false,
             id: index,
