@@ -7,8 +7,6 @@ import { Table } from 'react-virtualized';
 const Wrapper = styled.div`
     flex: 1;
     border-right: 1px solid rgb(36, 41, 45);
-    overflow-y: hidden;
-    overflow-x: hidden;
     .ReactVirtualized__Table {
         font-size: 13px;
         background: #24292d;
@@ -32,11 +30,12 @@ const Wrapper = styled.div`
         }
 
         .ReactVirtualized__Table__row {
-            background: #1c2022;
+            background-color: #1c2022;
             border-bottom: 1px solid rgb(36, 41, 45);
+            transition: all .2s ease;
 
             &.odd {
-                background: #2e3140;
+                background-color: #2e3140;
             }
 
             &.highlight {

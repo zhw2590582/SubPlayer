@@ -65,6 +65,7 @@ const Btn = styled.div`
     overflow: hidden;
     color: #ccc;
     background-color: rgb(39, 41, 54);
+    transition: all .2s ease;
 
     &:hover {
         color: #fff;

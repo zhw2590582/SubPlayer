@@ -2,17 +2,20 @@ import React from 'react';
 import styled from 'styled-components';
 import ArtplayerComponent from 'artplayer-react';
 import 'artplayer-react/dist/artplayer-react.css';
+import Toolset from './Toolset';
 
 const Wrapper = styled.div`
+    display: flex;
+    flex-direction: column;
     flex: 1;
 `;
 
-const VideoWrapper = styled.div`
+const VideoBox = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     height: 70%;
-    padding: 20px;
+    padding: 10px;
     border-bottom: 1px solid rgb(36, 41, 45);
 
     .artplayer-video-player .artplayer-subtitle p {
@@ -46,7 +49,7 @@ export default class Player extends React.Component {
     render() {
         return (
             <Wrapper>
-                <VideoWrapper>
+                <VideoBox>
                     {this.props.videoUrl && this.props.subtitleUrl ? (
                         <ArtplayerComponent
                             style={{
@@ -72,7 +75,8 @@ export default class Player extends React.Component {
                             }}
                         />
                     ) : null}
-                </VideoWrapper>
+                </VideoBox>
+                <Toolset {...this.props} />
             </Wrapper>
         );
     }
