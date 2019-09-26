@@ -48,11 +48,11 @@ export default class Player extends React.Component {
                 <Button onClick={() => this.props.addSubtitle(this.props.subtitles.length)}>
                     <i className="icon-doc-new"></i>Add Subtitle
                 </Button>
-                <Button>
-                    <i className="icon-minus"></i>Time Offset -100ms
+                <Button onClick={() => this.props.timeOffset(-0.5)}>
+                    <i className="icon-minus"></i>Time Offset -500ms
                 </Button>
-                <Button>
-                    <i className="icon-plus"></i>Time Offset +100ms
+                <Button onClick={() => this.props.timeOffset(0.5)}>
+                    <i className="icon-plus"></i>Time Offset +500ms
                 </Button>
                 <Button onClick={this.props.removeAllSubtitle}>
                     <i className="icon-trash-empty"></i>Remove All Subtitle

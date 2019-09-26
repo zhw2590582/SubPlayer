@@ -14,6 +14,7 @@ import {
     timeToSecond,
     downloadFile,
     secondToTime,
+    clamp,
 } from '../utils';
 
 const GlobalStyle = createGlobalStyle`
@@ -278,6 +279,24 @@ export default class App extends React.Component {
         );
     }
 
+    timeOffset(time) {
+        const subtitles = this.state.subtitles.map(item => {
+            item.highlight = false;
+            item.editing = false;
+            item.start = secondToTime(clamp(item.startTime + time, 0, Infinity));
+            item.end = secondToTime(clamp(item.endTime + time, 0, Infinity));
+            return item;
+        });
+        this.setState(
+            {
+                subtitles,
+            },
+            () => {
+                this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+            },
+        );
+    }
+
     render() {
         const props = {
             ...this.state,
@@ -293,6 +312,7 @@ export default class App extends React.Component {
             removeEmptySubtitle: this.removeEmptySubtitle.bind(this),
             removeAllSubtitle: this.removeAllSubtitle.bind(this),
             addSubtitle: this.addSubtitle.bind(this),
+            timeOffset: this.timeOffset.bind(this),
         };
 
         return (

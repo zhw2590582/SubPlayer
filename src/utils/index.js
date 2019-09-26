@@ -12,8 +12,8 @@ export function checkDuration(duration) {
     return /^\d+\.\d{3}/.test(duration);
 }
 
-export function sleep(ms = 0) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+export function clamp(num, a, b) {
+    return Math.max(Math.min(num, Math.max(a, b)), Math.min(a, b));
 }
 
 export function secondToTime(seconds) {
