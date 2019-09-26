@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import toastr from 'toastr';
-import { checkTime } from '../utils';
+import { checkTime, timeToSecond } from '../utils';
 import { Table } from 'react-virtualized';
 
 const Wrapper = styled.div`
@@ -35,12 +35,17 @@ const Wrapper = styled.div`
             background: #1c2022;
             border-bottom: 1px solid rgb(36, 41, 45);
 
-            &:nth-child(odd) {
+            &.odd {
                 background: #2e3140;
             }
 
-            &.onhighlight {
+            &.highlight {
                 background-color: #2196f3;
+            }
+
+            &.overlapping,
+            &.reverse {
+                background-color: #c75123;
             }
 
             .row {
@@ -86,7 +91,7 @@ const Wrapper = styled.div`
         height: 100%;
     }
 
-    .onedit {
+    .editing {
         .noedit {
             display: none;
         }
@@ -120,13 +125,25 @@ export default class Subtitle extends React.Component {
 
     checkSubtitle() {
         const { editIndex, editSubtitle } = this.state;
+        const { subtitles } = this.props;
         if (editIndex !== -1) {
             if (!checkTime(editSubtitle.start)) {
                 toastr.error(`Start time format needs to match like: [00:00:00.000]`);
                 return false;
             }
+
             if (!checkTime(editSubtitle.end)) {
                 toastr.error(`End time format needs to match like: [00:00:00.000]`);
+                return false;
+            }
+
+            if (timeToSecond(editSubtitle.start) >= timeToSecond(editSubtitle.end)) {
+                toastr.error(`Start time cannot be greater than or equal to the end time`);
+                return false;
+            }
+
+            if (subtitles[editIndex - 1] && timeToSecond(editSubtitle.start) < subtitles[editIndex - 1].endTime) {
+                toastr.error(`This time overlaps with the time of the previous one`);
                 return false;
             }
         }
@@ -215,11 +232,14 @@ export default class Subtitle extends React.Component {
                     rowRenderer={props => {
                         return (
                             <div
-                                key={props.index}
+                                key={props.key}
                                 className={[
                                     props.className,
-                                    props.rowData.$edit ? 'onedit' : '',
-                                    props.rowData.$highlight ? 'onhighlight' : '',
+                                    props.index % 2 ? 'odd' : '',
+                                    props.rowData.editing ? 'editing' : '',
+                                    props.rowData.highlight ? 'highlight' : '',
+                                    props.rowData.overlapping ? 'overlapping' : '',
+                                    props.rowData.reverse ? 'reverse' : '',
                                 ]
                                     .join(' ')
                                     .trim()}

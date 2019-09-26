@@ -119,11 +119,11 @@ export default class App extends React.Component {
 
     editSubtitle(index) {
         const subtitles = this.state.subtitles.map(item => {
-            item.$highlight = false;
-            item.$edit = false;
+            item.highlight = false;
+            item.editing = false;
             return item;
         });
-        subtitles[index].$edit = true;
+        subtitles[index].editing = true;
         this.setState({
             subtitles,
             currentTime: subtitles[index].startTime + 0.001,
@@ -132,10 +132,10 @@ export default class App extends React.Component {
 
     highlightSubtitle(index) {
         const subtitles = this.state.subtitles.map(item => {
-            item.$highlight = false;
+            item.highlight = false;
             return item;
         });
-        subtitles[index].$highlight = true;
+        subtitles[index].highlight = true;
         this.setState({
             subtitles,
         });
@@ -143,7 +143,7 @@ export default class App extends React.Component {
 
     updateSubtitle(index, subtitle) {
         const subtitles = this.state.subtitles.map(item => {
-            item.$edit = false;
+            item.editing = false;
             return item;
         });
         subtitles[index] = {
@@ -156,6 +156,12 @@ export default class App extends React.Component {
             },
             get duration() {
                 return (this.endTime - this.startTime).toFixed(3);
+            },
+            get overlapping() {
+                return subtitles[index - 1] && this.startTime < subtitles[index - 1].endTime;
+            },
+            get reverse() {
+                return this.startTime >= this.endTime;
             },
         };
         this.setState({

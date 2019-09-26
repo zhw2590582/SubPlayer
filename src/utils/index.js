@@ -62,8 +62,8 @@ export function urlToArr(url) {
         $track.onload = () => {
             const arr = Array.from($track.track.cues).map((item, index) => {
                 return {
-                    $edit: false,
-                    $highlight: false,
+                    editing: false,
+                    highlight: false,
                     id: index,
                     start: secondToTime(item.startTime),
                     end: secondToTime(item.endTime),
@@ -76,6 +76,12 @@ export function urlToArr(url) {
                     },
                     get duration() {
                         return (this.endTime - this.startTime).toFixed(3);
+                    },
+                    get overlapping() {
+                        return arr[index - 1] && this.startTime < arr[index - 1].endTime;
+                    },
+                    get reverse() {
+                        return this.startTime >= this.endTime;
                     },
                 };
             });
