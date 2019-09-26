@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import toastr from 'toastr';
-import { checkTime, timeToSecond, escapeHTML } from '../utils';
+import { checkTime, timeToSecond, escapeHTML, unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
 
 const Wrapper = styled.div`
@@ -32,7 +32,7 @@ const Wrapper = styled.div`
         .ReactVirtualized__Table__row {
             background-color: #1c2022;
             border-bottom: 1px solid rgb(36, 41, 45);
-            transition: all .2s ease;
+            transition: all 0.2s ease;
 
             &.odd {
                 background-color: #2e3140;
@@ -283,7 +283,7 @@ export default class Subtitle extends React.Component {
                                     <textarea
                                         maxLength={500}
                                         className="textarea edit"
-                                        value={editSubtitle.text}
+                                        value={unescapeHTML(editSubtitle.text || '')}
                                         onChange={e => this.onChange('text', e.target.value)}
                                     />
                                 </div>

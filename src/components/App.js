@@ -15,7 +15,6 @@ import {
     downloadFile,
     secondToTime,
     clamp,
-    escapeHTML,
 } from '../utils';
 
 const GlobalStyle = createGlobalStyle`
