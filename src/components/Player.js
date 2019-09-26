@@ -50,7 +50,7 @@ export default class Player extends React.Component {
         return (
             <Wrapper>
                 <VideoBox>
-                    {this.props.videoUrl && this.props.subtitleUrl ? (
+                    {this.props.videoUrl ? (
                         <ArtplayerComponent
                             style={{
                                 width: '100%',

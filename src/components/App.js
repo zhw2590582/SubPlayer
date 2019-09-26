@@ -5,7 +5,16 @@ import Header from './Header';
 import Subtitle from './Subtitle';
 import Timeline from './Timeline';
 import Player from './Player';
-import { debounce, arrToVtt, vttToUrl, readSubtitleFromUrl, urlToArr, timeToSecond, downloadFile } from '../utils';
+import {
+    debounce,
+    arrToVtt,
+    vttToUrl,
+    readSubtitleFromUrl,
+    urlToArr,
+    timeToSecond,
+    downloadFile,
+    secondToTime,
+} from '../utils';
 
 const GlobalStyle = createGlobalStyle`
     html,
@@ -207,6 +216,69 @@ export default class App extends React.Component {
         downloadFile(vttToUrl(arrToVtt(this.state.subtitles)), `${Date.now()}.vtt`);
     }
 
+    removeEmptySubtitle() {
+        const subtitles = this.state.subtitles.filter(item => item.text.trim());
+        this.setState(
+            {
+                subtitles,
+            },
+            () => {
+                this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+            },
+        );
+    }
+
+    removeAllSubtitle() {
+        this.setState(
+            {
+                subtitles: [],
+            },
+            () => {
+                this.updateSubtitleUrl('');
+            },
+        );
+    }
+
+    addSubtitle(addIndex) {
+        const subtitles = this.state.subtitles;
+        const index = this.state.subtitles.length;
+        const previous = subtitles[index - 1];
+        this.state.subtitles.push({
+            editing: false,
+            highlight: false,
+            id: index,
+            start: previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.000',
+            end: previous ? secondToTime(previous.endTime + 0.002) : '00:00:00.000',
+            text: '<Subtitle Text>',
+            get startTime() {
+                return timeToSecond(this.start);
+            },
+            get endTime() {
+                return timeToSecond(this.end);
+            },
+            get duration() {
+                return (this.endTime - this.startTime).toFixed(3);
+            },
+            get overlapping() {
+                return previous && this.startTime < previous.endTime;
+            },
+            get reverse() {
+                return this.startTime >= this.endTime;
+            },
+        });
+        this.setState(
+            {
+                subtitles,
+            },
+            () => {
+                this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+                this.setState({
+                    currentIndex: index,
+                });
+            },
+        );
+    }
+
     render() {
         const props = {
             ...this.state,
@@ -219,6 +291,9 @@ export default class App extends React.Component {
             updateSubtitleUrl: this.updateSubtitleUrl.bind(this),
             updateCurrentTime: this.updateCurrentTime.bind(this),
             downloadSubtitles: this.downloadSubtitles.bind(this),
+            removeEmptySubtitle: this.removeEmptySubtitle.bind(this),
+            removeAllSubtitle: this.removeAllSubtitle.bind(this),
+            addSubtitle: this.addSubtitle.bind(this),
         };
 
         return (

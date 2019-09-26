@@ -45,7 +45,7 @@ export default class Player extends React.Component {
     render() {
         return (
             <Wrapper>
-                <Button>
+                <Button onClick={() => this.props.addSubtitle()}>
                     <i className="icon-doc-new"></i>Add Subtitle
                 </Button>
                 <Button>
@@ -54,10 +54,10 @@ export default class Player extends React.Component {
                 <Button>
                     <i className="icon-plus"></i>Time Offset +100ms
                 </Button>
-                <Button>
+                <Button onClick={this.props.removeAllSubtitle}>
                     <i className="icon-trash-empty"></i>Remove All Subtitle
                 </Button>
-                <Button>
+                <Button onClick={this.props.removeEmptySubtitle}>
                     <i className="icon-doc-remove"></i>Remove Empty Subtitle
                 </Button>
                 <div />
