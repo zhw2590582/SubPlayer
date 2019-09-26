@@ -228,11 +228,7 @@ export default class App extends React.Component {
             <React.Fragment>
                 <GlobalStyle />
                 <Header {...functions} />
-                <Main
-                    style={{
-                        height: `${this.state.mainHeight}px`,
-                    }}
-                >
+                <Main>
                     <Subtitle {...functions} />
                     <Player {...functions} />
                 </Main>

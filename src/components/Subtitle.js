@@ -10,7 +10,7 @@ const Wrapper = styled.div`
     overflow-y: hidden;
     overflow-x: hidden;
     .ReactVirtualized__Table {
-        width: 100%;
+        font-size: 13px;
         background: #24292d;
 
         .ReactVirtualized__Table__Grid {
@@ -22,7 +22,7 @@ const Wrapper = styled.div`
             border-bottom: 1px solid rgb(36, 41, 45);
 
             .row {
-                padding: 10px;
+                padding: 10px 5px;
                 font-style: normal;
                 font-weight: normal;
                 font-size: 14px;
@@ -44,7 +44,7 @@ const Wrapper = styled.div`
             }
 
             .row {
-                padding: 10px;
+                padding: 10px 5px;
                 text-align: center;
             }
         }
@@ -194,10 +194,10 @@ export default class Subtitle extends React.Component {
                                 <div className="row" style={{ width: 50 }} width="50">
                                     #
                                 </div>
-                                <div className="row" style={{ width: 120 }} width="120">
+                                <div className="row" style={{ width: 100 }} width="120">
                                     Start
                                 </div>
-                                <div className="row" style={{ width: 120 }} width="120">
+                                <div className="row" style={{ width: 100 }} width="120">
                                     End
                                 </div>
                                 <div className="row" style={{ width: 100 }} width="100">
@@ -228,7 +228,7 @@ export default class Subtitle extends React.Component {
                                 <div className="row" style={{ width: 50 }}>
                                     {props.index + 1}
                                 </div>
-                                <div className="row" style={{ width: 120 }}>
+                                <div className="row" style={{ width: 100 }}>
                                     <span className="noedit">{props.rowData.start}</span>
                                     <input
                                         maxLength={20}
@@ -237,7 +237,7 @@ export default class Subtitle extends React.Component {
                                         onChange={e => this.onChange('start', e.target.value)}
                                     />
                                 </div>
-                                <div className="row" style={{ width: 120 }}>
+                                <div className="row" style={{ width: 100 }}>
                                     <span className="noedit">{props.rowData.end}</span>
                                     <input
                                         maxLength={20}
