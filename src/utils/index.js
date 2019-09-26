@@ -8,6 +8,10 @@ export function checkTime(time) {
     return /^(\d+):([0-5][0-9]):([0-5][0-9])\.\d{3}$/.test(time);
 }
 
+export function sleep(ms = 0) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export function checkDuration(duration) {
     return /^\d+\.\d{3}/.test(duration);
 }
@@ -161,6 +165,10 @@ export function downloadFile(url, name) {
     document.body.appendChild(elink);
     elink.click();
     document.body.removeChild(elink);
+}
+
+export function runPromisesInSeries(ps) {
+    return ps.reduce((p, next) => p.then(next), Promise.resolve());
 }
 
 export function escapeHTML(str) {

@@ -43,7 +43,7 @@ const Select = styled.select`
 
 export default class Player extends React.Component {
     state = {
-        land: 'zh-CN',
+        land: 'zh',
     };
 
     render() {
@@ -65,7 +65,7 @@ export default class Player extends React.Component {
                     <i className="icon-doc-remove"></i>Remove Empty Subtitle
                 </Button>
                 <div />
-                <Button onClick={() => this.props.googleTranslate(this.state.land)}>
+                <Button onClick={() => this.props.translate(this.state.land)}>
                     <i className="icon-google"></i>Batch Google Translate
                 </Button>
                 <span
@@ -81,13 +81,13 @@ export default class Player extends React.Component {
                         this.setState({ land: event.target.value });
                     }}
                 >
-                    <option value="zh-CN">Chinese Simplified</option>
-                    <option value="zh-TW">Chinese Traditional</option>
+                    <option value="zh">Chinese Simplified</option>
+                    <option value="cht">Chinese Traditional</option>
                     <option value="en">English</option>
-                    <option value="ja">Japanese</option>
+                    <option value="jp">Japanese</option>
                     <option value="ru">Russian</option>
                     <option value="de">German</option>
-                    <option value="fr">French</option>
+                    <option value="fra">French</option>
                 </Select>
             </Wrapper>
         );

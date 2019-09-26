@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import NProgress from 'nprogress';
 import toastr from 'toastr';
 import Header from './Header';
 import Subtitle from './Subtitle';
@@ -16,6 +17,7 @@ import {
     secondToTime,
     clamp,
 } from '../utils';
+import translate from '../utils/translate';
 
 const GlobalStyle = createGlobalStyle`
     html,
@@ -67,6 +69,7 @@ export default class App extends React.Component {
     };
 
     componentDidMount() {
+        NProgress.configure({ parent: '.main' });
         this.uddateMainSize();
 
         const resizeDebounce = debounce(() => {
@@ -143,6 +146,7 @@ export default class App extends React.Component {
             item.editing = false;
             return item;
         });
+
         subtitles[index] = {
             ...subtitle,
             get startTime() {
@@ -155,7 +159,8 @@ export default class App extends React.Component {
                 return (this.endTime - this.startTime).toFixed(3);
             },
             get overlapping() {
-                return subtitles[index - 1] && this.startTime < subtitles[index - 1].endTime;
+                const previous = subtitles[index - 1];
+                return previous && this.startTime < previous.endTime;
             },
             get reverse() {
                 return this.startTime >= this.endTime;
@@ -297,8 +302,37 @@ export default class App extends React.Component {
         );
     }
 
-    googleTranslate(land) {
-        console.log(land);
+    inTranslation = false;
+    translate(land) {
+        if (this.inTranslation) {
+            return toastr.error('Translation is in progress...');
+        }
+
+        if (this.state.subtitles.length <= 1000) {
+            this.inTranslation = true;
+            NProgress.start();
+            translate(this.state.subtitles, land)
+                .then(subtitles => {
+                    this.inTranslation = false;
+                    NProgress.done();
+                    this.setState(
+                        {
+                            subtitles,
+                        },
+                        () => {
+                            this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+                        },
+                    );
+                })
+                .catch(error => {
+                    toastr.error(error.message);
+                    this.inTranslation = false;
+                    NProgress.done();
+                    throw error;
+                });
+        } else {
+            toastr.error('Currently translates up to 1000 subtitles at a time');
+        }
     }
 
     render() {
@@ -317,14 +351,14 @@ export default class App extends React.Component {
             removeAllSubtitle: this.removeAllSubtitle.bind(this),
             addSubtitle: this.addSubtitle.bind(this),
             timeOffset: this.timeOffset.bind(this),
-            googleTranslate: this.googleTranslate.bind(this),
+            translate: this.translate.bind(this),
         };
 
         return (
             <React.Fragment>
                 <GlobalStyle />
                 <Header {...props} />
-                <Main>
+                <Main className="main">
                     <Subtitle {...props} />
                     <Player {...props} />
                 </Main>
