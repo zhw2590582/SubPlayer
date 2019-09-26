@@ -42,6 +42,10 @@ const Select = styled.select`
 `;
 
 export default class Player extends React.Component {
+    state = {
+        land: 'zh-CN',
+    };
+
     render() {
         return (
             <Wrapper>
@@ -61,12 +65,9 @@ export default class Player extends React.Component {
                     <i className="icon-doc-remove"></i>Remove Empty Subtitle
                 </Button>
                 <div />
-                <Button>
+                <Button onClick={() => this.props.googleTranslate(this.state.land)}>
                     <i className="icon-google"></i>Batch Google Translate
                 </Button>
-                <Select>
-                    <option>中文</option>
-                </Select>
                 <span
                     style={{
                         marginRight: 10,
@@ -74,8 +75,19 @@ export default class Player extends React.Component {
                 >
                     To
                 </span>
-                <Select>
-                    <option>English</option>
+                <Select
+                    value={this.state.land}
+                    onChange={event => {
+                        this.setState({ land: event.target.value });
+                    }}
+                >
+                    <option value="zh-CN">Chinese Simplified</option>
+                    <option value="zh-TW">Chinese Traditional</option>
+                    <option value="en">English</option>
+                    <option value="ja">Japanese</option>
+                    <option value="ru">Russian</option>
+                    <option value="de">German</option>
+                    <option value="fr">French</option>
                 </Select>
             </Wrapper>
         );

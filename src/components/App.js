@@ -297,6 +297,10 @@ export default class App extends React.Component {
         );
     }
 
+    googleTranslate(land) {
+        console.log(land);
+    }
+
     render() {
         const props = {
             ...this.state,
@@ -313,6 +317,7 @@ export default class App extends React.Component {
             removeAllSubtitle: this.removeAllSubtitle.bind(this),
             addSubtitle: this.addSubtitle.bind(this),
             timeOffset: this.timeOffset.bind(this),
+            googleTranslate: this.googleTranslate.bind(this),
         };
 
         return (
