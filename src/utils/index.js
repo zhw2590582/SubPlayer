@@ -54,7 +54,7 @@ export function urlToArr(url) {
                     id: index,
                     start: secondToTime(item.startTime),
                     end: secondToTime(item.endTime),
-                    text: item.text,
+                    text: escapeHTML(item.text),
                     get startTime() {
                         return timeToSecond(this.start);
                     },
@@ -161,4 +161,18 @@ export function downloadFile(url, name) {
     document.body.appendChild(elink);
     elink.click();
     document.body.removeChild(elink);
+}
+
+export function escapeHTML(str) {
+    return str.replace(
+        /[&<>'"]/g,
+        tag =>
+            ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;',
+            }[tag] || tag),
+    );
 }

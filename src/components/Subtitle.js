@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import toastr from 'toastr';
-import { checkTime, timeToSecond } from '../utils';
+import { checkTime, timeToSecond, escapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
 
 const Wrapper = styled.div`
@@ -277,7 +277,7 @@ export default class Subtitle extends React.Component {
                                 <div className="row" style={{ flex: 1 }}>
                                     <span className="noedit">
                                         {props.rowData.text.split(/\r?\n/).map((item, index) => (
-                                            <p key={index}>{item}</p>
+                                            <p key={index}>{escapeHTML(item)}</p>
                                         ))}
                                     </span>
                                     <textarea
