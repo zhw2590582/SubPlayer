@@ -4,3 +4,8 @@
 .icon-trash-empty:before { content: '\e802'; } /* '' */
 .icon-ok:before { content: '\e803'; } /* '' */
 .icon-pencil:before { content: '\e804'; } /* '' */
+.icon-plus:before { content: '\e805'; } /* '' */
+.icon-doc-new:before { content: '\e806'; } /* '' */
+.icon-minus:before { content: '\e807'; } /* '' */
+.icon-doc-remove:before { content: '\e808'; } /* '' */
+.icon-google:before { content: '\f1a0'; } /* '' */

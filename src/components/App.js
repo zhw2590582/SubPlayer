@@ -94,10 +94,14 @@ export default class App extends React.Component {
     removeSubtitle(index) {
         const subtitles = this.state.subtitles;
         subtitles.splice(index, 1);
-        this.setState({
-            subtitles,
-        });
-        this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+        this.setState(
+            {
+                subtitles,
+            },
+            () => {
+                this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+            },
+        );
     }
 
     editSubtitle(index) {
@@ -147,10 +151,14 @@ export default class App extends React.Component {
                 return this.startTime >= this.endTime;
             },
         };
-        this.setState({
-            subtitles,
-        });
-        this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+        this.setState(
+            {
+                subtitles,
+            },
+            () => {
+                this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+            },
+        );
     }
 
     updateVideoUrl(videoUrl) {

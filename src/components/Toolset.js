@@ -23,6 +23,10 @@ const Button = styled.button`
         color: #fff;
         background-color: rgb(51, 54, 76);
     }
+
+    i {
+        margin-right: 5px;
+    }
 `;
 
 const Select = styled.select`
@@ -41,12 +45,25 @@ export default class Player extends React.Component {
     render() {
         return (
             <Wrapper>
-                <Button>Add Subtitle</Button>
-                <Button>Time Offset -100ms</Button>
-                <Button>Time Offset +100ms</Button>
-                <Button>Remove Empty Subtitle</Button>
+                <Button>
+                    <i className="icon-doc-new"></i>Add Subtitle
+                </Button>
+                <Button>
+                    <i className="icon-minus"></i>Time Offset -100ms
+                </Button>
+                <Button>
+                    <i className="icon-plus"></i>Time Offset +100ms
+                </Button>
+                <Button>
+                    <i className="icon-trash-empty"></i>Remove All Subtitle
+                </Button>
+                <Button>
+                    <i className="icon-doc-remove"></i>Remove Empty Subtitle
+                </Button>
                 <div />
-                <Button>Batch Google Translate</Button>
+                <Button>
+                    <i className="icon-google"></i>Batch Google Translate
+                </Button>
                 <Select>
                     <option>中文</option>
                 </Select>
