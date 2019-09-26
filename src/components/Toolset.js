@@ -7,7 +7,7 @@ const Wrapper = styled.div`
 `;
 
 const Button = styled.button`
-    height: 30px;
+    height: 25px;
     border: none;
     padding: 0 10px;
     outline: none;

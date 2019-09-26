@@ -8,7 +8,7 @@ const Wrapper = styled.div`
     flex: 1;
     border-right: 1px solid rgb(36, 41, 45);
     .ReactVirtualized__Table {
-        font-size: 13px;
+        font-size: 12px;
         background: #24292d;
 
         .ReactVirtualized__Table__Grid {
@@ -58,7 +58,8 @@ const Wrapper = styled.div`
             border: none;
             padding: 5px;
             min-height: 30px;
-            font-size: 13px;
+            font-size: 12px;
+            text-align: center;
             color: #fff;
             background-color: #3a3a3a;
         }
@@ -78,7 +79,7 @@ const Wrapper = styled.div`
         justify-content: center;
 
         i {
-            width: 30px;
+            width: 25px;
             cursor: pointer;
             font-size: 16px;
         }
@@ -221,7 +222,7 @@ export default class Subtitle extends React.Component {
                                 <div className="row" style={{ flex: 1 }}>
                                     Text
                                 </div>
-                                <div className="row" style={{ width: 100 }} width="100">
+                                <div className="row" style={{ width: 90 }} width="100">
                                     Operation
                                 </div>
                             </div>
@@ -287,7 +288,7 @@ export default class Subtitle extends React.Component {
                                         onChange={e => this.onChange('text', e.target.value)}
                                     />
                                 </div>
-                                <div className="row operation" style={{ width: 100 }}>
+                                <div className="row operation" style={{ width: 90 }}>
                                     <i className="icon-pencil noedit" onClick={() => this.onEdit(props.index)}></i>
                                     <i className="icon-ok edit" onClick={() => this.onUpdate(props.index)}></i>
                                     <i className="icon-trash-empty" onClick={() => this.onRemove(props.index)}></i>

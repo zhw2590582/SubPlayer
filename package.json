@@ -1,40 +1,42 @@
 {
-  "name": "subplayer",
-  "version": "1.0.0",
-  "private": true,
-  "homepage": "https://zhw2590582.github.io/SubPlayer/",
-  "dependencies": {
-    "artplayer-react": "^3.1.16",
-    "fetch-jsonp": "^1.1.3",
-    "moment": "^2.24.0",
-    "moment-duration-format": "^2.3.2",
-    "normalize.css": "^8.0.1",
-    "nprogress": "^0.2.0",
-    "p-limit": "^2.2.1",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-scripts": "3.1.2",
-    "react-virtualized": "^9.21.1",
-    "styled-components": "^4.3.2",
-    "toastr": "^2.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf docs && mv build docs"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+    "name": "subplayer",
+    "version": "1.0.0",
+    "private": true,
+    "homepage": "https://zhw2590582.github.io/SubPlayer/",
+    "dependencies": {
+        "artplayer-react": "^3.1.16",
+        "fetch-jsonp": "^1.1.3",
+        "moment": "^2.24.0",
+        "moment-duration-format": "^2.3.2",
+        "normalize.css": "^8.0.1",
+        "nprogress": "^0.2.0",
+        "p-limit": "^2.2.1",
+        "react": "^16.9.0",
+        "react-dom": "^16.9.0",
+        "react-scripts": "3.1.2",
+        "react-virtualized": "^9.21.1",
+        "styled-components": "^4.3.2",
+        "toastr": "^2.1.4"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build && rm -rf docs && mv build docs",
+        "predeploy": "yarn build",
+        "deploy": "gh-pages -d build"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
 }

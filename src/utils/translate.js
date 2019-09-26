@@ -18,11 +18,15 @@ function baiduTranslate(query, land) {
         url.searchParams.append('sign', MD5(appid + query + salt + key));
 
         sleep(10).then(async () => {
-            const data = await fetchJsonp(url.href);
-            const data_1 = await data.json();
-            if (data_1.trans_result) {
-                resolve(data_1.trans_result.map(item => item.dst));
-            } else {
+            try {
+                const data = await fetchJsonp(url.href);
+                const data_1 = await data.json();
+                if (data_1.trans_result) {
+                    resolve(data_1.trans_result.map(item => item.dst));
+                } else {
+                    resolve([]);
+                }
+            } catch (error) {
                 resolve([]);
             }
         });

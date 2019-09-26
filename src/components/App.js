@@ -38,6 +38,14 @@ const GlobalStyle = createGlobalStyle`
         background: rgb(16, 17, 19);
     }
 
+    #toast-container.toast-top-right {
+        top: 60px;
+
+        & > div {
+            box-shadow: none;
+        }
+    }
+
     ::-webkit-scrollbar {
         width: 10px;
     }
@@ -53,6 +61,7 @@ const GlobalStyle = createGlobalStyle`
 
 const Main = styled.div`
     display: flex;
+    flex: 1;
 `;
 
 let defaultVideoUrl = 'https://zhw2590582.github.io/assets-cdn/video/one-more-time-one-more-chance-480p.mp4';
