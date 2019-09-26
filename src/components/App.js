@@ -319,11 +319,9 @@ export default class App extends React.Component {
 
         if (this.state.subtitles.length <= 1000) {
             this.inTranslation = true;
-            NProgress.start();
             translate(this.state.subtitles, land)
                 .then(subtitles => {
                     this.inTranslation = false;
-                    NProgress.done();
                     this.setState(
                         {
                             subtitles,
@@ -336,7 +334,6 @@ export default class App extends React.Component {
                 .catch(error => {
                     toastr.error(error.message);
                     this.inTranslation = false;
-                    NProgress.done();
                     throw error;
                 });
         } else {

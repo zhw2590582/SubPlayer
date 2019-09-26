@@ -1,4 +1,6 @@
 import fetchJsonp from 'fetch-jsonp';
+import NProgress from 'nprogress';
+import toastr from 'toastr';
 import pLimit from 'p-limit';
 import MD5 from './md5';
 import { sleep } from './index';
@@ -17,16 +19,20 @@ function baiduTranslate(query, land) {
         url.searchParams.append('to', land);
         url.searchParams.append('sign', MD5(appid + query + salt + key));
 
-        sleep(10).then(async () => {
+        sleep().then(async () => {
             try {
                 const data = await fetchJsonp(url.href);
-                const data_1 = await data.json();
-                if (data_1.trans_result) {
-                    resolve(data_1.trans_result.map(item => item.dst));
+                const result = await data.json();
+                if (result.error_code) {
+                    toastr.error(result.error_msg);
+                    resolve([]);
+                } else if (result.trans_result) {
+                    resolve(result.trans_result.map(item => item.dst));
                 } else {
                     resolve([]);
                 }
             } catch (error) {
+                toastr.error(error.message);
                 resolve([]);
             }
         });
@@ -34,14 +40,24 @@ function baiduTranslate(query, land) {
 }
 
 export default function translate(subtitles, land) {
+    NProgress.start();
     const limit = pLimit(1);
+    let index = 0;
     return Promise.all(
         subtitles.map(item =>
             limit(async () => {
                 const data = await baiduTranslate(item.text, land);
-                item.text = data.join('\n').trim();
+                NProgress.set(++index / subtitles.length);
+
+                if (data.length) {
+                    item.text = data.join('\n').trim();
+                }
+
                 return item;
             }),
         ),
-    );
+    ).then(data => {
+        NProgress.done();
+        return data;
+    });
 }

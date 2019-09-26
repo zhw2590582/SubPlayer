@@ -13,7 +13,7 @@ import * as serviceWorker from './serviceWorker';
 toastr.options.timeOut = 3000;
 toastr.options.hideDuration = 300;
 
-NProgress.configure({ minimum: 0.5, showSpinner: false });
+NProgress.configure({ minimum: 0, showSpinner: false });
 
 ReactDOM.render(<App />, document.getElementById('root'));
 serviceWorker.unregister();
