@@ -39,19 +39,6 @@ export function debounce(func, wait, context) {
     };
 }
 
-export function notice(text, success) {
-    const $el = document.createElement('div');
-    $el.innerText = text;
-    $el.classList.add('notice');
-    if (success) {
-        $el.classList.add('success');
-    }
-    document.body.appendChild($el);
-    setTimeout(() => {
-        document.body.removeChild($el);
-    }, 3000);
-}
-
 export function urlToArr(url) {
     return new Promise(resolve => {
         const $video = document.createElement('video');

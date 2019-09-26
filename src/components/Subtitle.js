@@ -143,8 +143,7 @@ export default class Subtitle extends React.Component {
             }
 
             if (subtitles[editIndex - 1] && timeToSecond(editSubtitle.start) < subtitles[editIndex - 1].endTime) {
-                toastr.error(`This time overlaps with the time of the previous one`);
-                return false;
+                toastr.warning(`This time overlaps with the time of the previous one`);
             }
         }
         return true;

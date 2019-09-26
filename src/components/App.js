@@ -37,23 +37,6 @@ const GlobalStyle = createGlobalStyle`
     ::-webkit-scrollbar-thumb:hover {
         background-color: #ccc;
     }
-
-    .notice {
-        position: fixed;
-        z-index: 99;
-        top: 10px;
-        left: 50%;
-        transform: translate(-50%);
-        font-size: 13px;
-        color: #fff;
-        background: #e0271a;
-        padding: 7px 20px;
-        border-radius: 3px;
-
-        &.success {
-            background: rgb(18, 206, 67);
-        }
-    }
 `;
 
 const Main = styled.div`
@@ -217,7 +200,7 @@ export default class App extends React.Component {
     }
 
     render() {
-        const functions = {
+        const props = {
             ...this.state,
             removeSubtitle: this.removeSubtitle.bind(this),
             editSubtitle: this.editSubtitle.bind(this),
@@ -233,12 +216,12 @@ export default class App extends React.Component {
         return (
             <React.Fragment>
                 <GlobalStyle />
-                <Header {...functions} />
+                <Header {...props} />
                 <Main>
-                    <Subtitle {...functions} />
-                    <Player {...functions} />
+                    <Subtitle {...props} />
+                    <Player {...props} />
                 </Main>
-                <Timeline {...functions} />
+                <Timeline {...props} />
             </React.Fragment>
         );
     }
