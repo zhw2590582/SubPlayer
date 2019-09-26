@@ -149,7 +149,6 @@ export function readSubtitleFromUrl(url) {
             return text;
         })
         .catch(error => {
-            notice(error.message);
             throw error;
         });
 }
