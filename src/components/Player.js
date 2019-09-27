@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import ArtplayerComponent from 'artplayer-react';
-import 'artplayer-react/dist/artplayer-react.css';
 import Toolset from './Toolset';
 
 const Wrapper = styled.div`
@@ -30,11 +29,12 @@ export default class Player extends React.Component {
 
     static getDerivedStateFromProps(props, state) {
         if (state.art) {
-            const videoUrl = state.art.option.url;
+            const videoUrl = state.art.template.$video.src;
             const subtitleUrl = state.art.template.$track.src;
             const currentTime = state.art.currentTime;
             if (props.videoUrl !== videoUrl) {
                 state.art.player.switchUrl(props.videoUrl);
+                URL.revokeObjectURL(videoUrl);
             }
             if (props.subtitleUrl !== subtitleUrl) {
                 state.art.subtitle.init(props.subtitleUrl);
@@ -58,6 +58,7 @@ export default class Player extends React.Component {
                             }}
                             option={{
                                 url: this.props.videoUrl,
+                                loop: true,
                                 subtitle: {
                                     url: this.props.subtitleUrl,
                                 },

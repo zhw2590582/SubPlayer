@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import language from '../utils/language';
 
 const Wrapper = styled.div`
     flex: 1;
@@ -44,29 +45,40 @@ const Select = styled.select`
 export default class Player extends React.Component {
     state = {
         land: 'zh',
+        language,
     };
 
     render() {
         return (
             <Wrapper>
-                <Button onClick={() => this.props.addSubtitle(this.props.subtitles.length)}>
+                <Button onClick={() => this.props.updateSubtitle(this.props.subtitles.length)}>
                     <i className="icon-doc-new"></i>Add Subtitle
                 </Button>
-                <Button onClick={() => this.props.timeOffset(-0.5)}>
-                    <i className="icon-minus"></i>Time Offset -500ms
+                <Button onClick={() => this.props.timeOffset(-0.1)}>
+                    <i className="icon-minus"></i>Time Offset -100ms
                 </Button>
-                <Button onClick={() => this.props.timeOffset(0.5)}>
-                    <i className="icon-plus"></i>Time Offset +500ms
+                <Button onClick={() => this.props.timeOffset(0.1)}>
+                    <i className="icon-plus"></i>Time Offset +100ms
                 </Button>
+                <Button>
+                    <i className="icon-ccw"></i>Undo
+                </Button>
+                <Button>
+                    <i className="icon-cw"></i>Redo
+                </Button>
+                <div />
                 <Button onClick={this.props.removeAllSubtitle}>
                     <i className="icon-trash-empty"></i>Remove All Subtitle
                 </Button>
                 <Button onClick={this.props.removeEmptySubtitle}>
-                    <i className="icon-doc-remove"></i>Remove Empty Subtitle
+                    <i className="icon-trash-empty"></i>Remove Empty Subtitle
+                </Button>
+                <Button onClick={this.props.removeCache}>
+                    <i className="icon-trash-empty"></i>Remove Cache
                 </Button>
                 <div />
                 <Button onClick={() => this.props.translate(this.state.land)}>
-                    <i className="icon-google"></i>Batch Google Translate
+                    <i className="icon-language"></i>Batch Translate
                 </Button>
                 <span
                     style={{
@@ -81,13 +93,11 @@ export default class Player extends React.Component {
                         this.setState({ land: event.target.value });
                     }}
                 >
-                    <option value="zh">Chinese Simplified</option>
-                    <option value="cht">Chinese Traditional</option>
-                    <option value="en">English</option>
-                    <option value="jp">Japanese</option>
-                    <option value="ru">Russian</option>
-                    <option value="de">German</option>
-                    <option value="fra">French</option>
+                    {this.state.language.map(item => (
+                        <option key={item.key} value={item.key}>
+                            {item.name}
+                        </option>
+                    ))}
                 </Select>
             </Wrapper>
         );

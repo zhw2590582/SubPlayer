@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import toastr from 'toastr';
 import NProgress from 'nprogress';
-import { readSubtitleFromFile, urlToArr, vttToUrl } from '../utils';
+import { readSubtitleFromFile, urlToArr, vttToUrl, getExt } from '../utils';
 
 const Wrapper = styled.header`
     display: flex;
@@ -65,7 +65,7 @@ const Btn = styled.div`
     overflow: hidden;
     color: #ccc;
     background-color: rgb(39, 41, 54);
-    transition: all .2s ease;
+    transition: all 0.2s ease;
 
     &:hover {
         color: #fff;
@@ -96,18 +96,16 @@ export default class Header extends React.Component {
         if (this.$subtitle.current && this.$subtitle.current.files[0]) {
             NProgress.start().set(0.5);
             const file = this.$subtitle.current.files[0];
-            const type = file.name
-                .split('.')
-                .pop()
-                .toLowerCase();
-            if (type === 'vtt' || type === 'srt' || type === 'ass') {
+            const type = getExt(file.name);
+            if (['vtt', 'srt', 'ass'].includes(type)) {
                 readSubtitleFromFile(file, type)
                     .then(data => {
                         const subtitleUrl = vttToUrl(data);
-                        this.props.updateSubtitleUrl(subtitleUrl);
                         urlToArr(subtitleUrl).then(subtitles => {
-                            this.props.updateSubtitles(subtitles);
-                            NProgress.done();
+                            this.props.updateSubtitles(subtitles, true).then(() => {
+                                toastr.success('Upload subtitle file');
+                                NProgress.done();
+                            });
                         });
                     })
                     .catch(error => {
@@ -131,6 +129,7 @@ export default class Header extends React.Component {
             if (canPlayType === 'maybe' || canPlayType === 'probably') {
                 const url = URL.createObjectURL(file);
                 this.props.updateVideoUrl(url);
+                toastr.success('Upload video file');
             } else {
                 toastr.error(`This video format is not supported: ${file.type}`);
             }

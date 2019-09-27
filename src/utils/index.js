@@ -8,6 +8,26 @@ export function checkTime(time) {
     return /^(\d+):([0-5][0-9]):([0-5][0-9])\.\d{3}$/.test(time);
 }
 
+export function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
+}
+
+export function getExt(url) {
+    if (url.includes('?')) {
+        return getExt(url.split('?')[0]);
+    }
+
+    if (url.includes('#')) {
+        return getExt(url.split('#')[0]);
+    }
+
+    return url
+        .trim()
+        .toLowerCase()
+        .split('.')
+        .pop();
+}
+
 export function sleep(ms = 0) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }

@@ -8,4 +8,6 @@
 .icon-doc-new:before { content: '\e806'; } /* '' */
 .icon-minus:before { content: '\e807'; } /* '' */
 .icon-doc-remove:before { content: '\e808'; } /* '' */
-.icon-google:before { content: '\f1a0'; } /* '' */
+.icon-language:before { content: '\e809'; } /* '' */
+.icon-ccw:before { content: '\e80b'; } /* '' */
+.icon-cw:before { content: '\e80c'; } /* '' */
