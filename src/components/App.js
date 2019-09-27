@@ -68,8 +68,11 @@ const Main = styled.div`
 let defaultVideoUrl = 'https://zhw2590582.github.io/assets-cdn/video/fullmetal-alchemist-again.mp4';
 let defaultSubtitleUrl = 'https://zhw2590582.github.io/assets-cdn/subtitle/fullmetal-alchemist-again.vtt';
 
-const storage = new Storage();
 export default class App extends React.Component {
+    storage = new Storage();
+    inTranslation = false;
+    history = [];
+
     state = {
         mainHeight: 100,
         mainWidth: 100,
@@ -102,7 +105,7 @@ export default class App extends React.Component {
             decodeURIComponent(locationUrl.searchParams.get('subtitle') || '') || defaultSubtitleUrl;
         const locationVideoUrl = decodeURIComponent(locationUrl.searchParams.get('video') || '') || defaultVideoUrl;
 
-        const storageSubtitles = storage.get('subtitles');
+        const storageSubtitles = this.storage.get('subtitles');
         if (storageSubtitles) {
             const subtitleUrl = vttToUrl(arrToVtt(storageSubtitles));
             urlToArr(subtitleUrl).then(subtitles => {
@@ -255,8 +258,22 @@ export default class App extends React.Component {
                     const subtitles = this.state.subtitles;
                     if (updateUrl) {
                         this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+
+                        if (this.history.length >= 100) {
+                            this.history.shift();
+                        }
+
+                        this.history.push(
+                            subtitles.map(item => {
+                                return Object.getOwnPropertyNames(item).reduce((result, key) => {
+                                    Object.defineProperty(result, key, Object.getOwnPropertyDescriptor(item, key));
+                                    return result;
+                                }, {});
+                            }),
+                        );
+
+                        this.storage.set('subtitles', subtitles);
                     }
-                    storage.set('subtitles', subtitles);
                     resolve(subtitles);
                 },
             );
@@ -310,7 +327,6 @@ export default class App extends React.Component {
     }
 
     // 整体字幕翻译
-    inTranslation = false;
     translate(land) {
         if (!this.inTranslation) {
             if (this.state.subtitles.length <= 1000) {
@@ -337,7 +353,7 @@ export default class App extends React.Component {
 
     // 删除缓存
     removeCache() {
-        storage.clean();
+        this.storage.clean();
         window.location.reload();
     }
 
