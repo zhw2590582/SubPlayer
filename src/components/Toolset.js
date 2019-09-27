@@ -99,7 +99,7 @@ export default class Player extends React.Component {
                         this.setState({ lang: event.target.value });
                     }}
                 >
-                    {this.state.language['zh'].map(item => (
+                    {this.state.language[this.props.lang].map(item => (
                         <option key={item.key} value={item.key}>
                             {item.name}
                         </option>

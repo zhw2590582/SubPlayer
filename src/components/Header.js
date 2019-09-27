@@ -4,6 +4,7 @@ import { t, Translate } from 'react-i18nify';
 import toastr from 'toastr';
 import NProgress from 'nprogress';
 import { readSubtitleFromFile, urlToArr, vttToUrl, getExt } from '../utils';
+import { version } from '../../package.json';
 
 const Wrapper = styled.header`
     display: flex;
@@ -45,6 +46,11 @@ const Logo = styled.a`
     color: #fff;
     font-size: 16px;
     text-decoration: none;
+
+    .beta {
+        color: #67bf00;
+        font-size: 12px;
+    }
 `;
 
 const Description = styled.span`
@@ -179,7 +185,9 @@ export default class Header extends React.Component {
         return (
             <Wrapper>
                 <div className="left">
-                    <Logo href="./">SubPlayer.js</Logo>
+                    <Logo href="./">
+                        SubPlayer.js <span className="beta">Beta {version}</span>
+                    </Logo>
                     <Description>
                         <Translate value="description" />
                     </Description>
@@ -210,7 +218,7 @@ export default class Header extends React.Component {
                     </Btn>
                     <Btn onClick={this.props.downloadSubtitles.bind(this)}>
                         <i className="icon-download"></i>
-                        <Translate value="btnDownloadVideo" />
+                        <Translate value="btnDownloadSubtitle" />
                     </Btn>
                 </div>
             </Wrapper>

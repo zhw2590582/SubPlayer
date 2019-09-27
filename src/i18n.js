@@ -22,7 +22,7 @@ export default {
         uploadVideoErr: 'This video format is not supported',
         btnUploadSubtitle: 'Upload Subtitle',
         btnUploadVideo: 'Upload Video',
-        btnDownloadVideo: 'Upload Video',
+        btnDownloadSubtitle: 'Download Subtitle',
 
         startTime: 'Start time format needs to match like: [00:00:00.000]',
         endTime: 'End time format needs to match like: [00:00:00.000]',
@@ -67,7 +67,7 @@ export default {
         uploadVideoErr: '该视频格式不支持',
         btnUploadSubtitle: '上传字幕',
         btnUploadVideo: '上传视频',
-        btnDownloadVideo: '下载视频',
+        btnDownloadSubtitle: '下载字幕',
 
         startTime: '开始时间的格式需要类似: [00:00:00.000]',
         endTime: '结束时间的格式需要类似: [00:00:00.000]',

@@ -59,6 +59,7 @@ export default class Player extends React.Component {
                             option={{
                                 url: this.props.videoUrl,
                                 loop: true,
+                                lang: 'en',
                                 subtitle: {
                                     url: this.props.subtitleUrl,
                                 },
@@ -68,6 +69,10 @@ export default class Player extends React.Component {
                                     if (art.playing) {
                                         this.props.updateCurrentTime(art.currentTime);
                                     }
+                                });
+
+                                art.once('video:canplay', () => {
+                                    art.player.currentTime = 1;
                                 });
 
                                 this.setState({
