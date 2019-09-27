@@ -25,6 +25,8 @@ const GlobalStyle = createGlobalStyle`
     html,
     body,
     #root {
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
+        line-height: 1.5;
         height: 100%;
         overflow: hidden;
     }
