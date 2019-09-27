@@ -83,6 +83,7 @@ export default class App extends React.Component {
         videoUrl: '',
         subtitleUrl: '',
         currentTime: -1,
+        setTime: -1,
         currentIndex: -1,
         subtitles: [],
     };
@@ -169,7 +170,7 @@ export default class App extends React.Component {
         subtitles[index].editing = true;
         this.updateSubtitles(subtitles);
         this.setState({
-            currentTime: subtitles[index].startTime + 0.001,
+            setTime: subtitles[index].startTime + 0.001,
         });
     }
 
@@ -282,6 +283,7 @@ export default class App extends React.Component {
         this.highlightSubtitle(currentIndex);
         this.setState({
             currentIndex,
+            currentTime,
         });
     }
 

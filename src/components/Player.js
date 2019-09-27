@@ -39,8 +39,8 @@ export default class Player extends React.Component {
             if (props.subtitleUrl !== subtitleUrl) {
                 state.art.subtitle.init(props.subtitleUrl);
             }
-            if (!state.art.playing && props.currentTime > 0 && props.currentTime !== currentTime) {
-                state.art.currentTime = props.currentTime;
+            if (!state.art.playing && props.setTime > 0 && props.setTime !== currentTime) {
+                state.art.currentTime = props.setTime;
             }
         }
         return null;
