@@ -1,7 +1,6 @@
 export default {
     en: {
-        access: 'Please use a computer to access SubPlayer.',
-        init: 'Initialize App',
+        access: 'Please use a computer to access',
         delete: 'Delete a subtitle',
         update: 'Update a subtitle',
         your: 'Your Subtitle Text',
@@ -45,8 +44,7 @@ export default {
         to: 'To',
     },
     zh: {
-        access: '请使用电脑访问 SubPlayer.',
-        init: '初始化应用',
+        access: '请使用电脑访问',
         delete: '删除一个字幕',
         update: '更新一个字幕',
         your: '你的字幕文本',

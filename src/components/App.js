@@ -118,7 +118,6 @@ export default class App extends React.Component {
             urlToArr(subtitleUrl).then(subtitles => {
                 this.updateSubtitles(subtitles, true).then(() => {
                     this.updateVideoUrl(locationVideoUrl);
-                    toastr.success(t('init'));
                 });
             });
         } else {
@@ -128,7 +127,6 @@ export default class App extends React.Component {
                     urlToArr(subtitleUrl).then(subtitles => {
                         this.updateSubtitles(subtitles, true).then(() => {
                             this.updateVideoUrl(locationVideoUrl);
-                            toastr.success(t('init'));
                         });
                     });
                 })
