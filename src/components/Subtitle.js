@@ -104,24 +104,9 @@ const Wrapper = styled.div`
 
 export default class Subtitle extends React.Component {
     state = {
-        lastCurrentIndex: -1,
         editIndex: -1,
         editSubtitle: {},
-        $table: this.$table,
     };
-
-    static getDerivedStateFromProps(props, state) {
-        if (props.currentIndex !== state.lastCurrentIndex) {
-            const $subtitle = document.querySelector('.ReactVirtualized__Grid__innerScrollContainer .onhighlight');
-            if ($subtitle) {
-                document.querySelector('.ReactVirtualized__Table__Grid').scrollTop = $subtitle.offsetTop;
-            }
-        }
-
-        return {
-            lastCurrentIndex: props.currentIndex,
-        };
-    }
 
     checkSubtitle() {
         const { editIndex, editSubtitle } = this.state;
@@ -167,6 +152,7 @@ export default class Subtitle extends React.Component {
             this.props.updateSubtitle(editIndex, {
                 ...editSubtitle,
             });
+
             this.setState({
                 editIndex: -1,
                 editSubtitle: {},
@@ -192,8 +178,8 @@ export default class Subtitle extends React.Component {
     }
 
     render() {
-        const { subtitles, mainHeight, mainWidth } = this.props;
-        const { editSubtitle, lastCurrentIndex } = this.state;
+        const { subtitles, mainHeight, mainWidth, currentIndex } = this.props;
+        const { editSubtitle } = this.state;
         return (
             <Wrapper>
                 <Table
@@ -201,7 +187,7 @@ export default class Subtitle extends React.Component {
                     width={mainWidth / 2}
                     height={mainHeight}
                     rowHeight={60}
-                    scrollToIndex={lastCurrentIndex}
+                    scrollToIndex={currentIndex}
                     rowCount={subtitles.length}
                     rowGetter={({ index }) => subtitles[index]}
                     headerRowRenderer={() => {
@@ -282,7 +268,7 @@ export default class Subtitle extends React.Component {
                                         ))}
                                     </span>
                                     <textarea
-                                        maxLength={500}
+                                        maxLength={100}
                                         className="textarea edit"
                                         value={unescapeHTML(editSubtitle.text || '')}
                                         onChange={e => this.onChange('text', e.target.value)}

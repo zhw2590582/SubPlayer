@@ -73,6 +73,8 @@ export default class Player extends React.Component {
                                 this.setState({
                                     art,
                                 });
+
+                                this.props.getArt(art);
                             }}
                         />
                     ) : null}

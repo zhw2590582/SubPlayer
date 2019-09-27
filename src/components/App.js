@@ -72,6 +72,7 @@ export default class App extends React.Component {
     storage = new Storage();
     inTranslation = false;
     history = [];
+    art = null
 
     state = {
         mainHeight: 100,
@@ -135,6 +136,11 @@ export default class App extends React.Component {
     // 验证index在字幕数组范围内
     checkIndex(index) {
         return index >= 0 && index <= this.state.subtitles.length - 1;
+    }
+
+    // 获取播放器
+    getArt(art) {
+        this.art = art;
     }
 
     // 删除单个字幕
@@ -371,6 +377,7 @@ export default class App extends React.Component {
             translate: this.translate.bind(this),
             removeCache: this.removeCache.bind(this),
             undoSubtitle: this.undoSubtitle.bind(this),
+            getArt: this.getArt.bind(this),
         };
 
         return (
