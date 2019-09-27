@@ -17,23 +17,27 @@ function drawGrid(ctx, width, beginTime = 0) {
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     for (let index = 0; index < num; index++) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.fillRect(pre * index, 0, 1, height * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.fillRect(pre * index, 0, 2, height * 2);
         if (index % 10 === 0) {
             ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.fillRect(pre * index, 0, 2, 15);
+            if (index) {
+                ctx.fillRect(pre * index, 0, 2, 15);
+            }
         } else if (index % 5 === 0) {
             ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
             ctx.fillRect(pre * index, 0, 2, 30);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
             ctx.fillText(secondToTime(beginTime + timeIndex++).split('.')[0], pre * index - 42, 60);
         }
     }
 
     for (let index = 0; index < (height / pre) * 2; index++) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.fillRect(0, pre * index, width, 1);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.fillRect(0, pre * index, width, 2);
     }
+
+    return pre;
 }
 
 export default class Timeline extends React.Component {
