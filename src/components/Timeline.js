@@ -8,6 +8,22 @@ const Wrapper = styled.div`
     background-color: rgb(28, 32, 34);
 `;
 
-export default function Timeline() {
-    return <Wrapper>Timeline</Wrapper>;
+function drawbackground($canvas) {
+    console.log($canvas);
+}
+
+export default class Timeline extends React.Component {
+    $canvas = React.createRef();
+
+    componentDidMount() {
+        drawbackground(this.$canvas.current);
+    }
+
+    render() {
+        return (
+            <Wrapper>
+                <canvas width={this.props.mainWidth} height={200} ref={this.$canvas} />
+            </Wrapper>
+        );
+    }
 }

@@ -67,7 +67,7 @@ const Btn = styled.div`
     justify-content: center;
     height: 100%;
     padding: 0 10px;
-    width: 150px;
+    width: 170px;
     border-left: 1px solid #000;
     cursor: pointer;
     overflow: hidden;
