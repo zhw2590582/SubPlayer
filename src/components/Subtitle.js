@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { t, Translate } from 'react-i18nify';
 import toastr from 'toastr';
 import { checkTime, timeToSecond, escapeHTML, unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
@@ -113,22 +114,22 @@ export default class Subtitle extends React.Component {
         const { subtitles } = this.props;
         if (editIndex !== -1) {
             if (!checkTime(editSubtitle.start)) {
-                toastr.error(`Start time format needs to match like: [00:00:00.000]`);
+                toastr.error(t('startTime'));
                 return false;
             }
 
             if (!checkTime(editSubtitle.end)) {
-                toastr.error(`End time format needs to match like: [00:00:00.000]`);
+                toastr.error(t('endTime'));
                 return false;
             }
 
             if (timeToSecond(editSubtitle.start) >= timeToSecond(editSubtitle.end)) {
-                toastr.error(`Start time cannot be greater than or equal to the end time`);
+                toastr.error(t('greater'));
                 return false;
             }
 
             if (subtitles[editIndex - 1] && timeToSecond(editSubtitle.start) < subtitles[editIndex - 1].endTime) {
-                toastr.warning(`This time overlaps with the time of the previous one`);
+                toastr.warning(t('overlaps'));
             }
         }
         return true;
@@ -197,19 +198,19 @@ export default class Subtitle extends React.Component {
                                     #
                                 </div>
                                 <div className="row" style={{ width: 100 }} width="120">
-                                    Start
+                                    <Translate value="start" />
                                 </div>
                                 <div className="row" style={{ width: 100 }} width="120">
-                                    End
+                                    <Translate value="end" />
                                 </div>
                                 <div className="row" style={{ width: 100 }} width="100">
-                                    Duration
+                                    <Translate value="duration" />
                                 </div>
                                 <div className="row" style={{ flex: 1 }}>
-                                    Text
+                                    <Translate value="text" />
                                 </div>
                                 <div className="row" style={{ width: 90 }} width="100">
-                                    Operation
+                                    <Translate value="operation" />
                                 </div>
                             </div>
                         );

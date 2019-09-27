@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { t, Translate } from 'react-i18nify';
 import toastr from 'toastr';
 import NProgress from 'nprogress';
 import { readSubtitleFromFile, urlToArr, vttToUrl, getExt } from '../utils';
@@ -60,6 +61,7 @@ const Btn = styled.div`
     justify-content: center;
     height: 100%;
     padding: 0 10px;
+    width: 150px;
     border-left: 1px solid #000;
     cursor: pointer;
     overflow: hidden;
@@ -88,6 +90,42 @@ const File = styled.input`
     opacity: 0;
 `;
 
+const Lang = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+    color: #ccc;
+    background: #1a536d;
+    width: 60px;
+    padding: 5px 0;
+    font-size: 12px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    i {
+        margin-right: 5px;
+    }
+
+    span {
+        display: none;
+    }
+
+    &.lang-zh .en {
+        display: block;
+    }
+
+    &.lang-en .zh {
+        display: block;
+    }
+
+    &:hover {
+        color: #fff;
+        background: #03a9f4;
+    }
+`;
+
 export default class Header extends React.Component {
     $subtitle = React.createRef();
     $video = React.createRef();
@@ -103,7 +141,7 @@ export default class Header extends React.Component {
                         const subtitleUrl = vttToUrl(data);
                         urlToArr(subtitleUrl).then(subtitles => {
                             this.props.updateSubtitles(subtitles, true).then(() => {
-                                toastr.success('Upload subtitle file');
+                                toastr.success(t('uploadSubtitle'));
                                 NProgress.done();
                             });
                         });
@@ -115,7 +153,7 @@ export default class Header extends React.Component {
                     });
             } else {
                 NProgress.done();
-                toastr.error('Only the following subtitle formats are supported: .vtt, .srt, .ass');
+                toastr.error(t('uploadSubtitleErr'));
             }
         }
     }
@@ -129,9 +167,9 @@ export default class Header extends React.Component {
             if (canPlayType === 'maybe' || canPlayType === 'probably') {
                 const url = URL.createObjectURL(file);
                 this.props.updateVideoUrl(url);
-                toastr.success('Upload video file');
+                toastr.success(t('uploadVideo'));
             } else {
-                toastr.error(`This video format is not supported: ${file.type}`);
+                toastr.error(`${t('uploadVideoErr')}: ${file.type}`);
             }
             NProgress.done();
         }
@@ -142,22 +180,37 @@ export default class Header extends React.Component {
             <Wrapper>
                 <div className="left">
                     <Logo href="./">SubPlayer.js</Logo>
-                    <Description>Online Subtitle Maker</Description>
+                    <Description>
+                        <Translate value="description" />
+                    </Description>
                 </div>
                 <div className="right">
                     <div className="links">
                         <a href="https://github.com/zhw2590582/SubPlayer">Github</a>
                     </div>
+                    <Lang
+                        className={`lang-${this.props.lang}`}
+                        onClick={() => {
+                            this.props.setLocale(this.props.lang === 'zh' ? 'en' : 'zh');
+                        }}
+                    >
+                        <i className="icon-language"></i>
+                        <span className="zh">中</span>
+                        <span className="en">EN</span>
+                    </Lang>
                     <Btn>
-                        <i className="icon-upload"></i> Upload Subtitle
+                        <i className="icon-upload"></i>
+                        <Translate value="btnUploadSubtitle" />
                         <File type="file" name="file" ref={this.$subtitle} onChange={this.uploadSubtitle.bind(this)} />
                     </Btn>
                     <Btn>
-                        <i className="icon-upload"></i>Upload Video
+                        <i className="icon-upload"></i>
+                        <Translate value="btnUploadVideo" />
                         <File type="file" name="file" ref={this.$video} onChange={this.uploadVideo.bind(this)} />
                     </Btn>
                     <Btn onClick={this.props.downloadSubtitles.bind(this)}>
-                        <i className="icon-download"></i>Download Subtitle
+                        <i className="icon-download"></i>
+                        <Translate value="btnDownloadVideo" />
                     </Btn>
                 </div>
             </Wrapper>

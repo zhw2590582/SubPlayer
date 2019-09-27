@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Translate } from 'react-i18nify';
 import language from '../utils/language';
 
 const Wrapper = styled.div`
@@ -44,7 +45,7 @@ const Select = styled.select`
 
 export default class Player extends React.Component {
     state = {
-        land: 'zh',
+        lang: 'zh',
         language,
     };
 
@@ -52,45 +53,53 @@ export default class Player extends React.Component {
         return (
             <Wrapper>
                 <Button onClick={() => this.props.updateSubtitle(this.props.subtitles.length)}>
-                    <i className="icon-doc-new"></i>Add Subtitle
+                    <i className="icon-doc-new"></i>
+                    <Translate value="btnAddSubtitle" />
                 </Button>
                 <Button onClick={() => this.props.timeOffset(-0.1)}>
-                    <i className="icon-minus"></i>Time Offset -100ms
+                    <i className="icon-minus"></i>
+                    <Translate value="btnTimeOffsetMinus" />
                 </Button>
                 <Button onClick={() => this.props.timeOffset(0.1)}>
-                    <i className="icon-plus"></i>Time Offset +100ms
+                    <i className="icon-plus"></i>
+                    <Translate value="btnTimeOffsetPlus" />
                 </Button>
                 <Button onClick={() => this.props.undoSubtitle()}>
-                    <i className="icon-ccw"></i>Undo
+                    <i className="icon-ccw"></i>
+                    <Translate value="btnUndo" />
                 </Button>
                 <div />
                 <Button onClick={this.props.removeAllSubtitle}>
-                    <i className="icon-trash-empty"></i>Remove All Subtitle
+                    <i className="icon-trash-empty"></i>
+                    <Translate value="btnRemoveAll" />
                 </Button>
                 <Button onClick={this.props.removeEmptySubtitle}>
-                    <i className="icon-trash-empty"></i>Remove Empty Subtitle
+                    <i className="icon-trash-empty"></i>
+                    <Translate value="btnRemoveEmpty" />
                 </Button>
                 <Button onClick={this.props.removeCache}>
-                    <i className="icon-trash-empty"></i>Remove Cache
+                    <i className="icon-trash-empty"></i>
+                    <Translate value="btnRemoveCache" />
                 </Button>
                 <div />
-                <Button onClick={() => this.props.translate(this.state.land)}>
-                    <i className="icon-language"></i>Batch Translate
+                <Button onClick={() => this.props.translate(this.state.lang)}>
+                    <i className="icon-language"></i>
+                    <Translate value="btnBatchTranslate" />
                 </Button>
                 <span
                     style={{
                         marginRight: 10,
                     }}
                 >
-                    To
+                    <Translate value="to" />
                 </span>
                 <Select
-                    value={this.state.land}
+                    value={this.state.lang}
                     onChange={event => {
-                        this.setState({ land: event.target.value });
+                        this.setState({ lang: event.target.value });
                     }}
                 >
-                    {this.state.language.map(item => (
+                    {this.state.language['zh'].map(item => (
                         <option key={item.key} value={item.key}>
                             {item.name}
                         </option>

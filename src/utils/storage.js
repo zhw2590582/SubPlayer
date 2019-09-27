@@ -5,18 +5,18 @@ export default class Storage {
 
     get(key) {
         const storage = JSON.parse(window.localStorage.getItem(this.name)) || {};
-        return key ? storage[key] : null;
+        return key ? storage[key] : storage;
     }
 
     set(key, value) {
-        const storage = Object.assign({}, this.get() || {}, {
+        const storage = Object.assign({}, this.get(), {
             [key]: value,
         });
         window.localStorage.setItem(this.name, JSON.stringify(storage));
     }
 
     del(key) {
-        const storage = this.get() || {};
+        const storage = this.get();
         delete storage[key];
         window.localStorage.setItem(this.name, JSON.stringify(storage));
     }

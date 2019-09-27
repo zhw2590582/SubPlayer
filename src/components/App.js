@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import { t, setLocale } from 'react-i18nify';
 import NProgress from 'nprogress';
 import toastr from 'toastr';
 import Header from './Header';
@@ -72,9 +73,10 @@ export default class App extends React.Component {
     storage = new Storage();
     inTranslation = false;
     history = [];
-    art = null
+    art = null;
 
     state = {
+        lang: 'en',
         mainHeight: 100,
         mainWidth: 100,
         videoUrl: '',
@@ -86,6 +88,8 @@ export default class App extends React.Component {
 
     componentDidMount() {
         NProgress.configure({ parent: '.main' });
+
+        this.setLocale(this.storage.get('lang') || 'en');
 
         const uddateMainSize = () => {
             this.setState({
@@ -112,7 +116,7 @@ export default class App extends React.Component {
             urlToArr(subtitleUrl).then(subtitles => {
                 this.updateSubtitles(subtitles, true).then(() => {
                     this.updateVideoUrl(locationVideoUrl);
-                    toastr.success('Initialize SubPlayer');
+                    toastr.success(t('init'));
                 });
             });
         } else {
@@ -122,7 +126,7 @@ export default class App extends React.Component {
                     urlToArr(subtitleUrl).then(subtitles => {
                         this.updateSubtitles(subtitles, true).then(() => {
                             this.updateVideoUrl(locationVideoUrl);
-                            toastr.success('Initialize SubPlayer');
+                            toastr.success(t('init'));
                         });
                     });
                 })
@@ -149,7 +153,7 @@ export default class App extends React.Component {
         const subtitles = this.state.subtitles;
         subtitles.splice(index, 1);
         this.updateSubtitles(subtitles, true).then(() => {
-            toastr.success('Delete a subtitle');
+            toastr.success(t('delete'));
         });
     }
 
@@ -196,12 +200,12 @@ export default class App extends React.Component {
                 id: index,
                 start: previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.000',
                 end: previous ? secondToTime(previous.endTime + 0.002) : '00:00:00.000',
-                text: 'Your Subtitle Text',
+                text: t('your'),
             });
         }
 
         this.updateSubtitles(subtitles, true).then(() => {
-            toastr.success('Update a subtitle');
+            toastr.success(t('update'));
             this.setState({
                 currentIndex: index,
             });
@@ -283,21 +287,21 @@ export default class App extends React.Component {
     // 下载字幕
     downloadSubtitles() {
         downloadFile(vttToUrl(arrToVtt(this.state.subtitles)), `${Date.now()}.vtt`);
-        toastr.success('Download vtt subtitles');
+        toastr.success(t('download'));
     }
 
     // 删除空字幕
     removeEmptySubtitle() {
         const subtitles = this.state.subtitles.filter(item => item.text.trim());
         this.updateSubtitles(subtitles, true).then(() => {
-            toastr.success('Remove empty subtitles');
+            toastr.success(t('removeEmpty'));
         });
     }
 
     // 删除所有字幕
     removeAllSubtitle() {
         this.updateSubtitles([], true).then(() => {
-            toastr.success('Remove all subtitles');
+            toastr.success(t('removeAll'));
         });
     }
 
@@ -311,7 +315,7 @@ export default class App extends React.Component {
             return item;
         });
         this.updateSubtitles(subtitles, true).then(() => {
-            toastr.success(`Time offset: ${time}`);
+            toastr.success(`${t('offset')}: ${time}`);
         });
     }
 
@@ -324,7 +328,7 @@ export default class App extends React.Component {
                     .then(subtitles => {
                         this.inTranslation = false;
                         this.updateSubtitles(subtitles, true).then(() => {
-                            toastr.success('Translate subtitles');
+                            toastr.success(t('translate'));
                         });
                     })
                     .catch(error => {
@@ -333,10 +337,10 @@ export default class App extends React.Component {
                         throw error;
                     });
             } else {
-                toastr.error('Currently translates up to 1000 subtitles at a time');
+                toastr.error(t('translateLenght'));
             }
         } else {
-            toastr.error('Translation is in progress...');
+            toastr.error(t('translateProgress'));
         }
     }
 
@@ -346,16 +350,30 @@ export default class App extends React.Component {
         window.location.reload();
     }
 
+    // 历史回滚
     undoSubtitle() {
         this.history.pop();
         const subtitles = this.history[this.history.length - 1];
         if (subtitles) {
             this.updateSubtitles(subtitles, true, true).then(() => {
-                toastr.success('History rollback');
+                toastr.success(t('history'));
             });
         } else {
-            toastr.warning('History is empty');
+            toastr.warning(t('historyEmpty'));
         }
+    }
+
+    // 设置语言
+    setLocale(lang) {
+        this.setState(
+            {
+                lang,
+            },
+            () => {
+                setLocale(lang);
+                this.storage.set('lang', lang);
+            },
+        );
     }
 
     render() {
@@ -377,6 +395,7 @@ export default class App extends React.Component {
             translate: this.translate.bind(this),
             removeCache: this.removeCache.bind(this),
             undoSubtitle: this.undoSubtitle.bind(this),
+            setLocale: this.setLocale.bind(this),
             getArt: this.getArt.bind(this),
         };
 
