@@ -3,9 +3,18 @@ import styled from 'styled-components';
 import { secondToTime } from '../utils';
 
 const Wrapper = styled.div`
+    position: relative
     display: flex;
     height: 200px;
     background-color: rgb(28, 32, 34);
+
+    canvas {
+        position: absolute;
+        z-index: 5;
+        left: 0;
+        top: 0;
+        pointer-events: none;
+    }
 `;
 
 function drawGrid(ctx, width, beginTime = 0) {
