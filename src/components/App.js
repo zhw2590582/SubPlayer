@@ -179,27 +179,11 @@ export default class App extends React.Component {
             item.editing = false;
             return item;
         });
-        const previous = subtitles[index - 1];
+
         if (subtitle) {
-            subtitles[index] = {
-                ...subtitle,
-                get startTime() {
-                    return timeToSecond(this.start);
-                },
-                get endTime() {
-                    return timeToSecond(this.end);
-                },
-                get duration() {
-                    return (this.endTime - this.startTime).toFixed(3);
-                },
-                get overlapping() {
-                    return previous && this.startTime < previous.endTime;
-                },
-                get reverse() {
-                    return this.startTime >= this.endTime;
-                },
-            };
+            subtitles[index] = subtitle;
         } else {
+            const previous = subtitles[index - 1];
             subtitles.splice(index, 0, {
                 editing: false,
                 highlight: false,
@@ -207,21 +191,6 @@ export default class App extends React.Component {
                 start: previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.000',
                 end: previous ? secondToTime(previous.endTime + 0.002) : '00:00:00.000',
                 text: 'Your Subtitle Text',
-                get startTime() {
-                    return timeToSecond(this.start);
-                },
-                get endTime() {
-                    return timeToSecond(this.end);
-                },
-                get duration() {
-                    return (this.endTime - this.startTime).toFixed(3);
-                },
-                get overlapping() {
-                    return previous && this.startTime < previous.endTime;
-                },
-                get reverse() {
-                    return this.startTime >= this.endTime;
-                },
             });
         }
 
@@ -247,30 +216,44 @@ export default class App extends React.Component {
         });
     }
 
-    // 更新所有字幕数据, 可选是否更新字幕地址
-    updateSubtitles(subtitles, updateUrl) {
+    // 更新所有字幕数据, 可选是否更新字幕地址和是否回退操作
+    updateSubtitles(subtitles, updateUrl, isUndo) {
         return new Promise(resolve => {
             this.setState(
                 {
-                    subtitles,
+                    subtitles: subtitles.map((item, index) => {
+                        const previous = subtitles[index - 1];
+                        return {
+                            ...item,
+                            get startTime() {
+                                return timeToSecond(this.start);
+                            },
+                            get endTime() {
+                                return timeToSecond(this.end);
+                            },
+                            get duration() {
+                                return (this.endTime - this.startTime).toFixed(3);
+                            },
+                            get overlapping() {
+                                return previous && this.startTime < previous.endTime;
+                            },
+                            get reverse() {
+                                return this.startTime >= this.endTime;
+                            },
+                        };
+                    }),
                 },
                 () => {
                     const subtitles = this.state.subtitles;
                     if (updateUrl) {
                         this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
 
-                        if (this.history.length >= 100) {
-                            this.history.shift();
+                        if (!isUndo) {
+                            if (this.history.length >= 100) {
+                                this.history.shift();
+                            }
+                            this.history.push(subtitles.map(item => ({ ...item })));
                         }
-
-                        this.history.push(
-                            subtitles.map(item => {
-                                return Object.getOwnPropertyNames(item).reduce((result, key) => {
-                                    Object.defineProperty(result, key, Object.getOwnPropertyDescriptor(item, key));
-                                    return result;
-                                }, {});
-                            }),
-                        );
 
                         this.storage.set('subtitles', subtitles);
                     }
@@ -357,6 +340,18 @@ export default class App extends React.Component {
         window.location.reload();
     }
 
+    undoSubtitle() {
+        this.history.pop();
+        const subtitles = this.history[this.history.length - 1];
+        if (subtitles) {
+            this.updateSubtitles(subtitles, true, true).then(() => {
+                toastr.success('History rollback');
+            });
+        } else {
+            toastr.warning('History is empty');
+        }
+    }
+
     render() {
         const props = {
             ...this.state,
@@ -375,6 +370,7 @@ export default class App extends React.Component {
             timeOffset: this.timeOffset.bind(this),
             translate: this.translate.bind(this),
             removeCache: this.removeCache.bind(this),
+            undoSubtitle: this.undoSubtitle.bind(this),
         };
 
         return (

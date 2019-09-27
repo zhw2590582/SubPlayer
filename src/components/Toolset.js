@@ -60,11 +60,8 @@ export default class Player extends React.Component {
                 <Button onClick={() => this.props.timeOffset(0.1)}>
                     <i className="icon-plus"></i>Time Offset +100ms
                 </Button>
-                <Button>
+                <Button onClick={() => this.props.undoSubtitle()}>
                     <i className="icon-ccw"></i>Undo
-                </Button>
-                <Button>
-                    <i className="icon-cw"></i>Redo
                 </Button>
                 <div />
                 <Button onClick={this.props.removeAllSubtitle}>
