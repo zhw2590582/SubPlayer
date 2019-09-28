@@ -24,7 +24,6 @@ const Sub = styled.div`
     left: 0;
     top: 0;
     height: 100%;
-    padding: 0 10px;
     color: #fff;
     background-color: rgba(255, 255, 255, 0.2);
     border-left: 1px solid rgba(255, 255, 255, 0.2);
@@ -237,6 +236,8 @@ export default class Blocks extends React.Component {
                                 style={{
                                     left: (item.startTime - beginTime) * grid * 10,
                                     width: item.duration * grid * 10,
+                                    paddingLeft: grid,
+                                    paddingRight: grid,
                                 }}
                             >
                                 <Handle
