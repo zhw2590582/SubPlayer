@@ -29,7 +29,7 @@ const Line = styled.div`
     height: 100%;
     pointer-events: none;
     user-select: none;
-    background-color: #f44336;
+    background-color: #ff0000;
 `;
 
 function drawGrid(ctx, beginTime) {

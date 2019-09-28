@@ -14,9 +14,9 @@ export default {
         history: 'History rollback',
         historyEmpty: 'History is empty',
 
-        description: 'A Online Subtitle Editor: vtt, srt, ass',
+        description: 'A Online Subtitle Editor: vtt、srt、ass',
         uploadSubtitle: 'Upload subtitle file',
-        uploadSubtitleErr: 'Only the following subtitle are supported: vtt, srt, ass',
+        uploadSubtitleErr: 'Only the following subtitle are supported: vtt、srt、ass',
         uploadVideo: 'Upload video file',
         uploadVideoErr: 'This video format is not supported',
         btnUploadSubtitle: 'Upload Subtitle',
@@ -61,7 +61,7 @@ export default {
 
         description: '一个在线字幕编辑器：vtt、srt、ass',
         uploadSubtitle: '上传字幕文件',
-        uploadSubtitleErr: '当前只支持一下字幕: vtt, srt, ass',
+        uploadSubtitleErr: '当前只支持一下字幕: vtt、srt、ass',
         uploadVideo: '上传视频文件',
         uploadVideoErr: '该视频格式不支持',
         btnUploadSubtitle: '上传字幕',
