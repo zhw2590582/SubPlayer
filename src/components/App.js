@@ -258,9 +258,6 @@ export default class App extends React.Component {
                             get overlapping() {
                                 return previous && this.startTime < previous.endTime;
                             },
-                            get reverse() {
-                                return this.startTime >= this.endTime;
-                            },
                         };
                     }),
                 },

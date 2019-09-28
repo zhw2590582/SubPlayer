@@ -43,8 +43,7 @@ const Wrapper = styled.div`
                 background-color: #2196f3;
             }
 
-            &.overlapping,
-            &.reverse {
+            &.overlapping {
                 background-color: #c75123;
             }
 
@@ -225,7 +224,6 @@ export default class Subtitle extends React.Component {
                                     props.rowData.editing ? 'editing' : '',
                                     props.rowData.highlight ? 'highlight' : '',
                                     props.rowData.overlapping ? 'overlapping' : '',
-                                    props.rowData.reverse ? 'reverse' : '',
                                 ]
                                     .join(' ')
                                     .trim()}

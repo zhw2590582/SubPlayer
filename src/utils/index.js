@@ -91,9 +91,6 @@ export function urlToArr(url) {
                     get overlapping() {
                         return arr[index - 1] && this.startTime < arr[index - 1].endTime;
                     },
-                    get reverse() {
-                        return this.startTime >= this.endTime;
-                    },
                 };
             });
             resolve(arr);

@@ -47,6 +47,10 @@ const Sub = styled.div`
         border-right: 1px solid rgba(33, 150, 243, 0.5);
     }
 
+    &.overlapping {
+        background-color: #c75123;
+    }
+
     p {
         line-height: 1.5;
         margin: 0;
@@ -112,7 +116,6 @@ export default class Blocks extends React.Component {
                                     item.editing ? 'editing' : '',
                                     item.highlight ? 'highlight' : '',
                                     item.overlapping ? 'overlapping' : '',
-                                    item.reverse ? 'reverse' : '',
                                 ]
                                     .join(' ')
                                     .trim()}
