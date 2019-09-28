@@ -75,6 +75,12 @@ function findMatchedSubtitles(subtitles, beginTime) {
 }
 
 export default class Blocks extends React.Component {
+    $subs = React.createRef();
+    sub = null;
+    subIsDroging = false;
+    subLeftStart = 0;
+    subLeftDiff = 0;
+
     state = {
         subtitles: [],
     };
@@ -96,6 +102,43 @@ export default class Blocks extends React.Component {
         }
     }
 
+    subOnMouseDown(item, event) {
+        const isPause = this.props.art.pause;
+        this.sub = item;
+        this.subIsDroging = true;
+        this.subLeftStart = event.pageX;
+        if (!isPause) {
+            this.props.art.pause = true;
+        }
+    }
+
+    subOnMouseMove(item, event) {
+        if (this.subIsDroging && this.sub === item) {
+            const diffLength = event.pageX - this.subLeftStart;
+            const index = this.state.subtitles.indexOf(item);
+            const $sub = this.$subs.current.children[index];
+            $sub.style.transform = `translate(${diffLength}px)`;
+            this.subLeftDiff = diffLength / this.props.grid / 10;
+        }
+    }
+
+    componentDidMount() {
+        document.addEventListener('mouseup', () => {
+            if (this.subIsDroging && this.sub) {
+                const item = this.sub;
+                this.sub = null;
+                this.subIsDroging = false;
+                this.subLeftStart = 0;
+                const index = this.state.subtitles.indexOf(item);
+                const $sub = this.$subs.current.children[index];
+                $sub.style.transform = `translate(0)`;
+                item.startTime += this.subLeftDiff;
+                item.endTime += this.subLeftDiff;
+                this.props.updateSubtitle(item.index, item);
+            }
+        });
+    }
+
     render() {
         const { padding, grid, beginTime } = this.props;
         const { subtitles } = this.state;
@@ -106,12 +149,14 @@ export default class Blocks extends React.Component {
                     paddingRight: padding,
                 }}
             >
-                <Inner>
+                <Inner ref={this.$subs}>
                     {subtitles.map(item => {
                         return (
                             <Sub
                                 key={item.index}
                                 onClick={() => this.onClick(item)}
+                                onMouseDown={event => this.subOnMouseDown(item, event)}
+                                onMouseMove={event => this.subOnMouseMove(item, event)}
                                 className={[
                                     item.editing ? 'editing' : '',
                                     item.highlight ? 'highlight' : '',
