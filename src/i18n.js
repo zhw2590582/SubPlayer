@@ -33,6 +33,8 @@ export default {
         text: 'Text',
         operation: 'Operation',
 
+        durationLimit: 'Set the time longer than the video duration',
+
         btnAddSubtitle: 'Add Subtitle',
         btnTimeOffsetMinus: 'Time Offset -100ms',
         btnTimeOffsetPlus: 'Time Offset +100ms',
@@ -77,6 +79,8 @@ export default {
         duration: '时长',
         text: '文本',
         operation: '操作',
+
+        durationLimit: '设置时间大于视频的时长',
 
         btnAddSubtitle: '添加字幕',
         btnTimeOffsetMinus: '时间偏移 -100 毫秒',

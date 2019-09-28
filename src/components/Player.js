@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import ArtplayerComponent from 'artplayer-react';
+import { t } from 'react-i18nify';
 import Toolset from './Toolset';
+import toastr from 'toastr';
 
 const Wrapper = styled.div`
     display: flex;
@@ -41,8 +43,12 @@ export default class Player extends React.Component {
                 URL.revokeObjectURL(subtitleUrl);
             }
             if (!state.art.playing && props.setTime > 0 && props.setTime !== currentTime) {
-                state.art.currentTime = props.setTime;
-                props.updateCurrentTime(state.art.currentTime);
+                if (props.setTime <= state.art.duration) {
+                    state.art.currentTime = props.setTime;
+                    props.updateCurrentTime(state.art.currentTime);
+                } else {
+                    toastr.warning(t('durationLimit'));
+                }
             }
         }
         return null;
