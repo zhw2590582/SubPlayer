@@ -24,13 +24,6 @@ const Sub = styled.div`
     left: 0;
     top: 0;
     height: 100%;
-    font-size: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: move;
-    user-select: none;
     padding: 0 10px;
     color: #fff;
     background-color: rgba(255, 255, 255, 0.2);
@@ -57,12 +50,29 @@ const Sub = styled.div`
     }
 `;
 
+const SubText = styled.div`
+    position: relative;
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: move;
+    user-select: none;
+`;
+
 const Handle = styled.div`
     position: absolute;
     top: 0;
     height: 100%;
     cursor: col-resize;
     user-select: none;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 `;
 
 function findMatchedSubtitles(subtitles, beginTime) {
@@ -75,12 +85,6 @@ function findMatchedSubtitles(subtitles, beginTime) {
 }
 
 export default class Blocks extends React.Component {
-    $subs = React.createRef();
-    sub = null;
-    subIsDroging = false;
-    subLeftStart = 0;
-    subLeftDiff = 0;
-
     state = {
         subtitles: [],
     };
@@ -102,14 +106,20 @@ export default class Blocks extends React.Component {
         }
     }
 
+    $subs = React.createRef();
+    sub = null;
+    subIsDroging = false;
+    subLeftStart = 0;
+    subLeftDiff = 0;
+
     subOnMouseDown(item, event) {
         const isPause = this.props.art.pause;
-        this.sub = item;
-        this.subIsDroging = true;
-        this.subLeftStart = event.pageX;
         if (!isPause) {
             this.props.art.pause = true;
         }
+        this.sub = item;
+        this.subIsDroging = true;
+        this.subLeftStart = event.pageX;
     }
 
     subOnMouseMove(item, event) {
@@ -122,6 +132,14 @@ export default class Blocks extends React.Component {
         }
     }
 
+    handleOnMouseDown(item, event, type) {
+        //
+    }
+
+    handleOnMouseMove(item, event, type) {
+        //
+    }
+
     componentDidMount() {
         document.addEventListener('mouseup', () => {
             if (this.subIsDroging && this.sub) {
@@ -131,7 +149,7 @@ export default class Blocks extends React.Component {
                 this.subLeftStart = 0;
                 const index = this.state.subtitles.indexOf(item);
                 const $sub = this.$subs.current.children[index];
-                $sub.style.transform = `translate(0)`;
+                $sub && ($sub.style.transform = `translate(0)`);
                 item.startTime += this.subLeftDiff;
                 item.endTime += this.subLeftDiff;
                 this.props.updateSubtitle(item.index, item);
@@ -155,8 +173,6 @@ export default class Blocks extends React.Component {
                             <Sub
                                 key={item.index}
                                 onClick={() => this.onClick(item)}
-                                onMouseDown={event => this.subOnMouseDown(item, event)}
-                                onMouseMove={event => this.subOnMouseMove(item, event)}
                                 className={[
                                     item.editing ? 'editing' : '',
                                     item.highlight ? 'highlight' : '',
@@ -170,15 +186,24 @@ export default class Blocks extends React.Component {
                                 }}
                             >
                                 <Handle
+                                    onMouseDown={event => this.handleOnMouseDown(item, event, 'left')}
+                                    onMouseMove={event => this.handleOnMouseMove(item, event, 'left')}
                                     style={{
                                         left: 0,
                                         width: grid,
                                     }}
                                 />
-                                {item.text.split(/\r?\n/).map((item, index) => (
-                                    <p key={index}>{escapeHTML(item)}</p>
-                                ))}
+                                <SubText
+                                    onMouseDown={event => this.subOnMouseDown(item, event)}
+                                    onMouseMove={event => this.subOnMouseMove(item, event)}
+                                >
+                                    {item.text.split(/\r?\n/).map((item, index) => (
+                                        <p key={index}>{escapeHTML(item)}</p>
+                                    ))}
+                                </SubText>
                                 <Handle
+                                    onMouseDown={event => this.handleOnMouseDown(item, event, 'right')}
+                                    onMouseMove={event => this.handleOnMouseMove(item, event, 'right')}
                                     style={{
                                         right: 0,
                                         width: grid,
