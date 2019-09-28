@@ -132,12 +132,40 @@ export default class Blocks extends React.Component {
         }
     }
 
-    handleOnMouseDown(item, event, type) {
-        //
+    handleIsDroging = false;
+    handleLeftStart = 0;
+    handleLeftDiff = 0;
+    subWidth = 0;
+    handleType = '';
+
+    handleOnMouseDown(item, event) {
+        const isPause = this.props.art.pause;
+        if (!isPause) {
+            this.props.art.pause = true;
+        }
+        this.sub = item;
+        this.handleIsDroging = true;
+        this.handleLeftStart = event.pageX;
+        const index = this.state.subtitles.indexOf(item);
+        const $sub = this.$subs.current.children[index];
+        this.subWidth = parseFloat($sub.style.width);
     }
 
     handleOnMouseMove(item, event, type) {
-        //
+        if (this.handleIsDroging && this.sub === item) {
+            this.handleType = type;
+            const diffLength = event.pageX - this.handleLeftStart;
+            this.handleLeftDiff = diffLength / this.props.grid / 10;
+            const index = this.state.subtitles.indexOf(item);
+            const $sub = this.$subs.current.children[index];
+            if (type === 'right') {
+                $sub.style.width = `${this.subWidth + diffLength}px`;
+            }
+            if (type === 'left') {
+                $sub.style.width = `${this.subWidth + -diffLength}px`;
+                $sub.style.transform = `translate(${diffLength}px)`;
+            }
+        }
     }
 
     componentDidMount() {
@@ -150,9 +178,35 @@ export default class Blocks extends React.Component {
                 const index = this.state.subtitles.indexOf(item);
                 const $sub = this.$subs.current.children[index];
                 $sub && ($sub.style.transform = `translate(0)`);
-                item.startTime += this.subLeftDiff;
-                item.endTime += this.subLeftDiff;
-                this.props.updateSubtitle(item.index, item);
+                if (this.subLeftDiff) {
+                    item.startTime += this.subLeftDiff;
+                    item.endTime += this.subLeftDiff;
+                    this.props.updateSubtitle(item.index, item);
+                    this.subLeftDiff = 0;
+                }
+            }
+            if (this.handleIsDroging && this.sub) {
+                const item = this.sub;
+                this.sub = null;
+                this.handleIsDroging = false;
+                this.handleLeftStart = 0;
+                const index = this.state.subtitles.indexOf(item);
+                const $sub = this.$subs.current.children[index];
+                $sub && ($sub.style.transform = `translate(0)`);
+                if (this.handleLeftDiff) {
+                    if (this.handleType === 'right') {
+                        item.endTime += this.handleLeftDiff;
+                        this.props.updateSubtitle(item.index, item);
+                        this.handleLeftDiff = 0;
+                        this.handleType = '';
+                    }
+                    if (this.handleType === 'left') {
+                        item.startTime += this.handleLeftDiff;
+                        this.props.updateSubtitle(item.index, item);
+                        this.handleLeftDiff = 0;
+                        this.handleType = '';
+                    }
+                }
             }
         });
     }
