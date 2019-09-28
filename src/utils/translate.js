@@ -5,7 +5,7 @@ import pLimit from 'p-limit';
 import MD5 from './md5';
 import { sleep } from './index';
 
-function baiduTranslate(query, land) {
+export function baiduTranslate(query, land) {
     return new Promise(resolve => {
         const appid = '20190926000337502';
         const key = 'AyDT0yVJk43C8mgzspBY';
@@ -25,39 +25,79 @@ function baiduTranslate(query, land) {
                 const result = await data.json();
                 if (result.error_code) {
                     toastr.error(result.error_msg);
-                    resolve([]);
+                    resolve('');
                 } else if (result.trans_result) {
-                    resolve(result.trans_result.map(item => item.dst));
+                    resolve(
+                        result.trans_result
+                            .map(item => item.dst)
+                            .join('\n')
+                            .trim(),
+                    );
                 } else {
-                    resolve([]);
+                    resolve('');
                 }
             } catch (error) {
                 toastr.error(error.message);
-                resolve([]);
+                resolve('');
             }
         });
     });
 }
 
-export default function translate(subtitles, land) {
+export function googleTranslate(query, land) {
+    const url = new URL('https://translate.googleapis.com/translate_a/single');
+    url.searchParams.append('client', 'gtx');
+    url.searchParams.append('sl', 'auto');
+    url.searchParams.append('dt', 't');
+    url.searchParams.append('tl', land);
+    url.searchParams.append('q', query);
+
+    return new Promise(resolve => {
+        sleep().then(async () => {
+            fetch(url.href)
+                .then(data => data.json())
+                .then(data => {
+                    if (data) {
+                        resolve(data[0].map(item => item[0].trim()).join('\n'));
+                    } else {
+                        resolve('');
+                    }
+                })
+                .catch(error => {
+                    toastr.error(error.message);
+                    resolve('');
+                });
+        });
+    });
+}
+
+export default async function translate(subtitles, land, translatorName = 'google') {
     NProgress.start();
     const limit = pLimit(1);
     let index = 0;
-    return Promise.all(
-        subtitles.map(item =>
-            limit(async () => {
-                const data = await baiduTranslate(item.text, land);
-                NProgress.set(++index / subtitles.length);
 
-                if (data.length) {
-                    item.text = data.join('\n').trim();
-                }
+    const translator = {
+        baidu: baiduTranslate,
+        google: googleTranslate,
+    }[translatorName];
 
-                return item;
-            }),
-        ),
-    ).then(data => {
+    try {
+        const result = await Promise.all(
+            subtitles.map(item =>
+                limit(async () => {
+                    const data = await translator(item.text, land);
+                    NProgress.set(++index / subtitles.length);
+                    if (data) {
+                        item.text = data;
+                    }
+                    return item;
+                }),
+            ),
+        );
         NProgress.done();
-        return data;
-    });
+        return result;
+    } catch (error) {
+        NProgress.done();
+        toastr.error(error.message);
+    }
 }

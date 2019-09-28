@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Translate } from 'react-i18nify';
-import language from '../utils/language';
+import languages from '../utils/languages';
 
 const Wrapper = styled.div`
     flex: 1;
@@ -32,7 +32,7 @@ const Button = styled.button`
 `;
 
 const Select = styled.select`
-    height: 30px;
+    height: 25px;
     border: none;
     padding: 0 10px;
     outline: none;
@@ -46,7 +46,30 @@ const Select = styled.select`
 export default class Player extends React.Component {
     state = {
         lang: 'zh',
-        language,
+        translator: 'google',
+        translators: {
+            zh: [
+                {
+                    name: '谷歌翻译',
+                    key: 'google',
+                },
+                {
+                    name: '百度翻译',
+                    key: 'baidu',
+                },
+            ],
+            en: [
+                {
+                    name: 'Google Translate',
+                    key: 'google',
+                },
+                {
+                    name: 'Baidu Translate',
+                    key: 'baidu',
+                },
+            ],
+        },
+        languages,
     };
 
     render() {
@@ -82,10 +105,29 @@ export default class Player extends React.Component {
                     <Translate value="btnRemoveCache" />
                 </Button>
                 <div />
-                <Button onClick={() => this.props.translate(this.state.lang)}>
+                <Button onClick={() => this.props.translate(this.state.lang, this.state.translator)}>
                     <i className="icon-language"></i>
                     <Translate value="btnBatchTranslate" />
                 </Button>
+                <span
+                    style={{
+                        marginRight: 10,
+                    }}
+                >
+                    <Translate value="use" />
+                </span>
+                <Select
+                    value={this.state.translator}
+                    onChange={event => {
+                        this.setState({ translator: event.target.value });
+                    }}
+                >
+                    {this.state.translators[this.props.lang].map(item => (
+                        <option key={item.key} value={item.key}>
+                            {item.name}
+                        </option>
+                    ))}
+                </Select>
                 <span
                     style={{
                         marginRight: 10,
@@ -99,7 +141,7 @@ export default class Player extends React.Component {
                         this.setState({ lang: event.target.value });
                     }}
                 >
-                    {this.state.language[this.props.lang].map(item => (
+                    {this.state.languages[this.state.translator][this.props.lang].map(item => (
                         <option key={item.key} value={item.key}>
                             {item.name}
                         </option>

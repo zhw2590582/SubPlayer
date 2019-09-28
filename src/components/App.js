@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { t, setLocale } from 'react-i18nify';
-import NProgress from 'nprogress';
 import toastr from 'toastr';
 import Header from './Header';
 import Subtitle from './Subtitle';
@@ -51,6 +50,14 @@ const GlobalStyle = createGlobalStyle`
         }
     }
 
+    #nprogress .bar {
+        top: 50px !important;
+
+        .peg {
+            display: none !important;
+        }
+    }
+
     ::-webkit-scrollbar {
         width: 10px;
     }
@@ -65,6 +72,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Main = styled.div`
+    position: relative;
     display: flex;
     flex: 1;
 `;
@@ -91,8 +99,6 @@ export default class App extends React.Component {
     };
 
     componentDidMount() {
-        NProgress.configure({ parent: '.main' });
-
         this.setLocale(this.storage.get('lang') || 'en');
 
         const uddateMainSize = () => {
@@ -188,17 +194,19 @@ export default class App extends React.Component {
     // 更新单个字幕
     updateSubtitle(index, subtitle) {
         const subtitles = this.state.subtitles.map(item => {
+            item.highlight = false;
             item.editing = false;
             return item;
         });
 
         if (subtitle) {
+            subtitle.highlight = true;
             subtitles[index] = subtitle;
         } else {
             const previous = subtitles[index - 1];
             subtitles.splice(index, 0, {
                 editing: false,
-                highlight: false,
+                highlight: true,
                 id: index,
                 start: previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.000',
                 end: previous ? secondToTime(previous.endTime + 0.002) : '00:00:00.000',
@@ -323,11 +331,11 @@ export default class App extends React.Component {
     }
 
     // 整体字幕翻译
-    translate(land) {
+    translate(land, translator) {
         if (!this.inTranslation) {
             if (this.state.subtitles.length <= 1000) {
                 this.inTranslation = true;
-                translate(this.state.subtitles, land)
+                translate(this.state.subtitles, land, translator)
                     .then(subtitles => {
                         this.inTranslation = false;
                         this.updateSubtitles(subtitles, true).then(() => {

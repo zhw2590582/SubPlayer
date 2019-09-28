@@ -4,7 +4,7 @@ import { secondToTime } from '../utils';
 
 const timelineHeight = 200;
 const Wrapper = styled.div`
-    position: relative
+    position: relative;
     display: flex;
     height: ${timelineHeight}px;
     background-color: rgb(28, 32, 34);

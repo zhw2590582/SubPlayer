@@ -14,9 +14,9 @@ export default {
         history: 'History rollback',
         historyEmpty: 'History is empty',
 
-        description: 'A Online Subtitle Maker',
+        description: 'A Online Subtitle Editor: vtt, srt, ass',
         uploadSubtitle: 'Upload subtitle file',
-        uploadSubtitleErr: 'Only the following subtitle formats are supported: .vtt, .srt, .ass',
+        uploadSubtitleErr: 'Only the following subtitle are supported: vtt, srt, ass',
         uploadVideo: 'Upload video file',
         uploadVideoErr: 'This video format is not supported',
         btnUploadSubtitle: 'Upload Subtitle',
@@ -42,6 +42,7 @@ export default {
         btnRemoveCache: 'Remove Cache',
         btnBatchTranslate: 'Batch Translate',
         to: 'To',
+        use: 'Use',
     },
     zh: {
         access: '请使用电脑访问',
@@ -58,9 +59,9 @@ export default {
         history: '历史回滚',
         historyEmpty: '历史为空',
 
-        description: '一个在线字幕生成器',
+        description: '一个在线字幕编辑器：vtt、srt、ass',
         uploadSubtitle: '上传字幕文件',
-        uploadSubtitleErr: '当前只支持一下字幕: .vtt, .srt, .ass',
+        uploadSubtitleErr: '当前只支持一下字幕: vtt, srt, ass',
         uploadVideo: '上传视频文件',
         uploadVideoErr: '该视频格式不支持',
         btnUploadSubtitle: '上传字幕',
@@ -86,5 +87,6 @@ export default {
         btnRemoveCache: '删除缓存',
         btnBatchTranslate: '批量翻译',
         to: '到',
+        use: '使用',
     },
 };
