@@ -48,39 +48,48 @@ export default class Player extends React.Component {
     }
 
     render() {
+        const { videoUrl, subtitleUrl, updateCurrentTime, getArt } = this.props;
         return (
             <Wrapper>
                 <VideoBox>
-                    {this.props.videoUrl ? (
+                    {videoUrl ? (
                         <ArtplayerComponent
                             style={{
                                 width: '100%',
                                 height: '100%',
                             }}
                             option={{
-                                url: this.props.videoUrl,
+                                url: videoUrl,
                                 loop: true,
                                 lang: 'en',
                                 subtitle: {
-                                    url: this.props.subtitleUrl,
+                                    url: subtitleUrl,
                                 },
                             }}
                             getInstance={art => {
-                                art.on('video:timeupdate', () => {
-                                    if (art.playing) {
-                                        this.props.updateCurrentTime(art.currentTime);
-                                    }
-                                });
+                                (function loop() {
+                                    window.requestAnimationFrame(() => {
+                                        if (art.playing) {
+                                            updateCurrentTime(art.currentTime);
+                                        }
+                                        loop();
+                                    });
+                                })();
 
                                 art.once('video:canplay', () => {
                                     art.player.currentTime = 1;
+                                    updateCurrentTime(art.currentTime);
+                                });
+
+                                art.on('seek', () => {
+                                    updateCurrentTime(art.currentTime);
                                 });
 
                                 this.setState({
                                     art,
                                 });
 
-                                this.props.getArt(art);
+                                getArt(art);
                             }}
                         />
                     ) : null}

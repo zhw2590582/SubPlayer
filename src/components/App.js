@@ -84,7 +84,7 @@ export default class App extends React.Component {
         mainWidth: 100,
         videoUrl: '',
         subtitleUrl: '',
-        currentTime: -1,
+        currentTime: 0,
         setTime: -1,
         currentIndex: -1,
         subtitles: [],

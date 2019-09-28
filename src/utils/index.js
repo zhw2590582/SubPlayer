@@ -78,7 +78,7 @@ export function urlToArr(url) {
                     id: index,
                     start: secondToTime(item.startTime),
                     end: secondToTime(item.endTime),
-                    text: escapeHTML(item.text),
+                    text: item.text,
                     get startTime() {
                         return timeToSecond(this.start);
                     },
