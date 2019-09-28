@@ -84,9 +84,9 @@ export default class App extends React.Component {
     storage = new Storage();
     inTranslation = false;
     history = [];
-    art = null;
 
     state = {
+        art: null,
         lang: 'en',
         mainHeight: 100,
         mainWidth: 100,
@@ -103,7 +103,7 @@ export default class App extends React.Component {
 
         const uddateMainSize = () => {
             this.setState({
-                mainHeight: document.body.clientHeight - 250,
+                mainHeight: document.body.clientHeight - 200,
                 mainWidth: document.body.clientWidth,
             });
         };
@@ -152,7 +152,9 @@ export default class App extends React.Component {
 
     // 获取播放器
     getArt(art) {
-        this.art = art;
+        this.setState({
+            art,
+        });
     }
 
     // 删除单个字幕
@@ -209,16 +211,14 @@ export default class App extends React.Component {
                 highlight: true,
                 id: index,
                 start: previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.000',
-                end: previous ? secondToTime(previous.endTime + 0.002) : '00:00:00.000',
+                end: previous ? secondToTime(previous.endTime + 1.001) : '00:00:00.000',
                 text: t('your'),
             });
         }
 
         this.updateSubtitles(subtitles, true).then(() => {
             toastr.success(t('update'));
-            this.setState({
-                currentIndex: index,
-            });
+            this.updateCurrentIndex(index);
         });
     }
 
@@ -245,6 +245,7 @@ export default class App extends React.Component {
                         const previous = subtitles[index - 1];
                         return {
                             ...item,
+                            index: index,
                             get startTime() {
                                 return timeToSecond(this.start);
                             },
@@ -289,9 +290,22 @@ export default class App extends React.Component {
             return item.startTime <= currentTime && item.endTime >= currentTime;
         });
         this.highlightSubtitle(currentIndex);
+        this.setState(
+            {
+                currentTime,
+                setTime: -1,
+            },
+            () => {
+                this.updateCurrentIndex(currentIndex);
+            },
+        );
+    }
+
+    // 滚动到某个字幕
+    updateCurrentIndex(index) {
+        if (!this.checkIndex(index)) return;
         this.setState({
-            currentIndex,
-            currentTime,
+            currentIndex: index,
         });
     }
 
@@ -399,6 +413,7 @@ export default class App extends React.Component {
             updateVideoUrl: this.updateVideoUrl.bind(this),
             updateSubtitleUrl: this.updateSubtitleUrl.bind(this),
             updateCurrentTime: this.updateCurrentTime.bind(this),
+            updateCurrentIndex: this.updateCurrentIndex.bind(this),
             downloadSubtitles: this.downloadSubtitles.bind(this),
             removeEmptySubtitle: this.removeEmptySubtitle.bind(this),
             removeAllSubtitle: this.removeAllSubtitle.bind(this),

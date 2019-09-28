@@ -42,6 +42,7 @@ export default class Player extends React.Component {
             }
             if (!state.art.playing && props.setTime > 0 && props.setTime !== currentTime) {
                 state.art.currentTime = props.setTime;
+                props.updateCurrentTime(state.art.currentTime);
             }
         }
         return null;
@@ -62,6 +63,7 @@ export default class Player extends React.Component {
                                 url: videoUrl,
                                 loop: true,
                                 lang: 'en',
+                                autoSize: true,
                                 subtitle: {
                                     url: subtitleUrl,
                                 },

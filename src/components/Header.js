@@ -102,7 +102,7 @@ const Lang = styled.div`
     align-items: center;
     margin-right: 20px;
     color: #ccc;
-    background: #1a536d;
+    background-color: #1a536d;
     width: 60px;
     padding: 5px 0;
     font-size: 12px;
@@ -128,7 +128,7 @@ const Lang = styled.div`
 
     &:hover {
         color: #fff;
-        background: #03a9f4;
+        background-color: #03a9f4;
     }
 `;
 

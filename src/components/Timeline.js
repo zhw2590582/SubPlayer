@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import Blocks from './Blocks';
 import { secondToTime } from '../utils';
 
-const timelineHeight = 200;
+const timelineHeight = 150;
 const Wrapper = styled.div`
     position: relative;
     display: flex;
@@ -109,6 +110,7 @@ export default class Timeline extends React.Component {
         const lineX = padding + (currentTime % 10) * grid * 10;
         return (
             <Wrapper>
+                <Blocks {...this.props} {...this.state} />
                 <Canvas ref={$canvas} />
                 <Line
                     style={{

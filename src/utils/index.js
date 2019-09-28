@@ -75,7 +75,7 @@ export function urlToArr(url) {
                 return {
                     editing: false,
                     highlight: false,
-                    id: index,
+                    index: index,
                     start: secondToTime(item.startTime),
                     end: secondToTime(item.endTime),
                     text: item.text,
