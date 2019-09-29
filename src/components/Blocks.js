@@ -167,36 +167,44 @@ export default class Blocks extends React.Component {
     onMouseup() {
         if (this.isDroging) {
             if (this.leftDiff) {
-                const index = this.props.subtitles.indexOf(this.sub);
-                if (this.type === 'left') {
-                    const startTime = this.sub.startTime + this.leftDiff;
-                    if (startTime >= 0 && startTime < this.sub.endTime) {
-                        this.sub.startTime += this.leftDiff;
-                        this.props.updateSubtitle(index, this.sub);
-                    } else {
-                        this.$sub.style.width = `${this.subWidth}px`;
-                        toastr.warning(t('moveInvalid'));
-                    }
-                } else if (this.type === 'right') {
-                    const endTime = this.sub.endTime + this.leftDiff;
-                    if (endTime >= 0 && endTime > this.sub.startTime) {
-                        this.sub.endTime += this.leftDiff;
-                        this.props.updateSubtitle(index, this.sub);
-                    } else {
-                        this.$sub.style.width = `${this.subWidth}px`;
-                        toastr.warning(t('moveInvalid'));
-                    }
+                const subtitles = this.props.subtitles;
+                const index = subtitles.indexOf(this.sub);
+                const previous = subtitles[index - 1];
+                const next = subtitles[index + 1];
+                const startTime = this.sub.startTime + this.leftDiff;
+                const endTime = this.sub.endTime + this.leftDiff;
+
+                if ((previous && endTime < previous.startTime) || (next && startTime > next.endTime)) {
+                    toastr.warning(t('moveInvalid'));
                 } else {
-                    const startTime = this.sub.startTime + this.leftDiff;
-                    const endTime = this.sub.endTime + this.leftDiff;
-                    if (startTime > 0 && endTime > 0 && endTime > startTime) {
-                        this.sub.startTime += this.leftDiff;
-                        this.sub.endTime += this.leftDiff;
-                        this.props.updateSubtitle(index, this.sub);
+                    if (this.type === 'left') {
+                        if (startTime >= 0 && startTime < this.sub.endTime) {
+                            this.sub.startTime = startTime;
+                            this.props.updateSubtitle(index, this.sub);
+                        } else {
+                            this.$sub.style.width = `${this.subWidth}px`;
+                            toastr.warning(t('moveInvalid'));
+                        }
+                    } else if (this.type === 'right') {
+                        if (endTime >= 0 && endTime > this.sub.startTime) {
+                            this.sub.endTime = endTime;
+                            this.props.updateSubtitle(index, this.sub);
+                        } else {
+                            this.$sub.style.width = `${this.subWidth}px`;
+                            toastr.warning(t('moveInvalid'));
+                        }
                     } else {
-                        toastr.warning(t('moveInvalid'));
+                        if (startTime > 0 && endTime > 0 && endTime > startTime) {
+                            this.sub.startTime = startTime;
+                            this.sub.endTime = endTime;
+                            this.props.updateSubtitle(index, this.sub);
+                        } else {
+                            this.$sub.style.width = `${this.subWidth}px`;
+                            toastr.warning(t('moveInvalid'));
+                        }
                     }
                 }
+
                 this.$sub.style.transform = `translate(0)`;
             }
 
