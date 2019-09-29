@@ -18,7 +18,7 @@ const Wrapper = styled.div`
         }
 
         .ReactVirtualized__Table__headerRow {
-            background: rgb(46,54,60);
+            background: rgb(46, 54, 60);
             border-bottom: 1px solid rgb(10, 10, 10);
 
             .row {
@@ -37,7 +37,7 @@ const Wrapper = styled.div`
             transition: all 0.2s ease;
 
             &.odd {
-                background-color: rgb(46,54,60);
+                background-color: rgb(46, 54, 60);
             }
 
             &.highlight {
@@ -177,8 +177,8 @@ export default class Subtitle extends React.Component {
     }
 
     render() {
-        const { subtitles, mainHeight, mainWidth, currentIndex, checkOverlapping } = this.props;
         const { subtitle } = this.state;
+        const { subtitles, mainHeight, mainWidth, currentIndex, checkOverlapping } = this.props;
         return (
             <Wrapper>
                 <Table

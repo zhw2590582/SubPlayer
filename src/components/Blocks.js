@@ -167,7 +167,7 @@ export default class Blocks extends React.Component {
     onMouseup() {
         if (this.isDroging) {
             if (this.leftDiff) {
-                const index = this.state.subtitles.indexOf(this.sub);
+                const index = this.props.subtitles.indexOf(this.sub);
                 if (this.type === 'left') {
                     const startTime = this.sub.startTime + this.leftDiff;
                     if (startTime >= 0 && startTime < this.sub.endTime) {

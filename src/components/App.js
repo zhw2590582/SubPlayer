@@ -301,7 +301,7 @@ export default class App extends React.Component {
                             if (this.history.length >= 100) {
                                 this.history.shift();
                             }
-                            this.history.push(subtitles.map(item => ({ ...item })));
+                            this.history.push(subtitles.map(item => new Sub(item.start, item.end, item.text)));
                         }
 
                         this.storage.set('subtitles', subtitles);
