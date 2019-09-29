@@ -93,7 +93,6 @@ export default class App extends React.Component {
         videoUrl: '',
         subtitleUrl: '',
         currentTime: 0,
-        setTime: -1,
         currentIndex: -1,
         subtitles: [],
     };
@@ -170,6 +169,7 @@ export default class App extends React.Component {
     // 激活单个字幕的编辑
     editSubtitle(index) {
         if (!this.checkIndex(index)) return;
+        const { art } = this.state;
         const subtitles = this.state.subtitles.map(item => {
             item.highlight = false;
             item.editing = false;
@@ -177,9 +177,15 @@ export default class App extends React.Component {
         });
         subtitles[index].editing = true;
         this.updateSubtitles(subtitles);
-        this.setState({
-            setTime: subtitles[index].startTime + 0.001,
-        });
+        const currentTime = subtitles[index].startTime + 0.001;
+        if (!art.playing && currentTime > 0 && currentTime !== art.currentTime) {
+            if (currentTime <= art.duration) {
+                art.currentTime = currentTime;
+                this.updateCurrentTime(art.currentTime);
+            } else {
+                toastr.warning(t('durationLimit'));
+            }
+        }
     }
 
     // 激活单个字幕的高亮
@@ -296,7 +302,6 @@ export default class App extends React.Component {
         this.setState(
             {
                 currentTime,
-                setTime: -1,
             },
             () => {
                 this.updateCurrentIndex(currentIndex);

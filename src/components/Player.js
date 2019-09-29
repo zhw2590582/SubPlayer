@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ArtplayerComponent from 'artplayer-react';
-import { t } from 'react-i18nify';
 import Toolset from './Toolset';
-import toastr from 'toastr';
 
 const Wrapper = styled.div`
     display: flex;
@@ -33,7 +31,6 @@ export default class Player extends React.Component {
         if (state.art) {
             const videoUrl = state.art.template.$video.src;
             const subtitleUrl = state.art.template.$track.src;
-            const currentTime = state.art.currentTime;
             if (props.videoUrl !== videoUrl) {
                 state.art.player.switchUrl(props.videoUrl);
                 URL.revokeObjectURL(videoUrl);
@@ -41,14 +38,6 @@ export default class Player extends React.Component {
             if (props.subtitleUrl !== subtitleUrl) {
                 state.art.subtitle.init(props.subtitleUrl);
                 URL.revokeObjectURL(subtitleUrl);
-            }
-            if (!state.art.playing && props.setTime > 0 && props.setTime !== currentTime) {
-                if (props.setTime <= state.art.duration) {
-                    state.art.currentTime = props.setTime;
-                    props.updateCurrentTime(state.art.currentTime);
-                } else {
-                    toastr.warning(t('durationLimit'));
-                }
             }
         }
         return null;
