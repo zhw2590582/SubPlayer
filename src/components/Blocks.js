@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import dequal from 'dequal';
 import { escapeHTML } from '../utils';
+import { t, Translate } from 'react-i18nify';
+import toastr from 'toastr';
 
 const Wrapper = styled.div`
     position: absolute;
@@ -40,7 +42,7 @@ const Sub = styled.div`
     }
 
     &.overlapping {
-        background-color: #c75123;
+        background-color: rgba(199, 81, 35, 0.5);
     }
 
     p {
@@ -74,22 +76,45 @@ const Handle = styled.div`
     }
 `;
 
-function findMatchedSubtitles(subtitles, beginTime) {
-    return subtitles.filter(item => {
-        return (
-            (item.startTime >= beginTime && item.startTime <= beginTime + 10) ||
-            (item.endTime >= beginTime && item.endTime <= beginTime + 10)
-        );
-    });
-}
+const ContextMenu = styled.div`
+    position: absolute;
+    z-index: 4;
+    left: 0;
+    top: 0;
+`;
+
+const ContextMenuItem = styled.div`
+    height: 30px;
+    padding: 0 10px;
+    line-height: 30px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #ccc;
+    background-color: rgba(0, 0, 0, 0.75);
+    transition: all 0.2s ease;
+
+    &:hover {
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+`;
 
 export default class Blocks extends React.Component {
     state = {
         subtitles: [],
+        contextMenu: false,
+        contextMenuX: 0,
+        contextMenuY: 0,
     };
 
     static getDerivedStateFromProps(props, state) {
-        const subtitles = findMatchedSubtitles(props.subtitles, props.beginTime);
+        const subtitles = props.subtitles.filter(item => {
+            return (
+                (item.startTime >= props.beginTime && item.startTime <= props.beginTime + 10) ||
+                (item.endTime >= props.beginTime && item.endTime <= props.beginTime + 10)
+            );
+        });
+
         return dequal(subtitles, state.subtitles)
             ? null
             : {
@@ -97,178 +122,234 @@ export default class Blocks extends React.Component {
               };
     }
 
-    onClick(item) {
-        const { art, highlightSubtitle, updateCurrentIndex } = this.props;
-        if (!art.playing) {
+    type = '';
+    sub = null;
+    $sub = null;
+    leftDiff = 0;
+    subWidth = 0;
+    leftStart = 0;
+    isDroging = false;
+    $subs = React.createRef();
+
+    onMouseDown(item, event, type) {
+        const { highlightSubtitle, updateCurrentIndex } = this.props;
+        const isPause = this.props.art.pause;
+        if (!isPause) {
+            this.props.art.pause = true;
+        } else {
             highlightSubtitle(item.index);
             updateCurrentIndex(item.index);
         }
-    }
-
-    $subs = React.createRef();
-    sub = null;
-    subIsDroging = false;
-    subLeftStart = 0;
-    subLeftDiff = 0;
-
-    subOnMouseDown(item, event) {
-        const isPause = this.props.art.pause;
-        if (!isPause) {
-            this.props.art.pause = true;
-        }
         this.sub = item;
-        this.subIsDroging = true;
-        this.subLeftStart = event.pageX;
-    }
-
-    subOnMouseMove(item, event) {
-        if (this.subIsDroging && this.sub === item) {
-            const diffLength = event.pageX - this.subLeftStart;
-            const index = this.state.subtitles.indexOf(item);
-            const $sub = this.$subs.current.children[index];
-            $sub.style.transform = `translate(${diffLength}px)`;
-            this.subLeftDiff = diffLength / this.props.grid / 10;
-        }
-    }
-
-    handleIsDroging = false;
-    handleLeftStart = 0;
-    handleLeftDiff = 0;
-    subWidth = 0;
-    handleType = '';
-
-    handleOnMouseDown(item, event) {
-        const isPause = this.props.art.pause;
-        if (!isPause) {
-            this.props.art.pause = true;
-        }
-        this.sub = item;
-        this.handleIsDroging = true;
-        this.handleLeftStart = event.pageX;
+        this.type = type;
+        this.isDroging = true;
+        this.leftStart = event.pageX;
         const index = this.state.subtitles.indexOf(item);
-        const $sub = this.$subs.current.children[index];
-        this.subWidth = parseFloat($sub.style.width);
+        this.$sub = this.$subs.current.children[index];
+        this.subWidth = parseFloat(this.$sub.style.width);
     }
 
-    handleOnMouseMove(item, event, type) {
-        if (this.handleIsDroging && this.sub === item) {
-            this.handleType = type;
-            const diffLength = event.pageX - this.handleLeftStart;
-            this.handleLeftDiff = diffLength / this.props.grid / 10;
-            const index = this.state.subtitles.indexOf(item);
-            const $sub = this.$subs.current.children[index];
-            if (type === 'right') {
-                $sub.style.width = `${this.subWidth + diffLength}px`;
-            }
-            if (type === 'left') {
-                $sub.style.width = `${this.subWidth + -diffLength}px`;
-                $sub.style.transform = `translate(${diffLength}px)`;
+    onMousemove(event) {
+        if (this.isDroging) {
+            const diffLength = event.pageX - this.leftStart;
+            this.leftDiff = diffLength / this.props.grid / 10;
+            if (this.type === 'left') {
+                this.$sub.style.width = `${this.subWidth + -diffLength}px`;
+                this.$sub.style.transform = `translate(${diffLength}px)`;
+            } else if (this.type === 'right') {
+                this.$sub.style.width = `${this.subWidth + diffLength}px`;
+            } else {
+                this.$sub.style.transform = `translate(${diffLength}px)`;
             }
         }
+    }
+
+    onMouseup() {
+        if (this.isDroging) {
+            if (this.leftDiff) {
+                if (this.type === 'left') {
+                    const startTime = this.sub.startTime + this.leftDiff;
+                    if (startTime >= 0 && startTime < this.sub.endTime) {
+                        this.sub.startTime += this.leftDiff;
+                        this.props.updateSubtitle(this.sub.index, this.sub);
+                    } else {
+                        this.$sub.style.width = `${this.subWidth}px`;
+                        toastr.warning(t('moveInvalid'));
+                    }
+                } else if (this.type === 'right') {
+                    const endTime = this.sub.endTime + this.leftDiff;
+                    if (endTime >= 0 && endTime > this.sub.startTime) {
+                        this.sub.endTime += this.leftDiff;
+                        this.props.updateSubtitle(this.sub.index, this.sub);
+                    } else {
+                        this.$sub.style.width = `${this.subWidth}px`;
+                        toastr.warning(t('moveInvalid'));
+                    }
+                } else {
+                    const startTime = this.sub.startTime + this.leftDiff;
+                    const endTime = this.sub.endTime + this.leftDiff;
+                    if (startTime > 0 && endTime > 0 && endTime > startTime) {
+                        this.sub.startTime += this.leftDiff;
+                        this.sub.endTime += this.leftDiff;
+                        this.props.updateSubtitle(this.sub.index, this.sub);
+                    } else {
+                        toastr.warning(t('moveInvalid'));
+                    }
+                }
+                this.$sub.style.transform = `translate(0)`;
+            }
+
+            this.type = '';
+            this.sub = null;
+            this.$sub = null;
+            this.leftDiff = 0;
+            this.subWidth = 0;
+            this.leftStart = 0;
+            this.isDroging = false;
+        }
+    }
+
+    $contextMenu = React.createRef();
+    onContextMenu(item, event) {
+        this.onMouseup();
+        event.preventDefault();
+        this.sub = item;
+        const $subs = this.$subs.current;
+        const subsTop = $subs.getBoundingClientRect().top;
+        const $contextMenu = this.$contextMenu.current;
+        const contextMenuY =
+            event.pageY + $contextMenu.clientHeight > document.body.clientHeight
+                ? document.body.clientHeight - $contextMenu.clientHeight - subsTop
+                : event.pageY - subsTop;
+        this.setState({
+            contextMenu: true,
+            contextMenuX: event.pageX,
+            contextMenuY,
+        });
+    }
+
+    hideContextMenu() {
+        this.setState(
+            {
+                contextMenu: false,
+            },
+            () => {
+                this.sub = null;
+            },
+        );
     }
 
     componentDidMount() {
+        document.addEventListener('click', event => {
+            if (event.composedPath().indexOf(this.$contextMenu.current) < 0) {
+                this.hideContextMenu();
+            }
+        });
+
+        document.addEventListener('mousemove', event => {
+            this.onMousemove(event);
+        });
+
         document.addEventListener('mouseup', () => {
-            if (this.subIsDroging && this.sub) {
-                const item = this.sub;
-                this.sub = null;
-                this.subIsDroging = false;
-                this.subLeftStart = 0;
-                const index = this.state.subtitles.indexOf(item);
-                const $sub = this.$subs.current.children[index];
-                $sub && ($sub.style.transform = `translate(0)`);
-                if (this.subLeftDiff) {
-                    item.startTime += this.subLeftDiff;
-                    item.endTime += this.subLeftDiff;
-                    this.props.updateSubtitle(item.index, item);
-                    this.subLeftDiff = 0;
-                }
-            }
-            if (this.handleIsDroging && this.sub) {
-                const item = this.sub;
-                this.sub = null;
-                this.handleIsDroging = false;
-                this.handleLeftStart = 0;
-                const index = this.state.subtitles.indexOf(item);
-                const $sub = this.$subs.current.children[index];
-                $sub && ($sub.style.transform = `translate(0)`);
-                if (this.handleLeftDiff) {
-                    if (this.handleType === 'right') {
-                        item.endTime += this.handleLeftDiff;
-                        this.props.updateSubtitle(item.index, item);
-                        this.handleLeftDiff = 0;
-                        this.handleType = '';
-                    }
-                    if (this.handleType === 'left') {
-                        item.startTime += this.handleLeftDiff;
-                        this.props.updateSubtitle(item.index, item);
-                        this.handleLeftDiff = 0;
-                        this.handleType = '';
-                    }
-                }
-            }
+            this.onMouseup();
         });
     }
 
     render() {
-        const { padding, grid, beginTime } = this.props;
-        const { subtitles } = this.state;
+        const { subtitles, contextMenu, contextMenuX, contextMenuY } = this.state;
+        const { padding, grid, beginTime, removeSubtitle, updateSubtitle, mergeSubtitle } = this.props;
         return (
-            <Wrapper
-                style={{
-                    paddingLeft: padding,
-                    paddingRight: padding,
-                }}
-            >
-                <Inner ref={this.$subs}>
-                    {subtitles.map(item => {
-                        return (
-                            <Sub
-                                key={item.index}
-                                onClick={() => this.onClick(item)}
-                                className={[
-                                    item.editing ? 'editing' : '',
-                                    item.highlight ? 'highlight' : '',
-                                    item.overlapping ? 'overlapping' : '',
-                                ]
-                                    .join(' ')
-                                    .trim()}
-                                style={{
-                                    left: (item.startTime - beginTime) * grid * 10,
-                                    width: item.duration * grid * 10,
-                                    paddingLeft: grid,
-                                    paddingRight: grid,
-                                }}
-                            >
-                                <Handle
-                                    onMouseDown={event => this.handleOnMouseDown(item, event, 'left')}
-                                    onMouseMove={event => this.handleOnMouseMove(item, event, 'left')}
+            <React.Fragment>
+                <Wrapper
+                    style={{
+                        padding: `0 ${padding}px`,
+                    }}
+                >
+                    <Inner ref={this.$subs}>
+                        {subtitles.map(item => {
+                            return (
+                                <Sub
+                                    key={item.index}
+                                    onContextMenu={event => this.onContextMenu(item, event)}
+                                    className={[
+                                        item.editing ? 'editing' : '',
+                                        item.highlight ? 'highlight' : '',
+                                        item.overlapping ? 'overlapping' : '',
+                                    ]
+                                        .join(' ')
+                                        .trim()}
                                     style={{
-                                        left: 0,
-                                        width: grid,
+                                        left: (item.startTime - beginTime) * grid * 10,
+                                        width: item.duration * grid * 10,
+                                        padding: `0 ${grid}px`,
                                     }}
-                                />
-                                <SubText
-                                    onMouseDown={event => this.subOnMouseDown(item, event)}
-                                    onMouseMove={event => this.subOnMouseMove(item, event)}
                                 >
-                                    {item.text.split(/\r?\n/).map((item, index) => (
-                                        <p key={index}>{escapeHTML(item)}</p>
-                                    ))}
-                                </SubText>
-                                <Handle
-                                    onMouseDown={event => this.handleOnMouseDown(item, event, 'right')}
-                                    onMouseMove={event => this.handleOnMouseMove(item, event, 'right')}
-                                    style={{
-                                        right: 0,
-                                        width: grid,
-                                    }}
-                                />
-                            </Sub>
-                        );
-                    })}
-                </Inner>
-            </Wrapper>
+                                    <Handle
+                                        onMouseDown={event => this.onMouseDown(item, event, 'left')}
+                                        style={{
+                                            left: 0,
+                                            width: grid,
+                                        }}
+                                    />
+                                    <SubText onMouseDown={event => this.onMouseDown(item, event)}>
+                                        {item.text.split(/\r?\n/).map((item, index) => (
+                                            <p key={index}>{escapeHTML(item)}</p>
+                                        ))}
+                                    </SubText>
+                                    <Handle
+                                        onMouseDown={event => this.onMouseDown(item, event, 'right')}
+                                        style={{
+                                            right: 0,
+                                            width: grid,
+                                        }}
+                                    />
+                                </Sub>
+                            );
+                        })}
+                    </Inner>
+                </Wrapper>
+                <ContextMenu
+                    ref={this.$contextMenu}
+                    style={{
+                        visibility: contextMenu ? 'visible' : 'hidden',
+                        left: contextMenuX,
+                        top: contextMenuY,
+                    }}
+                >
+                    <ContextMenuItem
+                        onClick={() => {
+                            removeSubtitle(this.sub.index);
+                            this.hideContextMenu();
+                        }}
+                    >
+                        <Translate value="deleteLine" />
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                        onClick={() => {
+                            updateSubtitle(this.sub.index);
+                            this.hideContextMenu();
+                        }}
+                    >
+                        <Translate value="insertBefore" />
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                        onClick={() => {
+                            updateSubtitle(this.sub.index + 1);
+                            this.hideContextMenu();
+                        }}
+                    >
+                        <Translate value="insertAfter" />
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                        onClick={() => {
+                            mergeSubtitle(this.sub.index);
+                            this.hideContextMenu();
+                        }}
+                    >
+                        <Translate value="mergeNext" />
+                    </ContextMenuItem>
+                </ContextMenu>
+            </React.Fragment>
         );
     }
 }

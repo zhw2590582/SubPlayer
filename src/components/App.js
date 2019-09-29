@@ -199,7 +199,7 @@ export default class App extends React.Component {
         this.updateSubtitles(subtitles);
     }
 
-    // 更新单个字幕
+    // 更新或插入单个字幕
     updateSubtitle(index, subtitle) {
         const subtitles = this.state.subtitles.map(item => {
             item.highlight = false;
@@ -215,15 +215,36 @@ export default class App extends React.Component {
             subtitles.splice(index, 0, {
                 editing: false,
                 highlight: true,
-                id: index,
-                start: previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.000',
-                end: previous ? secondToTime(previous.endTime + 1.001) : '00:00:00.000',
+                start: previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.001',
+                end: previous ? secondToTime(previous.endTime + 1.001) : '00:00:01.001',
                 text: t('your'),
             });
         }
 
         this.updateSubtitles(subtitles, true).then(() => {
             toastr.success(t('update'));
+            this.updateCurrentIndex(index);
+        });
+    }
+
+    // 合并当前与下一个字幕
+    mergeSubtitle(index) {
+        if (!this.checkIndex(index)) return;
+        const subtitles = this.state.subtitles;
+        const current = subtitles[index];
+        const next = subtitles[index + 1];
+        if (!next) return;
+        const subtitle = {
+            editing: false,
+            highlight: true,
+            start: current.start,
+            end: next.end,
+            text: current.text + '\n' + next.text,
+        };
+        subtitles[index] = subtitle;
+        subtitles.splice(index + 1, 1);
+        this.updateSubtitles(subtitles, true).then(() => {
+            toastr.success(t('merge'));
             this.updateCurrentIndex(index);
         });
     }
@@ -425,6 +446,7 @@ export default class App extends React.Component {
             downloadSubtitles: this.downloadSubtitles.bind(this),
             removeEmptySubtitle: this.removeEmptySubtitle.bind(this),
             removeAllSubtitle: this.removeAllSubtitle.bind(this),
+            mergeSubtitle: this.mergeSubtitle.bind(this),
             timeOffset: this.timeOffset.bind(this),
             translate: this.translate.bind(this),
             removeCache: this.removeCache.bind(this),

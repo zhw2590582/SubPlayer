@@ -3,6 +3,7 @@ export default {
         access: 'Please use a computer to access',
         delete: 'Delete a subtitle',
         update: 'Update a subtitle',
+        merge: 'merge two subtitle',
         your: 'Your Subtitle Text',
         download: 'Download vtt subtitle',
         removeEmpty: 'Remove empty subtitle',
@@ -45,11 +46,18 @@ export default {
         btnBatchTranslate: 'Batch Translate',
         to: 'To',
         use: 'Use',
+
+        moveInvalid: 'Subtitle parameters are invalid, please try again',
+        deleteLine: 'Delete line',
+        insertBefore: 'Insert before',
+        insertAfter: 'Insert after',
+        mergeNext: 'Merge with next',
     },
     zh: {
         access: '请使用电脑访问',
         delete: '删除一个字幕',
         update: '更新一个字幕',
+        merge: '合并两个字幕',
         your: '你的字幕文本',
         download: '下载 VTT 字幕',
         removeEmpty: '删除空的字幕',
@@ -92,5 +100,11 @@ export default {
         btnBatchTranslate: '批量翻译',
         to: '到',
         use: '使用',
+
+        moveInvalid: '字幕参数不合法，请重试',
+        deleteLine: '删除字幕',
+        insertBefore: '之前插入',
+        insertAfter: '之后插入',
+        mergeNext: '合并下条',
     },
 };

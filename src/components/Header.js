@@ -50,6 +50,7 @@ const Logo = styled.a`
     .beta {
         color: #67bf00;
         font-size: 12px;
+        margin-left: 5px;
     }
 `;
 
@@ -186,7 +187,7 @@ export default class Header extends React.Component {
             <Wrapper>
                 <div className="left">
                     <Logo href="./">
-                        SubPlayer.js <span className="beta">Beta {version}</span>
+                        SubPlayer <span className="beta">Beta {version}</span>
                     </Logo>
                     <Description>
                         <Translate value="description" />

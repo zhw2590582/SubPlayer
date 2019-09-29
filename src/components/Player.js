@@ -17,7 +17,7 @@ const VideoBox = styled.div`
     padding: 10px;
     border-bottom: 1px solid rgb(36, 41, 45);
 
-    .artplayer-video-player .artplayer-subtitle p {
+    .artplayer-video-player .artplayer-subtitle {
         background-color: rgba(0, 0, 0, 0.5);
     }
 `;

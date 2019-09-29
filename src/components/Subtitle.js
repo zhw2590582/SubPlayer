@@ -111,6 +111,9 @@ export default class Subtitle extends React.Component {
     checkSubtitle() {
         const { editIndex, editSubtitle } = this.state;
         const { subtitles } = this.props;
+        const startTime = timeToSecond(editSubtitle.start);
+        const endTime = timeToSecond(editSubtitle.end);
+
         if (editIndex !== -1) {
             if (!checkTime(editSubtitle.start)) {
                 toastr.error(t('startTime'));
@@ -122,12 +125,12 @@ export default class Subtitle extends React.Component {
                 return false;
             }
 
-            if (timeToSecond(editSubtitle.start) >= timeToSecond(editSubtitle.end)) {
+            if (startTime >= endTime) {
                 toastr.error(t('greater'));
                 return false;
             }
 
-            if (subtitles[editIndex - 1] && timeToSecond(editSubtitle.start) < subtitles[editIndex - 1].endTime) {
+            if (subtitles[editIndex - 1] && startTime < subtitles[editIndex - 1].endTime) {
                 toastr.warning(t('overlaps'));
             }
         }
