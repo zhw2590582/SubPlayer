@@ -137,8 +137,8 @@ export default class Blocks extends React.Component {
         if (!isPause) {
             this.props.art.pause = true;
         } else {
-            highlightSubtitle(item.index);
-            updateCurrentIndex(item.index);
+            highlightSubtitle(item);
+            updateCurrentIndex(item);
         }
         this.sub = item;
         this.type = type;
@@ -167,11 +167,12 @@ export default class Blocks extends React.Component {
     onMouseup() {
         if (this.isDroging) {
             if (this.leftDiff) {
+                const index = this.state.subtitles.indexOf(this.sub);
                 if (this.type === 'left') {
                     const startTime = this.sub.startTime + this.leftDiff;
                     if (startTime >= 0 && startTime < this.sub.endTime) {
                         this.sub.startTime += this.leftDiff;
-                        this.props.updateSubtitle(this.sub.index, this.sub);
+                        this.props.updateSubtitle(index, this.sub);
                     } else {
                         this.$sub.style.width = `${this.subWidth}px`;
                         toastr.warning(t('moveInvalid'));
@@ -180,7 +181,7 @@ export default class Blocks extends React.Component {
                     const endTime = this.sub.endTime + this.leftDiff;
                     if (endTime >= 0 && endTime > this.sub.startTime) {
                         this.sub.endTime += this.leftDiff;
-                        this.props.updateSubtitle(this.sub.index, this.sub);
+                        this.props.updateSubtitle(index, this.sub);
                     } else {
                         this.$sub.style.width = `${this.subWidth}px`;
                         toastr.warning(t('moveInvalid'));
@@ -191,7 +192,7 @@ export default class Blocks extends React.Component {
                     if (startTime > 0 && endTime > 0 && endTime > startTime) {
                         this.sub.startTime += this.leftDiff;
                         this.sub.endTime += this.leftDiff;
-                        this.props.updateSubtitle(this.sub.index, this.sub);
+                        this.props.updateSubtitle(index, this.sub);
                     } else {
                         toastr.warning(t('moveInvalid'));
                     }
@@ -257,7 +258,15 @@ export default class Blocks extends React.Component {
 
     render() {
         const { subtitles, contextMenu, contextMenuX, contextMenuY } = this.state;
-        const { padding, grid, beginTime, removeSubtitle, updateSubtitle, mergeSubtitle } = this.props;
+        const {
+            padding,
+            grid,
+            beginTime,
+            removeSubtitle,
+            insertSubtitle,
+            mergeSubtitle,
+            checkOverlapping,
+        } = this.props;
         return (
             <React.Fragment>
                 <Wrapper
@@ -266,15 +275,15 @@ export default class Blocks extends React.Component {
                     }}
                 >
                     <Inner ref={this.$subs}>
-                        {subtitles.map(item => {
+                        {subtitles.map((item, index) => {
                             return (
                                 <Sub
-                                    key={item.index}
+                                    key={index}
                                     onContextMenu={event => this.onContextMenu(item, event)}
                                     className={[
                                         item.editing ? 'editing' : '',
                                         item.highlight ? 'highlight' : '',
-                                        item.overlapping ? 'overlapping' : '',
+                                        checkOverlapping(item) ? 'overlapping' : '',
                                     ]
                                         .join(' ')
                                         .trim()}
@@ -318,7 +327,7 @@ export default class Blocks extends React.Component {
                 >
                     <ContextMenuItem
                         onClick={() => {
-                            removeSubtitle(this.sub.index);
+                            removeSubtitle(this.sub);
                             this.hideContextMenu();
                         }}
                     >
@@ -326,7 +335,8 @@ export default class Blocks extends React.Component {
                     </ContextMenuItem>
                     <ContextMenuItem
                         onClick={() => {
-                            updateSubtitle(this.sub.index);
+                            const index = this.props.subtitles.indexOf(this.sub);
+                            insertSubtitle(index);
                             this.hideContextMenu();
                         }}
                     >
@@ -334,7 +344,8 @@ export default class Blocks extends React.Component {
                     </ContextMenuItem>
                     <ContextMenuItem
                         onClick={() => {
-                            updateSubtitle(this.sub.index + 1);
+                            const index = this.props.subtitles.indexOf(this.sub);
+                            insertSubtitle(index + 1);
                             this.hideContextMenu();
                         }}
                     >
@@ -342,7 +353,7 @@ export default class Blocks extends React.Component {
                     </ContextMenuItem>
                     <ContextMenuItem
                         onClick={() => {
-                            mergeSubtitle(this.sub.index);
+                            mergeSubtitle(this.sub);
                             this.hideContextMenu();
                         }}
                     >

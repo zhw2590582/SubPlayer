@@ -4,10 +4,11 @@ import { t, Translate } from 'react-i18nify';
 import toastr from 'toastr';
 import { checkTime, timeToSecond, escapeHTML, unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
+import Sub from '../utils/sub';
 
 const Wrapper = styled.div`
     flex: 1;
-    border-right: 1px solid rgb(36, 41, 45);
+    border-right: 1px solid rgb(10, 10, 10);
     .ReactVirtualized__Table {
         font-size: 12px;
         background: #24292d;
@@ -17,8 +18,8 @@ const Wrapper = styled.div`
         }
 
         .ReactVirtualized__Table__headerRow {
-            background: #1c2022;
-            border-bottom: 1px solid rgb(36, 41, 45);
+            background: rgb(46,54,60);
+            border-bottom: 1px solid rgb(10, 10, 10);
 
             .row {
                 padding: 10px 5px;
@@ -36,7 +37,7 @@ const Wrapper = styled.div`
             transition: all 0.2s ease;
 
             &.odd {
-                background-color: #2e3140;
+                background-color: rgb(46,54,60);
             }
 
             &.highlight {
@@ -104,23 +105,24 @@ const Wrapper = styled.div`
 
 export default class Subtitle extends React.Component {
     state = {
-        editIndex: -1,
-        editSubtitle: {},
+        index: -1,
+        subtitle: {},
     };
 
-    checkSubtitle() {
-        const { editIndex, editSubtitle } = this.state;
+    check() {
+        const { index, subtitle } = this.state;
         const { subtitles } = this.props;
-        const startTime = timeToSecond(editSubtitle.start);
-        const endTime = timeToSecond(editSubtitle.end);
+        const startTime = timeToSecond(subtitle.start);
+        const endTime = timeToSecond(subtitle.end);
+        const previous = subtitles[index - 1];
 
-        if (editIndex !== -1) {
-            if (!checkTime(editSubtitle.start)) {
+        if (index !== -1) {
+            if (!checkTime(subtitle.start)) {
                 toastr.error(t('startTime'));
                 return false;
             }
 
-            if (!checkTime(editSubtitle.end)) {
+            if (!checkTime(subtitle.end)) {
                 toastr.error(t('endTime'));
                 return false;
             }
@@ -130,59 +132,53 @@ export default class Subtitle extends React.Component {
                 return false;
             }
 
-            if (subtitles[editIndex - 1] && startTime < subtitles[editIndex - 1].endTime) {
+            if (previous && startTime < previous.endTime) {
                 toastr.warning(t('overlaps'));
             }
         }
         return true;
     }
 
-    onEdit(index) {
-        if (this.checkSubtitle()) {
-            this.setState({
-                editIndex: index,
-                editSubtitle: {
-                    ...this.props.subtitles[index],
-                },
-            });
-            this.props.editSubtitle(index);
-        }
+    onEdit(sub) {
+        const index = this.props.subtitles.indexOf(sub);
+        this.setState({
+            index: index,
+            subtitle: new Sub(sub.start, sub.end, sub.text),
+        });
+        this.props.editSubtitle(sub);
     }
 
     onUpdate() {
-        if (this.checkSubtitle()) {
-            const { editIndex, editSubtitle } = this.state;
-            this.props.updateSubtitle(editIndex, {
-                ...editSubtitle,
-            });
-
+        if (this.check()) {
+            const { index, subtitle } = this.state;
+            this.props.updateSubtitle(index, subtitle);
             this.setState({
-                editIndex: -1,
-                editSubtitle: {},
+                index: -1,
+                subtitle: {},
             });
         }
     }
 
     onChange(name, value) {
         this.setState({
-            editSubtitle: {
-                ...this.state.editSubtitle,
+            subtitle: {
+                ...this.state.subtitle,
                 [name]: value,
             },
         });
     }
 
-    onRemove(index) {
-        this.props.removeSubtitle(index);
+    onRemove(sub) {
+        this.props.removeSubtitle(sub);
         this.setState({
-            editIndex: -1,
-            editSubtitle: {},
+            index: -1,
+            subtitle: {},
         });
     }
 
     render() {
-        const { subtitles, mainHeight, mainWidth, currentIndex } = this.props;
-        const { editSubtitle } = this.state;
+        const { subtitles, mainHeight, mainWidth, currentIndex, checkOverlapping } = this.props;
+        const { subtitle } = this.state;
         return (
             <Wrapper>
                 <Table
@@ -226,7 +222,7 @@ export default class Subtitle extends React.Component {
                                     props.index % 2 ? 'odd' : '',
                                     props.rowData.editing ? 'editing' : '',
                                     props.rowData.highlight ? 'highlight' : '',
-                                    props.rowData.overlapping ? 'overlapping' : '',
+                                    checkOverlapping(props.rowData) ? 'overlapping' : '',
                                 ]
                                     .join(' ')
                                     .trim()}
@@ -240,7 +236,7 @@ export default class Subtitle extends React.Component {
                                     <input
                                         maxLength={20}
                                         className="input edit"
-                                        defaultValue={editSubtitle.start}
+                                        defaultValue={subtitle.start}
                                         onChange={e => this.onChange('start', e.target.value)}
                                     />
                                 </div>
@@ -249,7 +245,7 @@ export default class Subtitle extends React.Component {
                                     <input
                                         maxLength={20}
                                         className="input edit"
-                                        defaultValue={editSubtitle.end}
+                                        defaultValue={subtitle.end}
                                         onChange={e => this.onChange('end', e.target.value)}
                                     />
                                 </div>
@@ -259,7 +255,7 @@ export default class Subtitle extends React.Component {
                                         disabled
                                         maxLength={20}
                                         className="input edit"
-                                        defaultValue={editSubtitle.duration}
+                                        defaultValue={subtitle.duration}
                                         onChange={e => this.onChange('duration', e.target.value)}
                                     />
                                 </div>
@@ -272,14 +268,14 @@ export default class Subtitle extends React.Component {
                                     <textarea
                                         maxLength={100}
                                         className="textarea edit"
-                                        value={unescapeHTML(editSubtitle.text || '')}
+                                        value={unescapeHTML(subtitle.text || '')}
                                         onChange={e => this.onChange('text', e.target.value)}
                                     />
                                 </div>
                                 <div className="row operation" style={{ width: 90 }}>
-                                    <i className="icon-pencil noedit" onClick={() => this.onEdit(props.index)}></i>
-                                    <i className="icon-ok edit" onClick={() => this.onUpdate(props.index)}></i>
-                                    <i className="icon-trash-empty" onClick={() => this.onRemove(props.index)}></i>
+                                    <i className="icon-pencil noedit" onClick={() => this.onEdit(props.rowData)}></i>
+                                    <i className="icon-ok edit" onClick={() => this.onUpdate(props.rowData)}></i>
+                                    <i className="icon-trash-empty" onClick={() => this.onRemove(props.rowData)}></i>
                                 </div>
                             </div>
                         );

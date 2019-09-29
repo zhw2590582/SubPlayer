@@ -18,12 +18,12 @@ const Button = styled.button`
     font-size: 13px;
     margin: 0 10px 10px 0;
     color: #ccc;
-    background-color: rgb(39, 41, 54);
+    background-color: rgb(46, 54, 60);
     transition: all 0.2s ease;
 
     &:hover {
         color: #fff;
-        background-color: rgb(51, 54, 76);
+        background-color: rgb(66, 82, 95);
     }
 
     i {
@@ -40,7 +40,7 @@ const Select = styled.select`
     font-size: 13px;
     margin: 0 10px 10px 0;
     color: #ccc;
-    background-color: rgb(39, 41, 54);
+    background-color: rgb(46, 54, 60);
 `;
 
 export default class Player extends React.Component {
@@ -75,7 +75,7 @@ export default class Player extends React.Component {
     render() {
         return (
             <Wrapper>
-                <Button onClick={() => this.props.updateSubtitle(this.props.subtitles.length)}>
+                <Button onClick={() => this.props.insertSubtitle(this.props.subtitles.length)}>
                     <i className="icon-doc-new"></i>
                     <Translate value="btnAddSubtitle" />
                 </Button>
@@ -92,15 +92,15 @@ export default class Player extends React.Component {
                     <Translate value="btnUndo" />
                 </Button>
                 <div />
-                <Button onClick={this.props.removeAllSubtitle}>
+                <Button onClick={() => this.props.removeAllSubtitle()}>
                     <i className="icon-trash-empty"></i>
                     <Translate value="btnRemoveAll" />
                 </Button>
-                <Button onClick={this.props.removeEmptySubtitle}>
+                <Button onClick={() => this.props.removeEmptySubtitle()}>
                     <i className="icon-trash-empty"></i>
                     <Translate value="btnRemoveEmpty" />
                 </Button>
-                <Button onClick={this.props.removeCache}>
+                <Button onClick={() => this.props.removeCache()}>
                     <i className="icon-trash-empty"></i>
                     <Translate value="btnRemoveCache" />
                 </Button>

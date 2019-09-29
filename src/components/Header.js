@@ -11,7 +11,7 @@ const Wrapper = styled.header`
     justify-content: space-between;
     align-items: center;
     height: 50px;
-    border-bottom: 1px solid rgb(36, 41, 45);
+    border-bottom: 1px solid rgb(10, 10, 10);
     background-color: rgb(28, 32, 34);
 
     .left {
@@ -55,9 +55,9 @@ const Logo = styled.a`
 `;
 
 const Description = styled.span`
-    font-size: 13px;
+    font-size: 12px;
     font-style: italic;
-    padding-left: 20px;
+    margin-left: 10px;
     opacity: 0.4;
 `;
 
@@ -69,16 +69,16 @@ const Btn = styled.div`
     height: 100%;
     padding: 0 10px;
     width: 170px;
-    border-left: 1px solid #000;
     cursor: pointer;
     overflow: hidden;
     color: #ccc;
-    background-color: rgb(39, 41, 54);
+    background-color: rgb(46, 54, 60);
+    border-left: 1px solid rgb(10, 10, 10);
     transition: all 0.2s ease;
 
     &:hover {
         color: #fff;
-        background-color: rgb(51, 54, 76);
+        background-color: rgb(66, 82, 95);
     }
 
     i {
@@ -105,7 +105,7 @@ const Lang = styled.div`
     color: #ccc;
     background-color: #1a536d;
     width: 60px;
-    padding: 5px 0;
+    padding: 4px 0;
     font-size: 12px;
     border-radius: 15px;
     cursor: pointer;
@@ -146,12 +146,18 @@ export default class Header extends React.Component {
                 readSubtitleFromFile(file, type)
                     .then(data => {
                         const subtitleUrl = vttToUrl(data);
-                        urlToArr(subtitleUrl).then(subtitles => {
-                            this.props.updateSubtitles(subtitles, true).then(() => {
-                                toastr.success(t('uploadSubtitle'));
+                        urlToArr(subtitleUrl)
+                            .then(subtitles => {
+                                this.props.updateSubtitles(subtitles, true).then(() => {
+                                    toastr.success(`${t('uploadSubtitle')}: ${subtitles.length}`);
+                                    NProgress.done();
+                                });
+                            })
+                            .catch(error => {
+                                toastr.error(error.message);
                                 NProgress.done();
+                                throw error;
                             });
-                        });
                     })
                     .catch(error => {
                         toastr.error(error.message);
@@ -176,7 +182,7 @@ export default class Header extends React.Component {
                 this.props.updateVideoUrl(url);
                 toastr.success(t('uploadVideo'));
             } else {
-                toastr.error(`${t('uploadVideoErr')}: ${file.type}`);
+                toastr.error(`${t('uploadVideoErr')}: ${file.type || 'unknown'}`);
             }
             NProgress.done();
         }
@@ -188,10 +194,10 @@ export default class Header extends React.Component {
                 <div className="left">
                     <Logo href="./">
                         SubPlayer <span className="beta">Beta {version}</span>
+                        <Description>
+                            <Translate value="description" />
+                        </Description>
                     </Logo>
-                    <Description>
-                        <Translate value="description" />
-                    </Description>
                 </div>
                 <div className="right">
                     <div className="links">
@@ -210,12 +216,12 @@ export default class Header extends React.Component {
                     <Btn>
                         <i className="icon-upload"></i>
                         <Translate value="btnUploadSubtitle" />
-                        <File type="file" name="file" ref={this.$subtitle} onChange={this.uploadSubtitle.bind(this)} />
+                        <File type="file" name="file" ref={this.$subtitle} onChange={() => this.uploadSubtitle()} />
                     </Btn>
                     <Btn>
                         <i className="icon-upload"></i>
                         <Translate value="btnUploadVideo" />
-                        <File type="file" name="file" ref={this.$video} onChange={this.uploadVideo.bind(this)} />
+                        <File type="file" name="file" ref={this.$video} onChange={() => this.uploadVideo()} />
                     </Btn>
                     <Btn onClick={this.props.downloadSubtitles.bind(this)}>
                         <i className="icon-download"></i>

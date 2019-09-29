@@ -8,16 +8,17 @@ import Timeline from './Timeline';
 import Player from './Player';
 import translate from '../utils/translate';
 import Storage from '../utils/storage';
+import Sub from '../utils/sub';
 import {
     debounce,
     arrToVtt,
     vttToUrl,
     readSubtitleFromUrl,
     urlToArr,
-    timeToSecond,
     downloadFile,
     secondToTime,
     clamp,
+    getSearchParams,
 } from '../utils';
 
 const GlobalStyle = createGlobalStyle`
@@ -39,7 +40,7 @@ const GlobalStyle = createGlobalStyle`
         flex-direction: column;
         font-size: 14px;
         color: #ccc;
-        background: rgb(16, 17, 19);
+        background: rgb(28,32,26);
     }
 
     #toast-container.toast-top-right {
@@ -114,28 +115,36 @@ export default class App extends React.Component {
         uddateMainSize();
         window.addEventListener('resize', resizeDebounce);
 
-        const locationUrl = new URL(window.location.href);
-        const locationSubtitleUrl =
-            decodeURIComponent(locationUrl.searchParams.get('subtitle') || '') || defaultSubtitleUrl;
-        const locationVideoUrl = decodeURIComponent(locationUrl.searchParams.get('video') || '') || defaultVideoUrl;
-
+        const locationSubtitleUrl = getSearchParams('subtitle') || defaultSubtitleUrl;
+        const locationVideoUrl = getSearchParams('video') || defaultVideoUrl;
         const storageSubtitles = this.storage.get('subtitles');
+
         if (storageSubtitles) {
             const subtitleUrl = vttToUrl(arrToVtt(storageSubtitles));
-            urlToArr(subtitleUrl).then(subtitles => {
-                this.updateSubtitles(subtitles, true).then(() => {
-                    this.updateVideoUrl(locationVideoUrl);
+            urlToArr(subtitleUrl)
+                .then(subtitles => {
+                    this.updateSubtitles(subtitles, true).then(() => {
+                        this.updateVideoUrl(locationVideoUrl);
+                    });
+                })
+                .catch(error => {
+                    toastr.error(error.message);
+                    throw error;
                 });
-            });
         } else {
             readSubtitleFromUrl(locationSubtitleUrl)
                 .then(data => {
                     const subtitleUrl = vttToUrl(data);
-                    urlToArr(subtitleUrl).then(subtitles => {
-                        this.updateSubtitles(subtitles, true).then(() => {
-                            this.updateVideoUrl(locationVideoUrl);
+                    urlToArr(subtitleUrl)
+                        .then(subtitles => {
+                            this.updateSubtitles(subtitles, true).then(() => {
+                                this.updateVideoUrl(locationVideoUrl);
+                            });
+                        })
+                        .catch(error => {
+                            toastr.error(error.message);
+                            throw error;
                         });
-                    });
                 })
                 .catch(error => {
                     toastr.error(error.message);
@@ -144,9 +153,17 @@ export default class App extends React.Component {
         }
     }
 
-    // 验证index在字幕数组范围内
-    checkIndex(index) {
-        return index >= 0 && index <= this.state.subtitles.length - 1;
+    // 验证字幕在数组范围内
+    checkSub(sub) {
+        return this.state.subtitles.includes(sub);
+    }
+
+    // 验证字幕是否和上一条重叠
+    checkOverlapping(sub) {
+        const subtitles = this.state.subtitles;
+        const index = subtitles.indexOf(sub);
+        const previous = subtitles[index - 1];
+        return previous && sub.startTime < previous.endTime;
     }
 
     // 获取播放器
@@ -157,9 +174,10 @@ export default class App extends React.Component {
     }
 
     // 删除单个字幕
-    removeSubtitle(index) {
-        if (!this.checkIndex(index)) return;
+    removeSubtitle(sub) {
+        if (!this.checkSub(sub)) return;
         const subtitles = this.state.subtitles;
+        const index = subtitles.indexOf(sub);
         subtitles.splice(index, 1);
         this.updateSubtitles(subtitles, true).then(() => {
             toastr.success(t('delete'));
@@ -167,85 +185,89 @@ export default class App extends React.Component {
     }
 
     // 激活单个字幕的编辑
-    editSubtitle(index) {
-        if (!this.checkIndex(index)) return;
-        const { art } = this.state;
+    editSubtitle(sub) {
+        if (!this.checkSub(sub)) return;
         const subtitles = this.state.subtitles.map(item => {
             item.highlight = false;
             item.editing = false;
             return item;
         });
+        const index = subtitles.indexOf(sub);
         subtitles[index].editing = true;
-        this.updateSubtitles(subtitles);
-        const currentTime = subtitles[index].startTime + 0.001;
-        if (!art.playing && currentTime > 0 && currentTime !== art.currentTime) {
-            if (currentTime <= art.duration) {
-                art.currentTime = currentTime;
-                this.updateCurrentTime(art.currentTime);
-            } else {
-                toastr.warning(t('durationLimit'));
+        this.updateSubtitles(subtitles).then(() => {
+            const { art } = this.state;
+            const currentTime = subtitles[index].startTime + 0.001;
+            if (!art.playing && currentTime > 0 && currentTime !== art.currentTime) {
+                if (currentTime <= art.duration) {
+                    art.seek = currentTime;
+                } else {
+                    toastr.warning(t('durationLimit'));
+                }
             }
-        }
+        });
     }
 
     // 激活单个字幕的高亮
-    highlightSubtitle(index) {
-        if (!this.checkIndex(index)) return;
+    highlightSubtitle(sub) {
+        if (!this.checkSub(sub)) return;
         const subtitles = this.state.subtitles.map(item => {
             item.highlight = false;
             return item;
         });
-        subtitles[index].highlight = true;
+        sub.highlight = true;
         this.updateSubtitles(subtitles);
     }
 
-    // 更新或插入单个字幕
-    updateSubtitle(index, subtitle) {
+    // 更新单个字幕
+    updateSubtitle(index, sub) {
         const subtitles = this.state.subtitles.map(item => {
             item.highlight = false;
             item.editing = false;
             return item;
         });
 
-        if (subtitle) {
-            subtitle.highlight = true;
-            subtitles[index] = subtitle;
-        } else {
-            const previous = subtitles[index - 1];
-            subtitles.splice(index, 0, {
-                editing: false,
-                highlight: true,
-                start: previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.001',
-                end: previous ? secondToTime(previous.endTime + 1.001) : '00:00:01.001',
-                text: t('your'),
-            });
-        }
-
+        subtitles[index] = sub;
         this.updateSubtitles(subtitles, true).then(() => {
             toastr.success(t('update'));
-            this.updateCurrentIndex(index);
+            this.updateCurrentIndex(sub);
+        });
+    }
+
+    // 插入单个新字幕
+    insertSubtitle(index) {
+        const subtitles = this.state.subtitles.map(item => {
+            item.highlight = false;
+            item.editing = false;
+            return item;
+        });
+        const previous = subtitles[index - 1];
+        const start = previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.001';
+        const end = previous ? secondToTime(previous.endTime + 1.001) : '00:00:01.001';
+        const text = t('your');
+        const sub = new Sub(start, end, text);
+        sub.highlight = true;
+        subtitles.splice(index, 0, sub);
+        this.updateSubtitles(subtitles, true).then(() => {
+            toastr.success(t('add'));
+            this.updateCurrentIndex(sub);
         });
     }
 
     // 合并当前与下一个字幕
-    mergeSubtitle(index) {
-        if (!this.checkIndex(index)) return;
+    mergeSubtitle(sub) {
+        if (!this.checkSub(sub)) return;
         const subtitles = this.state.subtitles;
+        const index = subtitles.indexOf(sub);
         const current = subtitles[index];
         const next = subtitles[index + 1];
         if (!next) return;
-        const subtitle = {
-            editing: false,
-            highlight: true,
-            start: current.start,
-            end: next.end,
-            text: current.text + '\n' + next.text,
-        };
-        subtitles[index] = subtitle;
+        const merge = new Sub(current.start, next.end, current.text + '\n' + next.text);
+        merge.highlight = true;
+        subtitles[index] = merge;
         subtitles.splice(index + 1, 1);
         this.updateSubtitles(subtitles, true).then(() => {
             toastr.success(t('merge'));
-            this.updateCurrentIndex(index);
+            this.updateCurrentIndex(sub);
         });
     }
 
@@ -268,31 +290,7 @@ export default class App extends React.Component {
         return new Promise(resolve => {
             this.setState(
                 {
-                    subtitles: subtitles.map((item, index) => {
-                        const previous = subtitles[index - 1];
-                        return {
-                            ...item,
-                            index: index,
-                            get startTime() {
-                                return timeToSecond(this.start);
-                            },
-                            set startTime(time) {
-                                this.start = secondToTime(clamp(time, 0, Infinity));
-                            },
-                            get endTime() {
-                                return timeToSecond(this.end);
-                            },
-                            set endTime(time) {
-                                this.end = secondToTime(clamp(time, 0, Infinity));
-                            },
-                            get duration() {
-                                return (this.endTime - this.startTime).toFixed(3);
-                            },
-                            get overlapping() {
-                                return previous && this.startTime < previous.endTime;
-                            },
-                        };
-                    }),
+                    subtitles: subtitles,
                 },
                 () => {
                     const subtitles = this.state.subtitles;
@@ -319,20 +317,23 @@ export default class App extends React.Component {
         const currentIndex = this.state.subtitles.findIndex(item => {
             return item.startTime <= currentTime && item.endTime >= currentTime;
         });
-        this.highlightSubtitle(currentIndex);
         this.setState(
             {
                 currentTime,
             },
             () => {
-                this.updateCurrentIndex(currentIndex);
+                const sub = this.state.subtitles[currentIndex];
+                this.highlightSubtitle(sub);
+                this.updateCurrentIndex(sub);
             },
         );
     }
 
     // 滚动到某个字幕
-    updateCurrentIndex(index) {
-        if (!this.checkIndex(index)) return;
+    updateCurrentIndex(sub) {
+        if (!this.checkSub(sub)) return;
+        const subtitles = this.state.subtitles;
+        const index = subtitles.indexOf(sub);
         this.setState({
             currentIndex: index,
         });
@@ -433,7 +434,7 @@ export default class App extends React.Component {
     render() {
         const props = {
             ...this.state,
-            checkIndex: this.checkIndex.bind(this),
+            checkOverlapping: this.checkOverlapping.bind(this),
             removeSubtitle: this.removeSubtitle.bind(this),
             editSubtitle: this.editSubtitle.bind(this),
             highlightSubtitle: this.highlightSubtitle.bind(this),
@@ -447,6 +448,7 @@ export default class App extends React.Component {
             removeEmptySubtitle: this.removeEmptySubtitle.bind(this),
             removeAllSubtitle: this.removeAllSubtitle.bind(this),
             mergeSubtitle: this.mergeSubtitle.bind(this),
+            insertSubtitle: this.insertSubtitle.bind(this),
             timeOffset: this.timeOffset.bind(this),
             translate: this.translate.bind(this),
             removeCache: this.removeCache.bind(this),

@@ -1,6 +1,7 @@
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
 import assToVtt from './assToVtt';
+import Sub from './sub';
 
 momentDurationFormatSetup(moment);
 
@@ -32,10 +33,6 @@ export function sleep(ms = 0) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function checkDuration(duration) {
-    return /^\d+\.\d{3}/.test(duration);
-}
-
 export function clamp(num, a, b) {
     return Math.max(Math.min(num, Math.max(a, b)), Math.min(a, b));
 }
@@ -64,42 +61,24 @@ export function debounce(func, wait, context) {
 }
 
 export function urlToArr(url) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         const $video = document.createElement('video');
         const $track = document.createElement('track');
         $track.default = true;
         $track.kind = 'metadata';
         $video.appendChild($track);
+        $track.onerror = error => {
+            reject(error);
+        };
         $track.onload = () => {
-            const arr = Array.from($track.track.cues).map((item, index) => {
-                return {
-                    editing: false,
-                    highlight: false,
-                    index: index,
-                    start: secondToTime(item.startTime),
-                    end: secondToTime(item.endTime),
-                    text: item.text,
-                    get startTime() {
-                        return timeToSecond(this.start);
-                    },
-                    set startTime(time) {
-                        this.start = secondToTime(clamp(time, 0, Infinity));
-                    },
-                    get endTime() {
-                        return timeToSecond(this.end);
-                    },
-                    set endTime(time) {
-                        this.end = secondToTime(clamp(time, 0, Infinity));
-                    },
-                    get duration() {
-                        return (this.endTime - this.startTime).toFixed(3);
-                    },
-                    get overlapping() {
-                        return arr[index - 1] && this.startTime < arr[index - 1].endTime;
-                    },
-                };
-            });
-            resolve(arr);
+            resolve(
+                Array.from($track.track.cues).map(item => {
+                    const start = secondToTime(item.startTime);
+                    const end = secondToTime(item.endTime);
+                    const text = item.text;
+                    return new Sub(start, end, text);
+                }),
+            );
         };
         $track.src = url;
     });
@@ -142,10 +121,7 @@ export function srtToVtt(srtText) {
 export function readSubtitleFromFile(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        const type = file.name
-            .split('.')
-            .pop()
-            .toLowerCase();
+        const type = getExt(file.name);
         reader.onload = () => {
             if (type === 'srt') {
                 resolve(srtToVtt(reader.result));
@@ -162,22 +138,21 @@ export function readSubtitleFromFile(file) {
     });
 }
 
-export function readSubtitleFromUrl(url) {
-    let type;
-    return fetch(url)
-        .then(response => {
-            type = response.headers.get('Content-Type');
-            return response.text();
-        })
-        .then(text => {
-            if (/x-subrip/gi.test(type)) {
-                return srtToVtt(text);
-            }
-            return text;
-        })
-        .catch(error => {
-            throw error;
-        });
+export async function readSubtitleFromUrl(url) {
+    try {
+        const response = await fetch(url);
+        const text = await response.text();
+        const type = getExt(url);
+        if (type === 'srt') {
+            return srtToVtt(text);
+        }
+        if (type === 'ass') {
+            return assToVtt(text);
+        }
+        return text.replace(/{[\s\S]*?}/g, '');
+    } catch (error) {
+        throw error;
+    }
 }
 
 export function downloadFile(url, name) {
@@ -188,10 +163,6 @@ export function downloadFile(url, name) {
     document.body.appendChild(elink);
     elink.click();
     document.body.removeChild(elink);
-}
-
-export function runPromisesInSeries(ps) {
-    return ps.reduce((p, next) => p.then(next), Promise.resolve());
 }
 
 export function escapeHTML(str) {
@@ -220,4 +191,9 @@ export function unescapeHTML(str) {
                 '&quot;': '"',
             }[tag] || tag),
     );
+}
+
+export function getSearchParams(name) {
+    const locationUrl = new URL(window.location.href);
+    return decodeURIComponent(locationUrl.searchParams.get(name) || '');
 }

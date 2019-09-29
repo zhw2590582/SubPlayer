@@ -9,6 +9,7 @@ const Wrapper = styled.div`
     display: flex;
     height: ${timelineHeight}px;
     background-color: rgb(28, 32, 34);
+    border-top: 1px solid rgb(10, 10, 10);
 `;
 
 const Canvas = styled.canvas`

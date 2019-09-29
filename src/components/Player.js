@@ -15,7 +15,7 @@ const VideoBox = styled.div`
     align-items: center;
     height: 70%;
     padding: 10px;
-    border-bottom: 1px solid rgb(36, 41, 45);
+    border-bottom: 1px solid rgb(10, 10, 10);
 
     .artplayer-video-player .artplayer-subtitle {
         background-color: rgba(0, 0, 0, 0.5);
