@@ -10,7 +10,7 @@
 
 ## Homepage
 
-[Checkout the homepage](https://zhw2590582.github.io/SubPlayer/) from Github Pages
+[Checkout the homepage](https://subplayer.js.org) from Github Pages
 
 ## Features
 
