@@ -12,6 +12,25 @@
 
 <body>
     <div id="root"></div>
+    <script>
+        var isLocalhost = Boolean(
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '[::1]' ||
+            window.location.hostname.match(
+                /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+            )
+        );
+        var _hmt = _hmt || [];
+        (function () {
+            if (!isLocalhost) {
+                var hm = document.createElement('script');
+                hm.src = 'https://hm.baidu.com/hm.js?9c948099957cd6a524dac835394d4495';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(hm, s);
+            }
+        })();
+
+    </script>
 </body>
 
 </html>
