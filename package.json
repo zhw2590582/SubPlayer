@@ -1,7 +1,7 @@
 {
     "name": "subplayer",
     "version": "1.0.0",
-    "private": true,
+    "description": "SubPlayer is a online subtitle editor",
     "homepage": "https://zhw2590582.github.io/SubPlayer/",
     "dependencies": {
         "artplayer-react": "^3.1.16",
@@ -23,6 +23,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build && rm -rf docs && mv build docs",
+        "lint": "npx eslint src",
         "predeploy": "yarn build",
         "deploy": "gh-pages -d build"
     },
