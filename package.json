@@ -2,7 +2,7 @@
     "name": "subplayer",
     "version": "1.0.0",
     "description": "SubPlayer is a online subtitle editor",
-    "homepage": "https://zhw2590582.github.io/SubPlayer/",
+    "homepage": "https://subplayer.js.org",
     "dependencies": {
         "artplayer-react": "^3.1.16",
         "dequal": "^1.0.0",
@@ -12,12 +12,12 @@
         "normalize.css": "^8.0.1",
         "nprogress": "^0.2.0",
         "p-limit": "^2.2.1",
-        "react": "^16.9.0",
-        "react-dom": "^16.9.0",
-        "react-i18nify": "^2.0.0-16",
+        "react": "^16.10.1",
+        "react-dom": "^16.10.1",
+        "react-i18nify": "^2.0.1",
         "react-scripts": "3.1.2",
         "react-virtualized": "^9.21.1",
-        "styled-components": "^4.3.2",
+        "styled-components": "^4.4.0",
         "toastr": "^2.1.4"
     },
     "scripts": {

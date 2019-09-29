@@ -12,6 +12,19 @@
 
 [Checkout the homepage](https://zhw2590582.github.io/SubPlayer/) from Github Pages
 
+## Features
+
+-   Online and real-time preview of subtitles
+-   Support `ass`, `srt`, `vtt` subtitle upload editing, and support export to `vtt`
+-   Support subtitle insertion, deletion , offset and merging
+-   Support large file list display, don't worry about too many subtitles
+-   Support bulk Google translation or Baidu translation
+-   Support for subtitle history rollback
+-   Support subtitle overall time offset
+-   Save last subtitle edit locally
+-   Real-time timeline display of subtitles
+-   And more...
+
 ## Donations
 
 We accept donations through these channels:

@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/SubPlayer/static/css/main.4f5dbe81.chunk.css",
-    "main.js": "/SubPlayer/static/js/main.bc020295.chunk.js",
-    "main.js.map": "/SubPlayer/static/js/main.bc020295.chunk.js.map",
-    "runtime-main.js": "/SubPlayer/static/js/runtime-main.fb386181.js",
-    "runtime-main.js.map": "/SubPlayer/static/js/runtime-main.fb386181.js.map",
-    "static/css/2.c5d91536.chunk.css": "/SubPlayer/static/css/2.c5d91536.chunk.css",
-    "static/js/2.673a53b2.chunk.js": "/SubPlayer/static/js/2.673a53b2.chunk.js",
-    "static/js/2.673a53b2.chunk.js.map": "/SubPlayer/static/js/2.673a53b2.chunk.js.map",
-    "index.html": "/SubPlayer/index.html",
-    "precache-manifest.0cead344db19ade8ddb8589503d6be99.js": "/SubPlayer/precache-manifest.0cead344db19ade8ddb8589503d6be99.js",
-    "service-worker.js": "/SubPlayer/service-worker.js",
-    "static/css/2.c5d91536.chunk.css.map": "/SubPlayer/static/css/2.c5d91536.chunk.css.map",
-    "static/css/main.4f5dbe81.chunk.css.map": "/SubPlayer/static/css/main.4f5dbe81.chunk.css.map",
-    "static/media/fontello.css": "/SubPlayer/static/media/fontello.f90296ac.ttf"
+    "main.css": "/static/css/main.e0eceb71.chunk.css",
+    "main.js": "/static/js/main.2d9a45f7.chunk.js",
+    "main.js.map": "/static/js/main.2d9a45f7.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.439e6b80.js",
+    "runtime-main.js.map": "/static/js/runtime-main.439e6b80.js.map",
+    "static/css/2.c5d91536.chunk.css": "/static/css/2.c5d91536.chunk.css",
+    "static/js/2.f18727f1.chunk.js": "/static/js/2.f18727f1.chunk.js",
+    "static/js/2.f18727f1.chunk.js.map": "/static/js/2.f18727f1.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.988a1b5a0a72987d67717c230bc7cd8b.js": "/precache-manifest.988a1b5a0a72987d67717c230bc7cd8b.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.c5d91536.chunk.css.map": "/static/css/2.c5d91536.chunk.css.map",
+    "static/css/main.e0eceb71.chunk.css.map": "/static/css/main.e0eceb71.chunk.css.map",
+    "static/media/fontello.css": "/static/media/fontello.f90296ac.ttf"
   }
 }
