@@ -322,7 +322,11 @@ export default class App extends React.Component {
                             this.history.push(subtitles.map(sub => sub.clone));
                         }
 
-                        this.storage.set('subtitles', subtitles);
+                        this.storage.set('subtitles', subtitles.map(item => ({
+                            start: item.start,
+                            end: item.end,
+                            text: item.text,
+                        })));
                     }
                     resolve(subtitles);
                 },
