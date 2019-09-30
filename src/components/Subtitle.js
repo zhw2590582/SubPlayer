@@ -40,10 +40,12 @@ const Wrapper = styled.div`
             }
 
             &.highlight {
+                color: #fff;
                 background-color: #2196f3;
             }
 
             &.overlapping {
+                color: #fff;
                 background-color: #c75123;
             }
 
