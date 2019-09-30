@@ -4,7 +4,6 @@ import { t, Translate } from 'react-i18nify';
 import toastr from 'toastr';
 import { checkTime, timeToSecond, escapeHTML, unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
-import Sub from '../utils/sub';
 
 const Wrapper = styled.div`
     flex: 1;
@@ -115,6 +114,7 @@ export default class Subtitle extends React.Component {
         const startTime = timeToSecond(subtitle.start);
         const endTime = timeToSecond(subtitle.end);
         const previous = subtitles[index - 1];
+        const next = subtitles[index + 1];
 
         if (index !== -1) {
             if (!checkTime(subtitle.start)) {
@@ -132,6 +132,11 @@ export default class Subtitle extends React.Component {
                 return false;
             }
 
+            if ((previous && endTime < previous.startTime) || (next && startTime > next.endTime)) {
+                toastr.error(t('moveAcross'));
+                return false;
+            }
+
             if (previous && startTime < previous.endTime) {
                 toastr.warning(t('overlaps'));
             }
@@ -143,7 +148,7 @@ export default class Subtitle extends React.Component {
         const index = this.props.subtitles.indexOf(sub);
         this.setState({
             index: index,
-            subtitle: new Sub(sub.start, sub.end, sub.text),
+            subtitle: sub.clone,
         });
         this.props.editSubtitle(sub);
     }

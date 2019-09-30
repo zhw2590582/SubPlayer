@@ -48,7 +48,8 @@ export default {
         to: 'To',
         use: 'Use',
 
-        moveInvalid: 'Subtitle parameters are invalid, please try again',
+        moveInvalid: "Subtitle parameters are invalid, please try again",
+        moveAcross: "Can't move across subtitles, please try again",
         deleteLine: 'Delete line',
         insertBefore: 'Insert before',
         insertAfter: 'Insert after',
@@ -104,6 +105,7 @@ export default {
         use: '使用',
 
         moveInvalid: '字幕参数不合法，请重试',
+        moveAcross: '不能跨字幕移动，请重试',
         deleteLine: '删除字幕',
         insertBefore: '之前插入',
         insertAfter: '之后插入',

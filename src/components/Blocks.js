@@ -176,7 +176,7 @@ export default class Blocks extends React.Component {
                 const endTime = this.sub.endTime + this.leftDiff;
 
                 if ((previous && endTime < previous.startTime) || (next && startTime > next.endTime)) {
-                    toastr.warning(t('moveInvalid'));
+                    toastr.error(t('moveAcross'));
                 } else {
                     if (this.type === 'left') {
                         if (startTime >= 0 && startTime < this.sub.endTime) {
@@ -185,7 +185,7 @@ export default class Blocks extends React.Component {
                             videoSeek(this.sub, this.isPlaying);
                         } else {
                             this.$sub.style.width = `${this.subWidth}px`;
-                            toastr.warning(t('moveInvalid'));
+                            toastr.error(t('moveInvalid'));
                         }
                     } else if (this.type === 'right') {
                         if (endTime >= 0 && endTime > this.sub.startTime) {
@@ -194,7 +194,7 @@ export default class Blocks extends React.Component {
                             videoSeek(this.sub, this.isPlaying);
                         } else {
                             this.$sub.style.width = `${this.subWidth}px`;
-                            toastr.warning(t('moveInvalid'));
+                            toastr.error(t('moveInvalid'));
                         }
                     } else {
                         if (startTime > 0 && endTime > 0 && endTime > startTime) {
@@ -204,7 +204,7 @@ export default class Blocks extends React.Component {
                             videoSeek(this.sub, this.isPlaying);
                         } else {
                             this.$sub.style.width = `${this.subWidth}px`;
-                            toastr.warning(t('moveInvalid'));
+                            toastr.error(t('moveInvalid'));
                         }
                     }
                 }

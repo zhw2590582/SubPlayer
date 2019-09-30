@@ -10,7 +10,11 @@ export default class Sub {
     }
 
     get check() {
-        return this.startTime > 0 && this.endTime > 0 && this.startTime < this.endTime;
+        return this.startTime > 0 && this.endTime > 0 && this.startTime < this.endTime && !this.text.trim();
+    }
+
+    get clone() {
+        return new Sub(this.start, this.end, this.text);
     }
 
     get startTime() {
