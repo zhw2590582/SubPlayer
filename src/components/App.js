@@ -13,11 +13,13 @@ import {
     debounce,
     arrToVtt,
     vttToUrl,
+    vttToUrlWorker,
     readSubtitleFromUrl,
     urlToArr,
     downloadFile,
     secondToTime,
     clamp,
+    sleep,
     getSearchParams,
 } from '../utils';
 
@@ -82,6 +84,7 @@ let defaultVideoUrl = 'https://zhw2590582.github.io/assets-cdn/video/fullmetal-a
 let defaultSubtitleUrl = 'https://zhw2590582.github.io/assets-cdn/subtitle/fullmetal-alchemist-again.vtt';
 
 export default class App extends React.Component {
+    vttToUrl = new Worker(vttToUrlWorker());
     storage = new Storage();
     inTranslation = false;
     history = [];
@@ -151,6 +154,10 @@ export default class App extends React.Component {
                     throw error;
                 });
         }
+
+        this.vttToUrl.onmessage = event => {
+            this.updateSubtitleUrl(event.data);
+        };
     }
 
     // 验证字幕在数组范围内
@@ -195,16 +202,27 @@ export default class App extends React.Component {
         const index = subtitles.indexOf(sub);
         subtitles[index].editing = true;
         this.updateSubtitles(subtitles).then(() => {
-            const { art } = this.state;
-            const currentTime = subtitles[index].startTime + 0.001;
-            if (!art.playing && currentTime > 0 && currentTime !== art.currentTime) {
-                if (currentTime <= art.duration) {
-                    art.seek = currentTime;
-                } else {
-                    toastr.warning(t('durationLimit'));
-                }
-            }
+            this.videoSeek(sub);
         });
+    }
+
+    // 视频跳转到某个字幕的开始时间, 可选是否播放
+    videoSeek(sub, isPlay) {
+        const { art } = this.state;
+        const currentTime = sub.startTime + 0.001;
+        if (!art.playing && currentTime > 0 && currentTime !== art.currentTime) {
+            if (currentTime <= art.duration) {
+                // 由于字幕url是异步的，需要时间去同步
+                sleep(300).then(() => {
+                    art.seek = currentTime;
+                    if (isPlay) {
+                        art.play = true;
+                    }
+                });
+            } else {
+                toastr.warning(t('durationLimit'));
+            }
+        }
     }
 
     // 激活单个字幕的高亮
@@ -295,7 +313,7 @@ export default class App extends React.Component {
                 () => {
                     const subtitles = this.state.subtitles;
                     if (updateUrl) {
-                        this.updateSubtitleUrl(vttToUrl(arrToVtt(subtitles)));
+                        this.vttToUrl.postMessage(subtitles);
 
                         if (!isUndo) {
                             if (this.history.length >= 100) {
@@ -449,6 +467,7 @@ export default class App extends React.Component {
             removeAllSubtitle: this.removeAllSubtitle.bind(this),
             mergeSubtitle: this.mergeSubtitle.bind(this),
             insertSubtitle: this.insertSubtitle.bind(this),
+            videoSeek: this.videoSeek.bind(this),
             timeOffset: this.timeOffset.bind(this),
             translate: this.translate.bind(this),
             removeCache: this.removeCache.bind(this),

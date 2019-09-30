@@ -29,12 +29,15 @@ export default class Player extends React.Component {
 
     static getDerivedStateFromProps(props, state) {
         if (state.art) {
-            const videoUrl = state.art.template.$video.src;
-            const subtitleUrl = state.art.template.$track.src;
+            const $video = state.art.template.$video;
+            const $track = state.art.template.$track;
+            const videoUrl = $video.src;
+            const subtitleUrl = $track ? $track.src : '';
             if (props.videoUrl !== videoUrl) {
                 state.art.player.switchUrl(props.videoUrl);
                 URL.revokeObjectURL(videoUrl);
             }
+
             if (props.subtitleUrl !== subtitleUrl) {
                 state.art.subtitle.init(props.subtitleUrl);
                 URL.revokeObjectURL(subtitleUrl);

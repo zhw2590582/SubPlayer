@@ -92,14 +92,34 @@ export function vttToUrl(vttText) {
     );
 }
 
+export function vttToUrlWorker() {
+    return URL.createObjectURL(
+        new Blob([
+            `onmessage = event => {
+                postMessage(URL.createObjectURL(
+                    new Blob([
+                        \`WEBVTT
+
+                        \${event.data.map((item, index) => \`
+                        \${index + 1}
+                        \${item.start} --> \${item.end}
+                        \${item.text}\`).join('\\n\\n')}
+                        \`
+                    ], {
+                        type: 'text/vtt',
+                    }),
+                ))
+            }`,
+        ]),
+    );
+}
+
 export function arrToVtt(arr) {
     return (
         'WEBVTT\n\n' +
         arr
             .map((item, index) => {
-                return (
-                    index + 1 + '\n' + secondToTime(item.start) + ' --> ' + secondToTime(item.end) + '\n' + item.text
-                );
+                return index + 1 + '\n' + item.start + ' --> ' + item.end + '\n' + item.text;
             })
             .join('\n\n')
     );

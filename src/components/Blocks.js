@@ -129,13 +129,14 @@ export default class Blocks extends React.Component {
     subWidth = 0;
     leftStart = 0;
     isDroging = false;
+    isPlaying = false;
     $subs = React.createRef();
 
     onMouseDown(item, event, type) {
         const { highlightSubtitle, updateCurrentIndex } = this.props;
-        const isPause = this.props.art.pause;
-        if (!isPause) {
-            this.props.art.pause = true;
+        this.isPlaying = this.props.art.playing;
+        if (this.isPlaying) {
+            this.props.art.play = false;
         } else {
             highlightSubtitle(item);
             updateCurrentIndex(item);
@@ -165,9 +166,9 @@ export default class Blocks extends React.Component {
     }
 
     onMouseup() {
+        const { subtitles, videoSeek, updateSubtitle } = this.props;
         if (this.isDroging) {
             if (this.leftDiff) {
-                const subtitles = this.props.subtitles;
                 const index = subtitles.indexOf(this.sub);
                 const previous = subtitles[index - 1];
                 const next = subtitles[index + 1];
@@ -180,7 +181,8 @@ export default class Blocks extends React.Component {
                     if (this.type === 'left') {
                         if (startTime >= 0 && startTime < this.sub.endTime) {
                             this.sub.startTime = startTime;
-                            this.props.updateSubtitle(index, this.sub);
+                            updateSubtitle(index, this.sub);
+                            videoSeek(this.sub, this.isPlaying);
                         } else {
                             this.$sub.style.width = `${this.subWidth}px`;
                             toastr.warning(t('moveInvalid'));
@@ -188,7 +190,8 @@ export default class Blocks extends React.Component {
                     } else if (this.type === 'right') {
                         if (endTime >= 0 && endTime > this.sub.startTime) {
                             this.sub.endTime = endTime;
-                            this.props.updateSubtitle(index, this.sub);
+                            updateSubtitle(index, this.sub);
+                            videoSeek(this.sub, this.isPlaying);
                         } else {
                             this.$sub.style.width = `${this.subWidth}px`;
                             toastr.warning(t('moveInvalid'));
@@ -197,7 +200,8 @@ export default class Blocks extends React.Component {
                         if (startTime > 0 && endTime > 0 && endTime > startTime) {
                             this.sub.startTime = startTime;
                             this.sub.endTime = endTime;
-                            this.props.updateSubtitle(index, this.sub);
+                            updateSubtitle(index, this.sub);
+                            videoSeek(this.sub, this.isPlaying);
                         } else {
                             this.$sub.style.width = `${this.subWidth}px`;
                             toastr.warning(t('moveInvalid'));
@@ -215,6 +219,7 @@ export default class Blocks extends React.Component {
             this.subWidth = 0;
             this.leftStart = 0;
             this.isDroging = false;
+            this.isPlaying = false;
         }
     }
 
