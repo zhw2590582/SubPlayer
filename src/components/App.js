@@ -419,7 +419,7 @@ export default class App extends React.Component {
 
     // 删除缓存
     removeCache() {
-        this.storage.clean();
+        this.storage.del('subtitles');
         window.location.reload();
     }
 
