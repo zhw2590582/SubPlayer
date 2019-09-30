@@ -1,6 +1,6 @@
 {
     "name": "subplayer",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "SubPlayer is a online subtitle editor",
     "homepage": "https://subplayer.js.org",
     "dependencies": {
@@ -24,8 +24,7 @@
         "build": "react-scripts build && rm -rf docs && mv build docs",
         "lint": "npx eslint src",
         "predeploy": "yarn build",
-        "deploy": "gh-pages -d build",
-        "sizereport": "npx sizereport --config"
+        "deploy": "gh-pages -d build"
     },
     "eslintConfig": {
         "extends": "react-app"
@@ -41,8 +40,5 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
-    },
-    "devDependencies": {
-        "travis-size-report": "^1.1.0"
     }
 }
