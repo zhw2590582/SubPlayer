@@ -160,11 +160,10 @@ export default class Subtitle extends React.Component {
     }
 
     onChange(name, value) {
+        const subtitle = this.state.subtitle;
+        subtitle[name] = value;
         this.setState({
-            subtitle: {
-                ...this.state.subtitle,
-                [name]: value,
-            },
+            subtitle,
         });
     }
 
