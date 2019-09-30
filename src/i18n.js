@@ -17,12 +17,12 @@ export default {
         historyEmpty: 'History is empty',
 
         description: 'A Online Subtitle Editor: vtt、srt、ass',
-        uploadSubtitle: 'Upload subtitle file',
+        uploadSubtitle: 'Open subtitle file',
         uploadSubtitleErr: 'Only the following subtitle are supported: vtt、srt、ass',
-        uploadVideo: 'Upload video file',
+        uploadVideo: 'Open video file',
         uploadVideoErr: 'This video format is not supported',
-        btnUploadSubtitle: 'Upload Subtitle',
-        btnUploadVideo: 'Upload Video',
+        btnUploadSubtitle: 'Open Subtitle',
+        btnUploadVideo: 'Open Video',
         btnDownloadSubtitle: 'Download Subtitle',
 
         startTime: 'Start time format needs to match like: [00:00:00.000]',
@@ -72,12 +72,12 @@ export default {
         historyEmpty: '历史为空',
 
         description: '一个在线字幕编辑器：vtt、srt、ass',
-        uploadSubtitle: '上传字幕文件',
+        uploadSubtitle: '打开字幕文件',
         uploadSubtitleErr: '当前只支持一下字幕: vtt、srt、ass',
-        uploadVideo: '上传视频文件',
+        uploadVideo: '打开视频文件',
         uploadVideoErr: '该视频格式不支持',
-        btnUploadSubtitle: '上传字幕',
-        btnUploadVideo: '上传视频',
+        btnUploadSubtitle: '打开字幕',
+        btnUploadVideo: '打开视频',
         btnDownloadSubtitle: '下载字幕',
 
         startTime: '开始时间的格式需要类似: [00:00:00.000]',
