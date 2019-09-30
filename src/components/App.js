@@ -199,8 +199,7 @@ export default class App extends React.Component {
             item.editing = false;
             return item;
         });
-        const index = subtitles.indexOf(sub);
-        subtitles[index].editing = true;
+        sub.editing = true;
         this.updateSubtitles(subtitles).then(() => {
             this.videoSeek(sub);
         });
@@ -484,7 +483,7 @@ export default class App extends React.Component {
             <React.Fragment>
                 <GlobalStyle />
                 <Header {...props} />
-                <Main className="main">
+                <Main>
                     <Subtitle {...props} />
                     <Player {...props} />
                 </Main>
