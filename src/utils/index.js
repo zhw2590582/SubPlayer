@@ -1,9 +1,6 @@
-import moment from 'moment';
-import momentDurationFormatSetup from 'moment-duration-format';
+import DT from 'duration-time-conversion';
 import assToVtt from './assToVtt';
 import Sub from './sub';
-
-momentDurationFormatSetup(moment);
 
 export function checkTime(time) {
     return /^(\d+):([0-5][0-9]):([0-5][0-9])\.\d{3}$/.test(time);
@@ -37,15 +34,12 @@ export function clamp(num, a, b) {
     return Math.max(Math.min(num, Math.max(a, b)), Math.min(a, b));
 }
 
-export function secondToTime(seconds) {
-    const duration = moment.duration(seconds, 'seconds');
-    return duration.format('hh:mm:ss.SSS', {
-        trim: false,
-    });
+export function secondToTime(seconds = 0) {
+    return DT.d2t(seconds.toFixed(3));
 }
 
 export function timeToSecond(time) {
-    return moment.duration(time).asSeconds();
+    return DT.t2d(time);
 }
 
 export function debounce(func, wait, context) {

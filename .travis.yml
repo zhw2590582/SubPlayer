@@ -9,3 +9,6 @@ before_script:
 script:
     - npm run lint
     - npm run build
+
+after_success:
+    - npm run sizereport
