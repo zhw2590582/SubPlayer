@@ -4,6 +4,7 @@ import { t, Translate } from 'react-i18nify';
 import toastr from 'toastr';
 import { checkTime, timeToSecond, escapeHTML, unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
+import Sub from '../utils/sub';
 
 const Wrapper = styled.div`
     flex: 1;
@@ -118,6 +119,10 @@ export default class Subtitle extends React.Component {
     check() {
         const { index, subtitle } = this.state;
         const { subtitles } = this.props;
+        const startTime = timeToSecond(subtitle.start);
+        const endTime = timeToSecond(subtitle.end);
+        const previous = subtitles[index - 1];
+        const next = subtitles[index + 1];
 
         if (index !== -1) {
             if (!checkTime(subtitle.start)) {
@@ -125,20 +130,16 @@ export default class Subtitle extends React.Component {
                 return false;
             }
 
-            const startTime = timeToSecond(subtitle.start);
             if (!checkTime(subtitle.end)) {
                 toastr.error(t('endTime'));
                 return false;
             }
 
-            const endTime = timeToSecond(subtitle.end);
             if (startTime >= endTime) {
                 toastr.error(t('greater'));
                 return false;
             }
 
-            const previous = subtitles[index - 1];
-            const next = subtitles[index + 1];
             if ((previous && endTime < previous.startTime) || (next && startTime > next.endTime)) {
                 toastr.error(t('moveAcross'));
                 return false;
@@ -155,7 +156,12 @@ export default class Subtitle extends React.Component {
         const index = this.props.subtitles.indexOf(sub);
         this.setState({
             index: index,
-            subtitle: sub.clone,
+            subtitle: {
+                start: sub.start,
+                end: sub.end,
+                text: sub.text,
+                duration: sub.duration,
+            },
         });
         this.props.editSubtitle(sub);
     }
@@ -163,7 +169,7 @@ export default class Subtitle extends React.Component {
     onUpdate() {
         if (this.check()) {
             const { index, subtitle } = this.state;
-            this.props.updateSubtitle(index, subtitle);
+            this.props.updateSubtitle(index, new Sub(subtitle.start, subtitle.end, subtitle.text));
             this.setState({
                 index: -1,
                 subtitle: {
@@ -178,21 +184,10 @@ export default class Subtitle extends React.Component {
 
     onChange(name, value) {
         const subtitle = this.state.subtitle;
-        if (name === 'start' || name === 'end') {
-            if (checkTime(value)) {
-                subtitle[name] = value;
-                this.setState({
-                    subtitle,
-                });
-            } else {
-                toastr.error(t(`${name}Time`));
-            }
-        } else {
-            subtitle[name] = value;
-            this.setState({
-                subtitle,
-            });
-        }
+        subtitle[name] = value;
+        this.setState({
+            subtitle,
+        });
     }
 
     onRemove(sub) {
