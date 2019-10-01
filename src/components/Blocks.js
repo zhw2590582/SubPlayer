@@ -166,7 +166,7 @@ export default class Blocks extends React.Component {
     }
 
     onMouseup() {
-        const { subtitles, videoSeek, updateSubtitle } = this.props;
+        const { subtitles, videoSeek, updateSubtitle, overallOffset, timeOffset } = this.props;
         if (this.isDroging) {
             if (this.leftDiff) {
                 const index = subtitles.indexOf(this.sub);
@@ -198,9 +198,13 @@ export default class Blocks extends React.Component {
                         }
                     } else {
                         if (startTime > 0 && endTime > 0 && endTime > startTime) {
-                            this.sub.startTime = startTime;
-                            this.sub.endTime = endTime;
-                            updateSubtitle(index, this.sub);
+                            if (overallOffset) {
+                                timeOffset(Number(this.leftDiff.toFixed(3)));
+                            } else {
+                                this.sub.startTime = startTime;
+                                this.sub.endTime = endTime;
+                                updateSubtitle(index, this.sub);
+                            }
                             videoSeek(this.sub, this.isPlaying);
                         } else {
                             this.$sub.style.width = `${this.subWidth}px`;

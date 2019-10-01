@@ -47,6 +47,9 @@ export default {
         btnBatchTranslate: 'Batch Translate',
         to: 'To',
         use: 'Use',
+        btnOverallOffset: 'Timeline overall offset',
+        on: 'On',
+        off: 'Off',
 
         moveInvalid: "Subtitle parameters are invalid, please try again",
         moveAcross: "Can't move across subtitles, please try again",
@@ -103,6 +106,9 @@ export default {
         btnBatchTranslate: '批量翻译',
         to: '到',
         use: '使用',
+        btnOverallOffset: '时间轴整体偏移',
+        on: '开',
+        off: '关',
 
         moveInvalid: '字幕参数不合法，请重试',
         moveAcross: '不能跨字幕移动，请重试',

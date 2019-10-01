@@ -98,6 +98,7 @@ export default class App extends React.Component {
         subtitleUrl: '',
         currentTime: 0,
         currentIndex: -1,
+        overallOffset: false,
         subtitles: [],
     };
 
@@ -321,11 +322,14 @@ export default class App extends React.Component {
                             this.history.push(subtitles.map(sub => sub.clone));
                         }
 
-                        this.storage.set('subtitles', subtitles.map(item => ({
-                            start: item.start,
-                            end: item.end,
-                            text: item.text,
-                        })));
+                        this.storage.set(
+                            'subtitles',
+                            subtitles.map(item => ({
+                                start: item.start,
+                                end: item.end,
+                                text: item.text,
+                            })),
+                        );
                     }
                     resolve(subtitles);
                 },
@@ -391,7 +395,7 @@ export default class App extends React.Component {
             return item;
         });
         this.updateSubtitles(subtitles, true).then(() => {
-            toastr.success(`${t('offset')}: ${time}`);
+            toastr.success(`${t('offset')}: ${time}s`);
         });
     }
 
@@ -452,6 +456,13 @@ export default class App extends React.Component {
         );
     }
 
+    // 时间轴整体偏移开关
+    overallOffsetSwitch() {
+        this.setState({
+            overallOffset: !this.state.overallOffset,
+        });
+    }
+
     render() {
         const props = {
             ...this.state,
@@ -470,6 +481,7 @@ export default class App extends React.Component {
             removeAllSubtitle: this.removeAllSubtitle.bind(this),
             mergeSubtitle: this.mergeSubtitle.bind(this),
             insertSubtitle: this.insertSubtitle.bind(this),
+            overallOffsetSwitch: this.overallOffsetSwitch.bind(this),
             videoSeek: this.videoSeek.bind(this),
             timeOffset: this.timeOffset.bind(this),
             translate: this.translate.bind(this),

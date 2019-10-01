@@ -73,39 +73,52 @@ export default class Player extends React.Component {
     };
 
     render() {
+        const {
+            lang,
+            subtitles,
+            overallOffset,
+            insertSubtitle,
+            timeOffset,
+            undoSubtitle,
+            removeAllSubtitle,
+            removeEmptySubtitle,
+            removeCache,
+            translate,
+            overallOffsetSwitch,
+        } = this.props;
         return (
             <Wrapper>
-                <Button onClick={() => this.props.insertSubtitle(this.props.subtitles.length)}>
+                <Button onClick={() => insertSubtitle(subtitles.length)}>
                     <i className="icon-doc-new"></i>
                     <Translate value="btnAddSubtitle" />
                 </Button>
-                <Button onClick={() => this.props.timeOffset(-0.1)}>
+                <Button onClick={() => timeOffset(-0.1)}>
                     <i className="icon-minus"></i>
                     <Translate value="btnTimeOffsetMinus" />
                 </Button>
-                <Button onClick={() => this.props.timeOffset(0.1)}>
+                <Button onClick={() => timeOffset(0.1)}>
                     <i className="icon-plus"></i>
                     <Translate value="btnTimeOffsetPlus" />
                 </Button>
-                <Button onClick={() => this.props.undoSubtitle()}>
+                <Button onClick={() => undoSubtitle()}>
                     <i className="icon-ccw"></i>
                     <Translate value="btnUndo" />
                 </Button>
                 <div />
-                <Button onClick={() => this.props.removeAllSubtitle()}>
+                <Button onClick={() => removeAllSubtitle()}>
                     <i className="icon-trash-empty"></i>
                     <Translate value="btnRemoveAll" />
                 </Button>
-                <Button onClick={() => this.props.removeEmptySubtitle()}>
+                <Button onClick={() => removeEmptySubtitle()}>
                     <i className="icon-trash-empty"></i>
                     <Translate value="btnRemoveEmpty" />
                 </Button>
-                <Button onClick={() => this.props.removeCache()}>
+                <Button onClick={() => removeCache()}>
                     <i className="icon-trash-empty"></i>
                     <Translate value="btnRemoveCache" />
                 </Button>
                 <div />
-                <Button onClick={() => this.props.translate(this.state.lang, this.state.translator)}>
+                <Button onClick={() => translate(this.state.lang, this.state.translator)}>
                     <i className="icon-language"></i>
                     <Translate value="btnBatchTranslate" />
                 </Button>
@@ -119,10 +132,10 @@ export default class Player extends React.Component {
                 <Select
                     value={this.state.translator}
                     onChange={event => {
-                        this.setState({ translator: event.target.value });
+                        this.setState({ lang: 'zh', translator: event.target.value });
                     }}
                 >
-                    {this.state.translators[this.props.lang].map(item => (
+                    {this.state.translators[lang].map(item => (
                         <option key={item.key} value={item.key}>
                             {item.name}
                         </option>
@@ -141,12 +154,18 @@ export default class Player extends React.Component {
                         this.setState({ lang: event.target.value });
                     }}
                 >
-                    {this.state.languages[this.state.translator][this.props.lang].map(item => (
+                    {this.state.languages[this.state.translator][lang].map(item => (
                         <option key={item.key} value={item.key}>
                             {item.name}
                         </option>
                     ))}
                 </Select>
+                <div />
+                <Button onClick={() => overallOffsetSwitch()}>
+                    <i className="icon-switch"></i>
+                    <Translate value="btnOverallOffset" />:{' '}
+                    {overallOffset ? <Translate value="on" /> : <Translate value="off" />}
+                </Button>
             </Wrapper>
         );
     }
