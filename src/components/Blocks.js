@@ -41,7 +41,7 @@ const Sub = styled.div`
         border-right: 1px solid rgba(33, 150, 243, 0.5);
     }
 
-    &.overlapping {
+    &.illegal {
         background-color: rgba(199, 81, 35, 0.5);
     }
 
@@ -282,7 +282,7 @@ export default class Blocks extends React.Component {
             removeSubtitle,
             insertSubtitle,
             mergeSubtitle,
-            checkOverlapping,
+            checkSubtitleIllegal,
         } = this.props;
         return (
             <React.Fragment>
@@ -300,7 +300,7 @@ export default class Blocks extends React.Component {
                                     className={[
                                         item.editing ? 'editing' : '',
                                         item.highlight ? 'highlight' : '',
-                                        checkOverlapping(item) ? 'overlapping' : '',
+                                        checkSubtitleIllegal(item) ? 'illegal' : '',
                                     ]
                                         .join(' ')
                                         .trim()}

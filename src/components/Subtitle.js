@@ -44,7 +44,7 @@ const Wrapper = styled.div`
                 background-color: #2196f3;
             }
 
-            &.overlapping {
+            &.illegal {
                 color: #fff;
                 background-color: #c75123;
             }
@@ -107,7 +107,12 @@ const Wrapper = styled.div`
 export default class Subtitle extends React.Component {
     state = {
         index: -1,
-        subtitle: {},
+        subtitle: {
+            start: '',
+            end: '',
+            text: '',
+            duration: '',
+        },
     };
 
     check() {
@@ -161,7 +166,12 @@ export default class Subtitle extends React.Component {
             this.props.updateSubtitle(index, subtitle);
             this.setState({
                 index: -1,
-                subtitle: {},
+                subtitle: {
+                    start: '',
+                    end: '',
+                    text: '',
+                    duration: '',
+                },
             });
         }
     }
@@ -189,13 +199,18 @@ export default class Subtitle extends React.Component {
         this.props.removeSubtitle(sub);
         this.setState({
             index: -1,
-            subtitle: {},
+            subtitle: {
+                start: '',
+                end: '',
+                text: '',
+                duration: '',
+            },
         });
     }
 
     render() {
         const { subtitle } = this.state;
-        const { subtitles, mainHeight, mainWidth, currentIndex, checkOverlapping } = this.props;
+        const { subtitles, mainHeight, mainWidth, currentIndex, checkSubtitleIllegal } = this.props;
         return (
             <Wrapper>
                 <Table
@@ -239,7 +254,7 @@ export default class Subtitle extends React.Component {
                                     props.index % 2 ? 'odd' : '',
                                     props.rowData.editing ? 'editing' : '',
                                     props.rowData.highlight ? 'highlight' : '',
-                                    checkOverlapping(props.rowData) ? 'overlapping' : '',
+                                    checkSubtitleIllegal(props.rowData) ? 'illegal' : '',
                                 ]
                                     .join(' ')
                                     .trim()}
@@ -268,13 +283,7 @@ export default class Subtitle extends React.Component {
                                 </div>
                                 <div className="row" style={{ width: 100 }}>
                                     <span className="noedit">{props.rowData.duration}</span>
-                                    <input
-                                        disabled
-                                        maxLength={20}
-                                        className="input edit"
-                                        defaultValue={subtitle.duration}
-                                        onChange={e => this.onChange('duration', e.target.value)}
-                                    />
+                                    <input disabled maxLength={20} className="input edit" value={subtitle.duration} />
                                 </div>
                                 <div className="row" style={{ flex: 1 }}>
                                     <span className="noedit">

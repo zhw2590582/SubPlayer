@@ -166,12 +166,12 @@ export default class App extends React.Component {
         return this.state.subtitles.includes(sub);
     }
 
-    // 验证字幕是否和上一条重叠
-    checkOverlapping(sub) {
+    // 验证字幕是否不规范
+    checkSubtitleIllegal(sub) {
         const subtitles = this.state.subtitles;
         const index = subtitles.indexOf(sub);
         const previous = subtitles[index - 1];
-        return previous && sub.startTime < previous.endTime;
+        return (previous && sub.startTime < previous.endTime) || !sub.check;
     }
 
     // 获取播放器
@@ -466,7 +466,7 @@ export default class App extends React.Component {
     render() {
         const props = {
             ...this.state,
-            checkOverlapping: this.checkOverlapping.bind(this),
+            checkSubtitleIllegal: this.checkSubtitleIllegal.bind(this),
             removeSubtitle: this.removeSubtitle.bind(this),
             editSubtitle: this.editSubtitle.bind(this),
             highlightSubtitle: this.highlightSubtitle.bind(this),
