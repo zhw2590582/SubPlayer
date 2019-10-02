@@ -78,8 +78,7 @@ export default class Player extends React.Component {
                                 })();
 
                                 art.once('video:canplay', () => {
-                                    art.player.currentTime = 1;
-                                    updateCurrentTime(art.currentTime);
+                                    art.player.seek = 1;
                                 });
 
                                 art.on('seek', () => {

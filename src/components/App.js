@@ -210,7 +210,7 @@ export default class App extends React.Component {
     videoSeek(sub, isPlay) {
         const { art } = this.state;
         const currentTime = sub.startTime + 0.001;
-        if (!art.playing && currentTime > 0 && currentTime !== art.currentTime) {
+        if (!art.playing && currentTime > 0 && currentTime !== art.currentTime && art.duration) {
             if (currentTime <= art.duration) {
                 // 由于字幕url是异步的，需要时间去同步
                 sleep(300).then(() => {
