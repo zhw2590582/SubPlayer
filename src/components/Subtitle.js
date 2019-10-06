@@ -43,11 +43,13 @@ const Wrapper = styled.div`
             &.highlight {
                 color: #fff;
                 background-color: #2196f3;
+                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
             }
 
             &.illegal {
                 color: #fff;
                 background-color: #c75123;
+                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
             }
 
             .row {

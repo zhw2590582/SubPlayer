@@ -62,6 +62,7 @@ const SubText = styled.div`
     align-items: center;
     cursor: move;
     user-select: none;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
 `;
 
 const Handle = styled.div`
