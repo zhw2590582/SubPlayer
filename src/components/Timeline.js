@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Blocks from './Blocks';
-import Waveform from './Waveform';
 import { secondToTime } from '../utils';
 
 const timelineHeight = 150;
@@ -114,7 +113,6 @@ export default class Timeline extends React.Component {
             <Wrapper>
                 <Blocks {...this.props} {...this.state} />
                 <Canvas ref={$canvas} />
-                <Waveform {...this.props} {...this.state} />
                 <Line
                     style={{
                         transform: `translate(${lineX}px)`,

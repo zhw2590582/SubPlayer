@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
     position: absolute;
-    z-index: 3;
+    z-index: 1;
     left: 0;
     top: 0;
     width: 100%;
@@ -22,25 +22,29 @@ export default class Waveform extends React.Component {
     };
 
     static getDerivedStateFromProps(props, state) {
+        if (state.wavesurfer && props.art) {
+            state.wavesurfer.seekTo(props.art.currentTime / props.art.duration || 0);
+        }
+
         const $waveform = state.$waveform.current;
-        if (props.videoUrl && props.videoUrl !== state.videoUrl && $waveform) {
+        if (props.videoUrl && props.videoUrl.startsWith('blob:') && props.videoUrl !== state.videoUrl && $waveform) {
             if (state.wavesurfer) {
                 state.wavesurfer.destroy();
             }
 
             const wavesurfer = WaveSurfer.create({
-                container: $waveform,
                 height: 150,
+                container: $waveform,
                 cursorColor: 'rgba(255, 255, 255, 0)',
-                waveColor: 'rgba(255, 255, 255, 0.2)',
-                progressColor: 'rgba(255, 255, 255, 0.5)',
+                waveColor: 'rgba(255, 255, 255, 0.1)',
+                progressColor: 'rgba(255, 255, 255, 0.2)',
             });
 
             wavesurfer.load(props.videoUrl);
 
-            setTimeout(() => {
-                wavesurfer.seekTo(0.5);
-            }, 1000);
+            wavesurfer.on('ready', () => {
+                //
+            });
 
             return {
                 wavesurfer,
@@ -52,6 +56,14 @@ export default class Waveform extends React.Component {
     }
 
     render() {
-        return <Wrapper ref={this.state.$waveform}></Wrapper>;
+        return (
+            <Wrapper
+                style={{
+                    width: this.props.mainWidth - this.props.grid * 10,
+                    left: this.props.grid * 5,
+                }}
+                ref={this.state.$waveform}
+            ></Wrapper>
+        );
     }
 }
