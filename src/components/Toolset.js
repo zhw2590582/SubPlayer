@@ -76,6 +76,7 @@ export default class Player extends React.Component {
         const {
             lang,
             subtitles,
+            waveform,
             overallOffset,
             insertSubtitle,
             timeOffset,
@@ -85,6 +86,7 @@ export default class Player extends React.Component {
             removeCache,
             translate,
             overallOffsetSwitch,
+            waveformSwitch,
         } = this.props;
         return (
             <Wrapper>
@@ -165,6 +167,10 @@ export default class Player extends React.Component {
                     <i className="icon-switch"></i>
                     <Translate value="btnOverallOffset" />:{' '}
                     {overallOffset ? <Translate value="on" /> : <Translate value="off" />}
+                </Button>
+                <Button onClick={() => waveformSwitch()}>
+                    <i className="icon-switch"></i>
+                    <Translate value="waveform" />: {waveform ? <Translate value="on" /> : <Translate value="off" />}
                 </Button>
             </Wrapper>
         );

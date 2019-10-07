@@ -48,10 +48,11 @@ export default {
         to: 'To',
         use: 'Use',
         btnOverallOffset: 'Timeline overall offset',
+        waveform: 'Timeline waveform',
         on: 'On',
         off: 'Off',
 
-        moveInvalid: "Subtitle parameters are invalid, please try again",
+        moveInvalid: 'Subtitle parameters are invalid, please try again',
         moveAcross: "Can't move across subtitles, please try again",
         deleteLine: 'Delete line',
         insertBefore: 'Insert before',
@@ -107,6 +108,7 @@ export default {
         to: '到',
         use: '使用',
         btnOverallOffset: '时间轴整体偏移',
+        waveform: '时间轴波形图',
         on: '开',
         off: '关',
 

@@ -11,7 +11,6 @@ const Wrapper = styled.div`
     height: 100%;
     pointer-events: none;
     user-select: none;
-    transition: all 0.2s ease;
 `;
 
 export default class Waveform extends React.Component {
@@ -19,21 +18,23 @@ export default class Waveform extends React.Component {
         $waveform: React.createRef(),
         wavesurfer: null,
         videoUrl: '',
+        mainWidth: 0,
     };
 
     static getDerivedStateFromProps(props, state) {
-        if (state.wavesurfer && props.art) {
-            state.wavesurfer.seekTo(props.art.currentTime / props.art.duration || 0);
-        }
-
         const $waveform = state.$waveform.current;
-        if (props.videoUrl && props.videoUrl.startsWith('blob:') && props.videoUrl !== state.videoUrl && $waveform) {
+        if (!$waveform || !props.videoUrl) return null;
+
+        function drawWaveform() {
             if (state.wavesurfer) {
                 state.wavesurfer.destroy();
             }
 
             const wavesurfer = WaveSurfer.create({
                 height: 150,
+                fillParent: false,
+                responsive: true,
+                minPxPerSec: props.grid * 10,
                 container: $waveform,
                 cursorColor: 'rgba(255, 255, 255, 0)',
                 waveColor: 'rgba(255, 255, 255, 0.1)',
@@ -42,25 +43,35 @@ export default class Waveform extends React.Component {
 
             wavesurfer.load(props.videoUrl);
 
-            wavesurfer.on('ready', () => {
-                //
-            });
-
             return {
                 wavesurfer,
                 videoUrl: props.videoUrl,
+                mainWidth: props.mainWidth,
             };
+        }
+
+        if (state.wavesurfer && props.art) {
+            state.wavesurfer.seekTo(props.art.currentTime / props.art.duration || 0);
+        }
+
+        if (props.mainWidth !== state.mainWidth) {
+            return drawWaveform();
+        }
+
+        if (props.videoUrl !== state.videoUrl) {
+            return drawWaveform();
         }
 
         return null;
     }
 
     render() {
+        const left = -(Math.floor(this.props.currentTime / 10) * this.props.grid * 100) + this.props.grid * 5;
         return (
             <Wrapper
                 style={{
-                    width: this.props.mainWidth - this.props.grid * 10,
-                    left: this.props.grid * 5,
+                    display: this.props.waveform ? 'block' : 'none',
+                    transform: `translate(${left}px)`,
                 }}
                 ref={this.state.$waveform}
             ></Wrapper>
