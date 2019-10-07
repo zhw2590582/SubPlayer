@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import dequal from 'dequal';
+import Waveform from './Waveform';
 import { escapeHTML } from '../utils';
 import { t, Translate } from 'react-i18nify';
 import toastr from 'toastr';
@@ -292,6 +293,7 @@ export default class Blocks extends React.Component {
                         padding: `0 ${padding}px`,
                     }}
                 >
+                    <Waveform {...this.props} {...this.state} />
                     <Inner ref={this.$subs}>
                         {subtitles.map((item, index) => {
                             return (
