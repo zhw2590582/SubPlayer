@@ -293,7 +293,7 @@ export default class Blocks extends React.Component {
                         padding: `0 ${padding}px`,
                     }}
                 >
-                    <Waveform {...this.props} {...this.state} />
+                    {this.props.waveform ? <Waveform {...this.props} {...this.state} /> : null}
                     <Inner ref={this.$subs}>
                         {subtitles.map((item, index) => {
                             return (

@@ -99,7 +99,7 @@ export default class App extends React.Component {
         currentTime: 0,
         currentIndex: -1,
         overallOffset: false,
-        waveform: true,
+        waveform: false,
         subtitles: [],
     };
 

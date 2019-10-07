@@ -70,7 +70,6 @@ export default class Waveform extends React.Component {
         return (
             <Wrapper
                 style={{
-                    display: this.props.waveform ? 'block' : 'none',
                     transform: `translate(${left}px)`,
                 }}
                 ref={this.state.$waveform}
