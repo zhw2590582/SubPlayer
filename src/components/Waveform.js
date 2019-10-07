@@ -38,7 +38,7 @@ export default class Waveform extends React.Component {
                 container: $waveform,
                 cursorColor: 'rgba(255, 255, 255, 0)',
                 waveColor: 'rgba(255, 255, 255, 0.1)',
-                progressColor: 'rgba(255, 255, 255, 0.2)',
+                progressColor: 'rgba(255, 255, 255, 0.1)',
             });
 
             wavesurfer.load(props.videoUrl);
@@ -50,9 +50,9 @@ export default class Waveform extends React.Component {
             };
         }
 
-        if (state.wavesurfer && props.art) {
-            state.wavesurfer.seekTo(props.art.currentTime / props.art.duration || 0);
-        }
+        // if (state.wavesurfer && props.art) {
+        //     state.wavesurfer.seekTo(props.art.currentTime / props.art.duration || 0);
+        // }
 
         if (props.mainWidth !== state.mainWidth) {
             return drawWaveform();
