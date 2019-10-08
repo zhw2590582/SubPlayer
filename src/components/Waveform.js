@@ -50,10 +50,6 @@ export default class Waveform extends React.Component {
             };
         }
 
-        // if (state.wavesurfer && props.art) {
-        //     state.wavesurfer.seekTo(props.art.currentTime / props.art.duration || 0);
-        // }
-
         if (props.mainWidth !== state.mainWidth) {
             return drawWaveform();
         }
@@ -63,6 +59,12 @@ export default class Waveform extends React.Component {
         }
 
         return null;
+    }
+
+    componentWillUnmount() {
+        if (this.state.wavesurfer) {
+            this.state.wavesurfer.destroy();
+        }
     }
 
     render() {
