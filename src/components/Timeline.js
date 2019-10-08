@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Blocks from './Blocks';
+import Waveform from './Waveform';
 import { secondToTime } from '../utils';
 
 const timelineHeight = 150;
@@ -17,6 +18,7 @@ const Canvas = styled.canvas`
     z-index: 2;
     left: 0;
     top: 0;
+    height: 100%;
     pointer-events: none;
     user-select: none;
     transition: all 0.2s ease;
@@ -78,7 +80,7 @@ function drawGrid(ctx, beginTime) {
 
 export default class Timeline extends React.Component {
     state = {
-        $canvas: React.createRef(),
+        $grid: React.createRef(),
         grid: 0,
         padding: 0,
         beginTime: 0,
@@ -86,15 +88,13 @@ export default class Timeline extends React.Component {
 
     static getDerivedStateFromProps(props, state) {
         const beginTime = Math.floor(props.currentTime / 10) * 10;
-        if (state.$canvas.current) {
-            const $canvas = state.$canvas.current;
-            const ctx = $canvas.getContext('2d');
-
-            if (props.mainWidth * 2 !== $canvas.width) {
-                $canvas.height = timelineHeight * 2;
-                $canvas.width = props.mainWidth * 2;
-                $canvas.style.height = '100%';
-                $canvas.style.width = `${props.mainWidth}px`;
+        const $grid = state.$grid.current;
+        if ($grid) {
+            const ctx = $grid.getContext('2d');
+            if (props.mainWidth * 2 !== $grid.width) {
+                $grid.height = timelineHeight * 2;
+                $grid.width = props.mainWidth * 2;
+                $grid.style.width = `${props.mainWidth}px`;
                 return drawGrid(ctx, beginTime);
             }
 
@@ -106,13 +106,14 @@ export default class Timeline extends React.Component {
     }
 
     render() {
-        const { $canvas, grid, padding } = this.state;
-        const { currentTime } = this.props;
+        const { $grid, grid, padding } = this.state;
+        const { currentTime, waveform } = this.props;
         const lineX = padding + (currentTime % 10) * grid * 10;
         return (
             <Wrapper>
                 <Blocks {...this.props} {...this.state} />
-                <Canvas ref={$canvas} />
+                <Canvas ref={$grid} />
+                {waveform ? <Waveform {...this.props} {...this.state} /> : null}
                 <Line
                     style={{
                         transform: `translate(${lineX}px)`,

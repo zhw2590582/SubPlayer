@@ -1,8 +1,9 @@
 import React from 'react';
-import WaveSurfer from 'wavesurfer.js';
 import styled from 'styled-components';
+import wavesurfer from '../utils/wavesurfer';
 
-const Wrapper = styled.div`
+const timelineHeight = 150;
+const Canvas = styled.canvas`
     position: absolute;
     z-index: 1;
     left: 0;
@@ -14,68 +15,74 @@ const Wrapper = styled.div`
 `;
 
 export default class Waveform extends React.Component {
-    state = {
-        $waveform: React.createRef(),
-        wavesurfer: null,
-        videoUrl: '',
-        mainWidth: 0,
-    };
+    videoUrl = '';
+    mainWidth = 0;
+    canvasData = [];
+    canvasIndex = 0;
+    $waveform = React.createRef();
 
-    static getDerivedStateFromProps(props, state) {
-        const $waveform = state.$waveform.current;
-        if (!$waveform || !props.videoUrl) return null;
+    async getCanvasData() {
+        const canvasData = await wavesurfer({
+            height: timelineHeight * 2,
+            videoUrl: this.props.videoUrl,
+            minPxPerSec: this.props.grid * 20,
+            maxCanvasWidth: (this.props.mainWidth - this.props.grid * 10) * 2,
+        });
+        if (canvasData.length) {
+            this.canvasData = canvasData;
+            const $waveform = this.$waveform.current;
+            const ctx = $waveform.getContext('2d');
+            ctx.clearRect(0, 0, $waveform.width, $waveform.height);
+            ctx.putImageData(this.canvasData[this.canvasIndex], this.props.grid * 10, 0);
+        }
+    }
 
-        function drawWaveform() {
-            if (state.wavesurfer) {
-                state.wavesurfer.destroy();
-            }
-
-            const wavesurfer = WaveSurfer.create({
-                height: 150,
-                fillParent: false,
-                responsive: true,
-                minPxPerSec: props.grid * 10,
-                container: $waveform,
-                cursorColor: 'rgba(255, 255, 255, 0)',
-                waveColor: 'rgba(255, 255, 255, 0.1)',
-                progressColor: 'rgba(255, 255, 255, 0.1)',
-            });
-
-            wavesurfer.load(props.videoUrl);
-
-            return {
-                wavesurfer,
-                videoUrl: props.videoUrl,
-                mainWidth: props.mainWidth,
-            };
+    drawWaveform() {
+        const $waveform = this.$waveform.current;
+        if (!$waveform || !this.props.videoUrl) return;
+        if (this.props.mainWidth !== this.mainWidth) {
+            this.mainWidth = this.props.mainWidth;
+            this.getCanvasData();
         }
 
-        if (props.mainWidth !== state.mainWidth) {
-            return drawWaveform();
+        if (this.props.videoUrl !== this.videoUrl) {
+            this.videoUrl = this.props.videoUrl;
+            this.getCanvasData();
         }
 
-        if (props.videoUrl !== state.videoUrl) {
-            return drawWaveform();
+        const index = Math.floor(this.props.currentTime / 10);
+        if (index !== this.canvasIndex && this.canvasData[index]) {
+            this.canvasIndex = index;
+            const ctx = $waveform.getContext('2d');
+            ctx.clearRect(0, 0, $waveform.width, $waveform.height);
+            ctx.putImageData(this.canvasData[index], this.props.grid * 10, 0);
         }
+    }
 
-        return null;
+    componentDidMount() {
+        this.drawWaveform();
+    }
+
+    componentDidUpdate() {
+        this.drawWaveform();
     }
 
     componentWillUnmount() {
-        if (this.state.wavesurfer) {
-            this.state.wavesurfer.destroy();
-        }
+        wavesurfer.destroy();
+        this.canvasData = [];
     }
 
     render() {
-        const left = -(Math.floor(this.props.currentTime / 10) * this.props.grid * 100) + this.props.grid * 5;
+        const { mainWidth } = this.props;
         return (
-            <Wrapper
+            <Canvas
+                height={timelineHeight * 2}
+                width={mainWidth * 2}
                 style={{
-                    transform: `translate(${left}px)`,
+                    width: mainWidth,
                 }}
-                ref={this.state.$waveform}
-            ></Wrapper>
+                ref={this.$waveform}
+            ></Canvas>
         );
     }
 }
