@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import wavesurfer from '../utils/wavesurfer';
+import { debounce } from '../utils';
+import { t } from 'react-i18nify';
+import toastr from 'toastr';
 
 const timelineHeight = 150;
 const Canvas = styled.canvas`
@@ -20,8 +23,10 @@ export default class Waveform extends React.Component {
     canvasData = [];
     canvasIndex = 0;
     $waveform = React.createRef();
+    getCanvasDataDebounce = debounce(this.getCanvasData.bind(this), 500);
 
     async getCanvasData() {
+        toastr.warning(t('waveformBuildStart'));
         const canvasData = await wavesurfer({
             height: timelineHeight * 2,
             videoUrl: this.props.videoUrl,
@@ -34,6 +39,7 @@ export default class Waveform extends React.Component {
             const ctx = $waveform.getContext('2d');
             ctx.clearRect(0, 0, $waveform.width, $waveform.height);
             ctx.putImageData(this.canvasData[this.canvasIndex], this.props.grid * 10, 0);
+            toastr.success(t('waveformBuildEnd'));
         }
     }
 
@@ -42,12 +48,12 @@ export default class Waveform extends React.Component {
         if (!$waveform || !this.props.videoUrl) return;
         if (this.props.mainWidth !== this.mainWidth) {
             this.mainWidth = this.props.mainWidth;
-            this.getCanvasData();
+            this.getCanvasDataDebounce();
         }
 
         if (this.props.videoUrl !== this.videoUrl) {
             this.videoUrl = this.props.videoUrl;
-            this.getCanvasData();
+            this.getCanvasDataDebounce();
         }
 
         const index = Math.floor(this.props.currentTime / 10);
