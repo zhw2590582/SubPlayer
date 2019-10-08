@@ -59,8 +59,8 @@ export default {
         insertAfter: 'Insert after',
         mergeNext: 'Merge with next',
 
-        waveformBuildStart: 'The waveform is being generated...',
-        waveformBuildEnd: 'Waveform generation succeeded',
+        waveformBuildStart: 'The waveform is being generated, may take a little time',
+        waveformBuildEnd: 'The waveform generation succeeded',
     },
     zh: {
         access: '请使用电脑访问',
@@ -122,7 +122,7 @@ export default {
         insertAfter: '之后插入',
         mergeNext: '合并下条',
 
-        waveformBuildStart: '波形图正在生成中...',
+        waveformBuildStart: '波形图正在生成中，可能需要一点时间',
         waveformBuildEnd: '波形图生成成功',
     },
 };
