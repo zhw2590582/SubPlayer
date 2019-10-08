@@ -28,6 +28,7 @@ export default class Waveform extends React.Component {
     async getCanvasData() {
         toastr.warning(t('waveformBuildStart'));
         const canvasData = await wavesurfer({
+            pixelRatio: 1,
             height: timelineHeight * 2,
             videoUrl: this.props.videoUrl,
             minPxPerSec: this.props.grid * 20,
