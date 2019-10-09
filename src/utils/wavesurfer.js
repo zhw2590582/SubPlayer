@@ -1,4 +1,5 @@
 import WaveSurfer from 'wavesurfer.js';
+import NProgress from 'nprogress';
 import { sleep } from './index';
 
 let ws = null;
@@ -17,6 +18,8 @@ export default function wavesurfer(option) {
     return new Promise(resolve => {
         wavesurfer.destroy();
         $tmp = document.createElement('div');
+        $tmp.style.position = 'fixed';
+        $tmp.style.top = '-1000px';
         document.body.appendChild($tmp);
         const mergeOption = {
             pixelRatio: 1,
@@ -31,6 +34,10 @@ export default function wavesurfer(option) {
 
         ws = WaveSurfer.create(mergeOption);
         ws.load(mergeOption.videoUrl);
+        const isBlobUrl = mergeOption.videoUrl.startsWith('blob:');
+        if (!isBlobUrl) {
+            NProgress.start();
+        }
         ws.on('ready', () => {
             sleep(100).then(() => {
                 const canvasList = [...mergeOption.container.querySelectorAll('canvas')];
@@ -40,7 +47,15 @@ export default function wavesurfer(option) {
                 });
                 resolve(canvasData);
                 wavesurfer.destroy();
+                if (!isBlobUrl) {
+                    NProgress.done();
+                }
             });
+        });
+        ws.on('loading', integer => {
+            if (!isBlobUrl) {
+                NProgress.set(integer / 100);
+            }
         });
     });
 }
