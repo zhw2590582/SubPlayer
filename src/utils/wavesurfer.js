@@ -19,6 +19,7 @@ export default function wavesurfer(option) {
         $tmp = document.createElement('div');
         document.body.appendChild($tmp);
         const mergeOption = {
+            pixelRatio: 1,
             fillParent: false,
             responsive: true,
             container: $tmp,

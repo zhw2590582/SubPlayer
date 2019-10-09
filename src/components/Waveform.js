@@ -28,18 +28,17 @@ export default class Waveform extends React.Component {
     async getCanvasData() {
         toastr.warning(t('waveformBuildStart'));
         const canvasData = await wavesurfer({
-            pixelRatio: 1,
-            height: timelineHeight * 2,
+            height: timelineHeight,
             videoUrl: this.props.videoUrl,
-            minPxPerSec: this.props.grid * 20,
-            maxCanvasWidth: (this.props.mainWidth - this.props.grid * 10) * 2,
+            minPxPerSec: this.props.grid * 10,
+            maxCanvasWidth: (this.props.mainWidth - this.props.grid * 10),
         });
         if (canvasData.length) {
             this.canvasData = canvasData;
             const $waveform = this.$waveform.current;
             const ctx = $waveform.getContext('2d');
             ctx.clearRect(0, 0, $waveform.width, $waveform.height);
-            ctx.putImageData(this.canvasData[this.canvasIndex], this.props.grid * 10, 0);
+            ctx.putImageData(this.canvasData[this.canvasIndex], this.props.grid * 5, 0);
             toastr.success(t('waveformBuildEnd'));
         }
     }
@@ -62,7 +61,7 @@ export default class Waveform extends React.Component {
             this.canvasIndex = index;
             const ctx = $waveform.getContext('2d');
             ctx.clearRect(0, 0, $waveform.width, $waveform.height);
-            ctx.putImageData(this.canvasData[index], this.props.grid * 10, 0);
+            ctx.putImageData(this.canvasData[index], this.props.grid * 5, 0);
         }
     }
 
@@ -81,15 +80,6 @@ export default class Waveform extends React.Component {
 
     render() {
         const { mainWidth } = this.props;
-        return (
-            <Canvas
-                height={timelineHeight * 2}
-                width={mainWidth * 2}
-                style={{
-                    width: mainWidth,
-                }}
-                ref={this.$waveform}
-            ></Canvas>
-        );
+        return <Canvas height={timelineHeight} width={mainWidth} ref={this.$waveform}></Canvas>;
     }
 }
