@@ -180,7 +180,7 @@ export default class Header extends React.Component {
             if (canPlayType === 'maybe' || canPlayType === 'probably') {
                 const url = URL.createObjectURL(file);
                 this.props.updateVideoUrl(url);
-                toastr.success(t('uploadVideo'));
+                toastr.success(`${t('uploadVideo')}: ${(file.size / 1024 / 1024).toFixed(3)}M`);
             } else {
                 toastr.error(`${t('uploadVideoErr')}: ${file.type || 'unknown'}`);
             }
@@ -216,12 +216,12 @@ export default class Header extends React.Component {
                     <Btn>
                         <i className="icon-upload"></i>
                         <Translate value="btnUploadSubtitle" />
-                        <File type="file" name="file" ref={this.$subtitle} onChange={() => this.uploadSubtitle()} />
+                        <File className="uploadSubtitle" type="file" name="file" ref={this.$subtitle} onChange={() => this.uploadSubtitle()} />
                     </Btn>
                     <Btn>
                         <i className="icon-upload"></i>
                         <Translate value="btnUploadVideo" />
-                        <File type="file" name="file" ref={this.$video} onChange={() => this.uploadVideo()} />
+                        <File className="uploadVideo" type="file" name="file" ref={this.$video} onChange={() => this.uploadVideo()} />
                     </Btn>
                     <Btn onClick={this.props.downloadSubtitles.bind(this)}>
                         <i className="icon-download"></i>

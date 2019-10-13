@@ -35,7 +35,8 @@ export default class Player extends React.Component {
             const videoUrl = $video.src;
             const subtitleUrl = $track ? $track.src : '';
             if (props.videoUrl !== videoUrl) {
-                state.art.player.switchUrl(props.videoUrl);
+                const file = document.querySelector('.uploadVideo').files[0];
+                state.art.player.switchUrl(props.videoUrl, file ? file.name : '');
                 URL.revokeObjectURL(videoUrl);
             }
 
