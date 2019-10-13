@@ -95,7 +95,7 @@ export default class Timeline extends React.Component {
         return (
             <Wrapper>
                 <Waveform ref={this.$waveform} />
-                <Blocks {...this.props} {...this.state} />
+                {this.state.grid ? <Blocks {...this.props} {...this.state} /> : null}
             </Wrapper>
         );
     }
