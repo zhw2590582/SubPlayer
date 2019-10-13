@@ -66,6 +66,9 @@ export default class Player extends React.Component {
                                 subtitle: {
                                     url: subtitleUrl,
                                 },
+                                moreVideoAttr: {
+                                    crossOrigin: 'anonymous',
+                                },
                             }}
                             getInstance={art => {
                                 (function loop() {

@@ -48,7 +48,6 @@ export default {
         to: 'To',
         use: 'Use',
         btnOverallOffset: 'Timeline overall offset',
-        waveform: 'Timeline waveform',
         on: 'On',
         off: 'Off',
 
@@ -59,7 +58,6 @@ export default {
         insertAfter: 'Insert after',
         mergeNext: 'Merge with next',
 
-        waveformBuildStart: 'The waveform is being generated, may take a little time',
         waveformBuildEnd: 'The waveform generation succeeded',
     },
     zh: {
@@ -111,7 +109,6 @@ export default {
         to: '到',
         use: '使用',
         btnOverallOffset: '时间轴整体偏移',
-        waveform: '时间轴波形图',
         on: '开',
         off: '关',
 
@@ -122,7 +119,6 @@ export default {
         insertAfter: '之后插入',
         mergeNext: '合并下条',
 
-        waveformBuildStart: '波形图正在生成中，可能需要一点时间',
         waveformBuildEnd: '波形图生成成功',
     },
 };
