@@ -18,7 +18,7 @@
         "react-virtualized": "^9.21.1",
         "styled-components": "^4.4.0",
         "toastr": "^2.1.4",
-        "wfplayer": "^1.0.7"
+        "wfplayer": "^1.0.8"
     },
     "scripts": {
         "start": "react-scripts start",

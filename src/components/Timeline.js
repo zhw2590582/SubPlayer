@@ -10,12 +10,14 @@ const Wrapper = styled.div`
     position: relative;
     display: flex;
     height: ${timelineHeight}px;
+    width: 100%;
     background-color: rgb(28, 32, 34);
     border-top: 1px solid rgb(10, 10, 10);
 `;
 
 const Waveform = styled.div`
     position: absolute;
+    z-index: 0;
     left: 0;
     top: 0;
     right: 0;
