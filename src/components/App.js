@@ -99,7 +99,6 @@ export default class App extends React.Component {
         currentTime: 0,
         currentIndex: -1,
         overallOffset: false,
-        waveform: false,
         subtitles: [],
     };
 
@@ -464,13 +463,6 @@ export default class App extends React.Component {
         });
     }
 
-    // 时间轴波形图开关
-    waveformSwitch() {
-        this.setState({
-            waveform: !this.state.waveform,
-        });
-    }
-
     render() {
         const props = {
             ...this.state,
@@ -490,7 +482,6 @@ export default class App extends React.Component {
             mergeSubtitle: this.mergeSubtitle.bind(this),
             insertSubtitle: this.insertSubtitle.bind(this),
             overallOffsetSwitch: this.overallOffsetSwitch.bind(this),
-            waveformSwitch: this.waveformSwitch.bind(this),
             videoSeek: this.videoSeek.bind(this),
             timeOffset: this.timeOffset.bind(this),
             translate: this.translate.bind(this),
