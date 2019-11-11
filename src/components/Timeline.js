@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Blocks from './Blocks';
-import WFPlayer from 'wfplayer';
+import WFPlayer from 'wfplayer/src';
 import { t } from 'react-i18nify';
 import toastr from 'toastr';
 

@@ -1,6 +1,6 @@
 {
     "name": "subplayer",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "SubPlayer is a online subtitle editor",
     "homepage": "https://subplayer.js.org",
     "dependencies": {
