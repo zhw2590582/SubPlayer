@@ -81,8 +81,10 @@ export default class Player extends React.Component {
                                     });
                                 })();
 
-                                art.once('video:canplay', () => {
-                                    art.player.seek = 1;
+                                art.on('ready', () => {
+                                    setTimeout(() => {
+                                        art.player.seek = 1;
+                                    }, 1000);
                                 });
 
                                 art.on('seek', () => {
