@@ -67,7 +67,6 @@ const Btn = styled.div`
     align-items: center;
     justify-content: center;
     height: 100%;
-    padding: 0 10px;
     width: 170px;
     cursor: pointer;
     overflow: hidden;
@@ -219,7 +218,7 @@ export default class Header extends React.Component {
                         }}
                     >
                         {Object.entries(this.state.translators).map(([key, item]) =>
-                            <option value={key}>
+                            <option key={key} value={key}>
                                  {item.name}
                             </option>
                         )}
