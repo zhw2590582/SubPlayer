@@ -68,6 +68,16 @@ export default class Player extends React.Component {
                     key: 'baidu',
                 },
             ],
+            es: [
+                {
+                    name: 'Traductor de google',
+                    key: 'google',
+                },
+                {
+                    name: 'Traductor de baidu',
+                    key: 'baidu',
+                },
+            ],
         },
         languages,
     };
