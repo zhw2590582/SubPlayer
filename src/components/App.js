@@ -466,9 +466,14 @@ export default class App extends React.Component {
         });
     }
 
+    getLocale() {
+        return this.storage.get('lang');
+    }
+
     render() {
         const props = {
             ...this.state,
+            getLocale: this.getLocale.bind(this),
             checkSubtitleIllegal: this.checkSubtitleIllegal.bind(this),
             removeSubtitle: this.removeSubtitle.bind(this),
             editSubtitle: this.editSubtitle.bind(this),

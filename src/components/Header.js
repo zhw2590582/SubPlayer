@@ -97,35 +97,21 @@ const File = styled.input`
     opacity: 0;
 `;
 
-const Lang = styled.div`
+const Lang = styled.select`
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left: 10px;
     margin-right: 20px;
     color: #ccc;
+    border: none;
     background-color: #1a536d;
-    width: 60px;
+    width: 45px;
     padding: 4px 0;
     font-size: 12px;
     border-radius: 15px;
     cursor: pointer;
     transition: all 0.2s ease;
-
-    i {
-        margin-right: 5px;
-    }
-
-    span {
-        display: none;
-    }
-
-    &.lang-zh .en {
-        display: block;
-    }
-
-    &.lang-en .zh {
-        display: block;
-    }
 
     &:hover {
         color: #fff;
@@ -134,6 +120,26 @@ const Lang = styled.div`
 `;
 
 export default class Header extends React.Component {
+    state = {
+        lang: this.props.getLocale() || 'en',
+        translators: {
+            zh:
+                {
+                    name: '中', key: 'chinese'
+                }
+            ,
+            en:
+                {
+                    name: 'EN', key: 'english'
+                }
+            ,
+            es:
+                {
+                    name: 'ES', key: 'spanish'
+                }
+            ,
+        },
+    };
     $subtitle = React.createRef();
     $video = React.createRef();
 
@@ -203,15 +209,20 @@ export default class Header extends React.Component {
                     <div className="links">
                         <a href="https://github.com/zhw2590582/SubPlayer">Github</a>
                     </div>
+                    <i className="icon-language"></i>
                     <Lang
+                        value={this.state.lang}
                         className={`lang-${this.props.lang}`}
-                        onClick={() => {
-                            this.props.setLocale(this.props.lang === 'zh' ? 'en' : 'zh');
+                        onChange={event => {
+                            this.setState({ lang: event.target.value });
+                            this.props.setLocale(event.target.value);
                         }}
                     >
-                        <i className="icon-language"></i>
-                        <span className="zh">中</span>
-                        <span className="en">EN</span>
+                        {Object.entries(this.state.translators).map(([key, item]) =>
+                            <option value={key}>
+                                 {item.name}
+                            </option>
+                        )}
                     </Lang>
                     <Btn>
                         <i className="icon-upload"></i>
