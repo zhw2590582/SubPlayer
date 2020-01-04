@@ -45,7 +45,7 @@ const Select = styled.select`
 
 export default class Player extends React.Component {
     state = {
-        lang: 'zh',
+        lang: 'en',
         translator: 'google',
         translators: {
             zh: [
@@ -142,7 +142,7 @@ export default class Player extends React.Component {
                 <Select
                     value={this.state.translator}
                     onChange={event => {
-                        this.setState({ lang: 'zh', translator: event.target.value });
+                        this.setState({ lang: 'en', translator: event.target.value });
                     }}
                 >
                     {this.state.translators[lang].map(item => (
