@@ -4,7 +4,7 @@
     "description": "SubPlayer is a online subtitle editor",
     "homepage": "https://subplayer.js.org",
     "dependencies": {
-        "artplayer-react": "^3.1.18",
+        "artplayer-react": "^3.3.2",
         "dequal": "^1.0.0",
         "duration-time-conversion": "^1.0.1",
         "fetch-jsonp": "^1.1.3",
