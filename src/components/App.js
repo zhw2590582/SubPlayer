@@ -209,18 +209,21 @@ export default class App extends React.Component {
     // 视频跳转到某个字幕的开始时间, 可选是否播放
     videoSeek(sub, isPlay) {
         const { art } = this.state;
-        const currentTime = sub.startTime + 0.001;
-        if (!art.playing && currentTime > 0 && currentTime !== art.currentTime && art.duration) {
-            if (currentTime <= art.duration) {
-                // 由于字幕url是异步的，需要时间去同步
-                sleep(300).then(() => {
-                    art.seek = currentTime;
-                    if (isPlay) {
-                        art.play = true;
-                    }
-                });
-            } else {
-                toastr.warning(t('durationLimit'));
+        // This allows that video are not loaded.
+        if (art !== null) {
+            const currentTime = sub.startTime + 0.001;
+            if (!art.playing && currentTime > 0 && currentTime !== art.currentTime && art.duration) {
+                if (currentTime <= art.duration) {
+                    // 由于字幕url是异步的，需要时间去同步
+                    sleep(300).then(() => {
+                        art.seek = currentTime;
+                        if (isPlay) {
+                            art.play = true;
+                        }
+                    });
+                } else {
+                    toastr.warning(t('durationLimit'));
+                }
             }
         }
     }
@@ -463,9 +466,14 @@ export default class App extends React.Component {
         });
     }
 
+    getLocale() {
+        return this.storage.get('lang');
+    }
+
     render() {
         const props = {
             ...this.state,
+            getLocale: this.getLocale.bind(this),
             checkSubtitleIllegal: this.checkSubtitleIllegal.bind(this),
             removeSubtitle: this.removeSubtitle.bind(this),
             editSubtitle: this.editSubtitle.bind(this),
