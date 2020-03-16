@@ -40,11 +40,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export default function() {
+    const [subtitles, setSubtitles] = useState([]);
+    const [currentTime, setCurrentTime] = useState(0);
     const [options, setOptions] = useState({
         videoUrl: '/sample.mp4',
         subtitleUrl: '/sample.vtt',
         audioWaveform: false,
-        subtitles: [],
     });
 
     const setOption = (key, value) => {
@@ -54,13 +55,13 @@ export default function() {
         });
     };
 
-    const [currentTime, setCurrentTime] = useState(0);
-
     const props = {
         options,
+        subtitles,
         setOption,
         setOptions,
         currentTime,
+        setSubtitles,
         setCurrentTime,
     };
 
