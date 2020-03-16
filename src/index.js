@@ -12,7 +12,6 @@ import './fontello/css/fontello.css';
 import 'toastr/build/toastr.css';
 import 'nprogress/nprogress.css';
 import 'react-virtualized/styles.css';
-import 'artplayer-react/dist/artplayer-react.css';
 
 setTranslations(i18n);
 toastr.options.timeOut = 3000;

@@ -1,6 +1,6 @@
 {
     "name": "subplayer",
-    "version": "1.0.2",
+    "version": "2.0.0",
     "description": "SubPlayer is a online subtitle editor",
     "homepage": "https://subplayer.js.org",
     "dependencies": {
@@ -13,7 +13,7 @@
         "p-limit": "^2.2.2",
         "react": "^16.13.0",
         "react-dom": "^16.13.0",
-        "react-i18nify": "^3.1.2",
+        "react-i18nify": "^3.1.4",
         "react-scripts": "3.4.0",
         "react-virtualized": "^9.21.2",
         "styled-components": "^5.0.1",
