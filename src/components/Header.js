@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { version } from '../../package.json';
 import i18n from '../i18n';
@@ -91,14 +91,6 @@ const I18n = styled.div`
 `;
 
 export default function(props) {
-    const [uploadOpen, setUploadOpen] = useState(false);
-
-    const moreProps = {
-        ...props,
-        uploadOpen,
-        setUploadOpen,
-    };
-
     return (
         <Header>
             <Left>
@@ -108,10 +100,10 @@ export default function(props) {
                 <Desc>A Online Subtitle Editor: vtt、srt、ass</Desc>
             </Left>
             <Right>
-                <Menu onClick={() => setUploadOpen(true)}>
+                <Menu onClick={() => props.setOption('uploadDialog', true)}>
                     <i className="icon-upload"></i>Open
                 </Menu>
-                <Menu>
+                <Menu onClick={() => props.setOption('downloadDialog', true)}>
                     <i className="icon-download"></i>Save
                 </Menu>
                 <I18n>
@@ -125,7 +117,7 @@ export default function(props) {
                     </select>
                 </I18n>
             </Right>
-            <Upload {...moreProps} />
+            <Upload {...props} />
         </Header>
     );
 }

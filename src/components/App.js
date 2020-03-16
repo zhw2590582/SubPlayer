@@ -8,9 +8,12 @@ const GlobalStyle = createGlobalStyle`
     html,
     body,
     #root {
+        height: 100%;
+    }
+
+    body {
         font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
         line-height: 1.5;
-        height: 100%;
         overflow: hidden;
     }
 
@@ -40,11 +43,15 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export default function() {
+    const [player, setPlayer] = useState(null);
     const [subtitles, setSubtitles] = useState([]);
     const [currentTime, setCurrentTime] = useState(0);
+
     const [options, setOptions] = useState({
         videoUrl: '/sample.mp4',
         subtitleUrl: '/sample.vtt',
+        uploadDialog: false,
+        downloadDialog: false,
         audioWaveform: false,
     });
 
@@ -56,8 +63,10 @@ export default function() {
     };
 
     const props = {
+        player,
         options,
         subtitles,
+        setPlayer,
         setOption,
         setOptions,
         currentTime,

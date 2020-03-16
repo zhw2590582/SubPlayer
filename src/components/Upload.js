@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import toastr from 'toastr';
 import { t } from 'react-i18nify';
 import NProgress from 'nprogress';
-import { readSubtitleFromFile, urlToArr, vttToUrl, getExt } from '../utils';
+import { readSubtitleFromFile, vttToUrl, getExt } from '../utils';
 
 const Upload = styled.div`
     position: fixed;
@@ -18,95 +18,95 @@ const Upload = styled.div`
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.4);
-`;
 
-const Inner = styled.div`
-    width: 500px;
-    background-color: #1f2133;
+    .dialog {
+        width: 500px;
+        background-color: #1f2133;
 
-    .item {
-        padding: 10px 0;
-        .title {
-            color: #fff;
-            font-size: 14px;
-            padding: 5px 10px;
-            border-left: 2px solid #03a9f4;
-        }
-        .centent {
-            padding: 15px 10px;
-            .upload {
-                position: relative;
-                margin-bottom: 10px;
-                .input {
-                    width: 100%;
-                    height: 30px;
-                    line-height: 30px;
-                    padding: 0 10px;
-                    outline: none;
-                    border: none;
-                    color: #fff;
-                    background-color: #363952;
-                }
-                .file {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    line-height: 1;
-                    height: 100%;
-                    width: 100px;
-                    color: #fff;
-                    background-color: rgb(9, 113, 241);
-
-                    input {
+        .item {
+            padding: 10px 0;
+            .title {
+                color: #fff;
+                font-size: 14px;
+                padding: 5px 10px;
+                border-left: 2px solid #03a9f4;
+            }
+            .centent {
+                padding: 15px 10px;
+                .upload {
+                    position: relative;
+                    margin-bottom: 10px;
+                    .input {
+                        width: 100%;
+                        height: 30px;
+                        line-height: 30px;
+                        padding: 0 10px;
+                        outline: none;
+                        border: none;
+                        color: #fff;
+                        background-color: #363952;
+                    }
+                    .file {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                         position: absolute;
-                        left: 0;
                         top: 0;
                         right: 0;
                         bottom: 0;
-                        width: 100%;
+                        line-height: 1;
                         height: 100%;
-                        opacity: 0;
+                        width: 100px;
+                        color: #fff;
+                        background-color: rgb(9, 113, 241);
+
+                        input {
+                            position: absolute;
+                            left: 0;
+                            top: 0;
+                            right: 0;
+                            bottom: 0;
+                            width: 100%;
+                            height: 100%;
+                            opacity: 0;
+                        }
                     }
                 }
-            }
-            .info {
-                font-size: 12px;
-                color: rgba(255, 255, 255, 0.5);
-                margin-bottom: 10px;
-            }
-            .option {
-                font-size: 12px;
-                label {
-                    margin-right: 20px;
-                    input {
-                        margin-right: 5px;
+                .info {
+                    font-size: 12px;
+                    color: rgba(255, 255, 255, 0.5);
+                    margin-bottom: 10px;
+                }
+                .option {
+                    font-size: 12px;
+                    label {
+                        margin-right: 20px;
+                        input {
+                            margin-right: 5px;
+                        }
                     }
                 }
             }
         }
-    }
 
-    .bottom {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        height: 40px;
-        cursor: pointer;
-        background-color: rgb(9, 113, 241);
-        transition: all 0.2s ease 0s;
+        .bottom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            height: 40px;
+            cursor: pointer;
+            background-color: rgb(9, 113, 241);
+            transition: all 0.2s ease 0s;
 
-        &:hover {
-            background-color: rgb(91, 148, 255);
+            &:hover {
+                background-color: rgb(91, 148, 255);
+            }
         }
     }
 `;
 
-export default function({ options, setOption, uploadOpen, setUploadOpen }) {
+export default function({ options, setOption }) {
     function loadSubtitle(file) {
         if (file) {
             NProgress.start().set(0.5);
@@ -115,17 +115,8 @@ export default function({ options, setOption, uploadOpen, setUploadOpen }) {
                 readSubtitleFromFile(file, type)
                     .then(data => {
                         const url = vttToUrl(data);
-                        urlToArr(url)
-                            .then(subs => {
-                                setOption('subtitles', subs);
-                                setOption('subtitleUrl', url);
-                                NProgress.done();
-                            })
-                            .catch(error => {
-                                toastr.error(error.message);
-                                NProgress.done();
-                                throw error;
-                            });
+                        setOption('subtitleUrl', url);
+                        NProgress.done();
                     })
                     .catch(error => {
                         toastr.error(error.message);
@@ -156,8 +147,11 @@ export default function({ options, setOption, uploadOpen, setUploadOpen }) {
     }
 
     return (
-        <Upload onClick={() => setUploadOpen(false)} style={{ display: uploadOpen ? 'flex' : 'none' }}>
-            <Inner onClick={event => event.stopPropagation()}>
+        <Upload
+            onClick={() => setOption('uploadDialog', false)}
+            style={{ display: options.uploadDialog ? 'flex' : 'none' }}
+        >
+            <div className="dialog" onClick={event => event.stopPropagation()}>
                 <div className="item">
                     <div className="title">Upload Subtitle</div>
                     <div className="centent">
@@ -208,10 +202,10 @@ export default function({ options, setOption, uploadOpen, setUploadOpen }) {
                         </div>
                     </div>
                 </div>
-                <div className="bottom" onClick={() => setUploadOpen(false)}>
+                <div className="bottom" onClick={() => setOption('uploadDialog', false)}>
                     Confirm
                 </div>
-            </Inner>
+            </div>
         </Upload>
     );
 }
