@@ -106,7 +106,7 @@ const Inner = styled.div`
     }
 `;
 
-export default function({ options, uploadOpen, setUploadOpen, setOption }) {
+export default function({ options, setOption, uploadOpen, setUploadOpen }) {
     function loadSubtitle(file) {
         if (file) {
             NProgress.start().set(0.5);
@@ -153,10 +153,6 @@ export default function({ options, uploadOpen, setUploadOpen, setOption }) {
             }
             NProgress.done();
         }
-    }
-
-    function confirm() {
-        setUploadOpen(false);
     }
 
     return (
@@ -212,7 +208,7 @@ export default function({ options, uploadOpen, setUploadOpen, setOption }) {
                         </div>
                     </div>
                 </div>
-                <div className="bottom" onClick={confirm}>
+                <div className="bottom" onClick={() => setUploadOpen(false)}>
                     Confirm
                 </div>
             </Inner>
