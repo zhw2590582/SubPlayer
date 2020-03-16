@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { version } from '../../package.json';
 import i18n from '../i18n';
+import Upload from './Upload';
 
 const Header = styled.div`
     position: relative;
@@ -53,7 +54,7 @@ const Menu = styled.div`
     padding: 7px 10px;
     margin-left: 10px;
     cursor: pointer;
-    border-radius: 2px;
+    border-radius: 3px;
     color: rgba(255, 255, 255, 1);
     background-color: rgb(9, 113, 241);
     transition: all 0.2s ease 0s;
@@ -90,6 +91,8 @@ const I18n = styled.div`
 `;
 
 export default function() {
+    const [uploadOpen, setUpload] = useState(false);
+
     return (
         <Header>
             <Left>
@@ -99,7 +102,7 @@ export default function() {
                 <Desc>A Online Subtitle Editor: vtt、srt、ass</Desc>
             </Left>
             <Right>
-                <Menu>
+                <Menu onClick={() => setUpload(true)}>
                     <i className="icon-upload"></i>Open
                 </Menu>
                 <Menu>
@@ -116,6 +119,7 @@ export default function() {
                     </select>
                 </I18n>
             </Right>
+            {uploadOpen ? <Upload setUpload={setUpload} /> : null}
         </Header>
     );
 }

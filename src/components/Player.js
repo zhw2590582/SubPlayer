@@ -10,6 +10,7 @@ const Player = styled.div`
     width: 100%;
     padding: 20px;
     border-bottom: 1px solid #000;
+    opacity: 0;
 `;
 
 export default function({ video = '/sample.mp4', subtitle = '/sample.vtt', poster = '/sample.jpg' }) {
