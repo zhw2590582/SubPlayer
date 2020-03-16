@@ -8,7 +8,7 @@ const GlobalStyle = createGlobalStyle`
     html,
     body,
     #root {
-        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
         line-height: 1.5;
         height: 100%;
         overflow: hidden;

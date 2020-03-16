@@ -4,7 +4,8 @@ import styled from 'styled-components';
 const Footer = styled.div`
     position: relative;
     display: flex;
-    flex: 1;
+    height: 200px;
+    background-color: #30324a;
 `;
 
 export default function() {
