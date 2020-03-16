@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import Header from './Header';
 import Main from './Main';
@@ -40,16 +40,36 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export default function() {
-    function getOption(option) {
-        console.log(option);
-    }
+    const [options, setOptions] = useState({
+        videoUrl: '/sample.mp4',
+        subtitleUrl: '/sample.vtt',
+        audioWaveform: false,
+        subtitles: [],
+    });
+
+    const setOption = (key, value) => {
+        setOptions({
+            ...options,
+            [key]: value,
+        });
+    };
+
+    const [currentTime, setCurrentTime] = useState(0);
+
+    const props = {
+        options,
+        setOption,
+        setOptions,
+        currentTime,
+        setCurrentTime,
+    };
 
     return (
         <React.Fragment>
             <GlobalStyle />
-            <Header getOption={getOption} />
-            <Main />
-            <Footer />
+            <Header {...props} />
+            <Main {...props} />
+            <Footer {...props} />
         </React.Fragment>
     );
 }

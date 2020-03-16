@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import toastr from 'toastr';
 import { t } from 'react-i18nify';
@@ -106,12 +106,7 @@ const Inner = styled.div`
     }
 `;
 
-export default function({ uploadOpen, setUpload, getOption }) {
-    const [videoUrl, setVideoUrl] = useState('/sample.mp4');
-    const [subtitleUrl, setSubtitleUrl] = useState('/sample.vtt');
-    const [audioWaveform, setAudioWaveform] = useState(false);
-    const [subtitles, setSubtitles] = useState([]);
-
+export default function({ options, uploadOpen, setUploadOpen, setOption }) {
     function loadSubtitle(file) {
         if (file) {
             NProgress.start().set(0.5);
@@ -122,8 +117,8 @@ export default function({ uploadOpen, setUpload, getOption }) {
                         const url = vttToUrl(data);
                         urlToArr(url)
                             .then(subs => {
-                                setSubtitles(subs);
-                                setSubtitleUrl(url);
+                                setOption('subtitles', subs);
+                                setOption('subtitleUrl', url);
                                 NProgress.done();
                             })
                             .catch(error => {
@@ -151,7 +146,7 @@ export default function({ uploadOpen, setUpload, getOption }) {
             const canPlayType = $video.canPlayType(file.type);
             if (canPlayType === 'maybe' || canPlayType === 'probably') {
                 const url = URL.createObjectURL(file);
-                setVideoUrl(url);
+                setOption('videoUrl', url);
                 toastr.success(`${t('uploadVideo')}: ${file.name}`);
             } else {
                 toastr.error(`${t('uploadVideoErr')}: ${file.type || 'unknown'}`);
@@ -161,29 +156,23 @@ export default function({ uploadOpen, setUpload, getOption }) {
     }
 
     function confirm() {
-        getOption({
-            videoUrl,
-            subtitleUrl,
-            audioWaveform,
-            subtitles,
-        });
-        setUpload(false);
+        setUploadOpen(false);
     }
 
     return (
-        <Upload onClick={() => setUpload(false)} style={{ display: uploadOpen ? 'flex' : 'none' }}>
+        <Upload onClick={() => setUploadOpen(false)} style={{ display: uploadOpen ? 'flex' : 'none' }}>
             <Inner onClick={event => event.stopPropagation()}>
                 <div className="item">
                     <div className="title">Upload Subtitle</div>
                     <div className="centent">
                         <div className="upload">
                             <input
-                                value={subtitleUrl}
+                                value={options.subtitleUrl}
                                 type="text"
                                 className="input"
                                 spellCheck="false"
                                 placeholder="Upload from remote address or local file"
-                                onChange={event => setSubtitleUrl(event.target.value)}
+                                onChange={event => setOption('subtitleUrl', event.target.value)}
                             />
                             <div className="file">
                                 Open
@@ -198,12 +187,12 @@ export default function({ uploadOpen, setUpload, getOption }) {
                     <div className="centent">
                         <div className="upload">
                             <input
-                                value={videoUrl}
+                                value={options.videoUrl}
                                 type="text"
                                 className="input"
                                 spellCheck="false"
                                 placeholder="Upload from remote address or local file"
-                                onChange={event => setVideoUrl(event.target.value)}
+                                onChange={event => setOption('videoUrl', event.target.value)}
                             />
                             <div className="file">
                                 Open
@@ -214,9 +203,9 @@ export default function({ uploadOpen, setUpload, getOption }) {
                         <div className="option">
                             <label>
                                 <input
-                                    value={audioWaveform}
+                                    value={options.audioWaveform}
                                     type="checkbox"
-                                    onChange={event => setAudioWaveform(event.target.checked)}
+                                    onChange={event => setOption('audioWaveform', event.target.checked)}
                                 />
                                 Generate audio waveform graph
                             </label>

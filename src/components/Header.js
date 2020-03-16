@@ -90,8 +90,14 @@ const I18n = styled.div`
     }
 `;
 
-export default function({ getOption }) {
-    const [uploadOpen, setUpload] = useState(false);
+export default function(props) {
+    const [uploadOpen, setUploadOpen] = useState(false);
+
+    const moreProps = {
+        ...props,
+        uploadOpen,
+        setUploadOpen,
+    };
 
     return (
         <Header>
@@ -102,7 +108,7 @@ export default function({ getOption }) {
                 <Desc>A Online Subtitle Editor: vtt、srt、ass</Desc>
             </Left>
             <Right>
-                <Menu onClick={() => setUpload(true)}>
+                <Menu onClick={() => setUploadOpen(true)}>
                     <i className="icon-upload"></i>Open
                 </Menu>
                 <Menu>
@@ -119,7 +125,7 @@ export default function({ getOption }) {
                     </select>
                 </I18n>
             </Right>
-            <Upload getOption={getOption} uploadOpen={uploadOpen} setUpload={setUpload} />
+            <Upload {...moreProps} />
         </Header>
     );
 }

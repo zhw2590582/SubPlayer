@@ -13,28 +13,30 @@ const Player = styled.div`
     opacity: 0;
 `;
 
-export default function({ video = '/sample.mp4', subtitle = '/sample.vtt', poster = '/sample.jpg' }) {
+let lastArt = null;
+export default function({ videoUrl = '/sample.mp4', subtitleUrl = '/sample.vtt' }) {
     return (
         <Player>
-            {video ? (
+            {videoUrl ? (
                 <ArtplayerComponent
                     style={{
                         width: '100%',
                         height: '100%',
                     }}
                     option={{
-                        url: video,
-                        poster,
+                        url: videoUrl,
+                        poster: '/sample.jpg',
                         loop: true,
                         autoSize: true,
                         subtitle: {
-                            url: subtitle,
+                            url: subtitleUrl,
                         },
                         moreVideoAttr: {
                             crossOrigin: 'anonymous',
                         },
                     }}
                     getInstance={art => {
+                        lastArt = art;
                         (function loop() {
                             window.requestAnimationFrame(() => {
                                 if (art.playing) {
