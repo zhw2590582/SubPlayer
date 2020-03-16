@@ -109,7 +109,6 @@ const Inner = styled.div`
 export default function({ uploadOpen, setUpload, getOption }) {
     const [videoUrl, setVideoUrl] = useState('/sample.mp4');
     const [subtitleUrl, setSubtitleUrl] = useState('/sample.vtt');
-    const [removeBlank, setRemoveBlank] = useState(false);
     const [audioWaveform, setAudioWaveform] = useState(false);
     const [subtitles, setSubtitles] = useState([]);
 
@@ -165,7 +164,6 @@ export default function({ uploadOpen, setUpload, getOption }) {
         getOption({
             videoUrl,
             subtitleUrl,
-            removeBlank,
             audioWaveform,
             subtitles,
         });
@@ -193,16 +191,6 @@ export default function({ uploadOpen, setUpload, getOption }) {
                             </div>
                         </div>
                         <div className="info">Supports opening subtitles in vtt, srt and ass formats</div>
-                        <div className="option">
-                            <label>
-                                <input
-                                    value={removeBlank}
-                                    type="checkbox"
-                                    onChange={event => setRemoveBlank(event.target.checked)}
-                                />
-                                Remove blank lines
-                            </label>
-                        </div>
                     </div>
                 </div>
                 <div className="item">
