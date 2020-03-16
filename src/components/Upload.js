@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import toastr from 'toastr';
+import { t } from 'react-i18nify';
+import NProgress from 'nprogress';
+import { readSubtitleFromFile, urlToArr, vttToUrl, getExt } from '../utils';
 
 const Upload = styled.div`
     position: fixed;
@@ -102,33 +106,100 @@ const Inner = styled.div`
     }
 `;
 
-export default function({ setUpload }) {
-    const [videoUrl] = useState('/sample.mp4');
-    const [subtitleUrl] = useState('/sample.vtt');
+export default function({ uploadOpen, setUpload, getOption }) {
+    const [videoUrl, setVideoUrl] = useState('/sample.mp4');
+    const [subtitleUrl, setSubtitleUrl] = useState('/sample.vtt');
+    const [removeBlank, setRemoveBlank] = useState(false);
+    const [audioWaveform, setAudioWaveform] = useState(false);
+    const [subtitles, setSubtitles] = useState([]);
+
+    function loadSubtitle(file) {
+        if (file) {
+            NProgress.start().set(0.5);
+            const type = getExt(file.name);
+            if (['vtt', 'srt', 'ass'].includes(type)) {
+                readSubtitleFromFile(file, type)
+                    .then(data => {
+                        const url = vttToUrl(data);
+                        urlToArr(url)
+                            .then(subs => {
+                                setSubtitles(subs);
+                                setSubtitleUrl(url);
+                                NProgress.done();
+                            })
+                            .catch(error => {
+                                toastr.error(error.message);
+                                NProgress.done();
+                                throw error;
+                            });
+                    })
+                    .catch(error => {
+                        toastr.error(error.message);
+                        NProgress.done();
+                        throw error;
+                    });
+            } else {
+                NProgress.done();
+                toastr.error(t('uploadSubtitleErr'));
+            }
+        }
+    }
+
+    function loadVideo(file) {
+        if (file) {
+            NProgress.start().set(0.5);
+            const $video = document.createElement('video');
+            const canPlayType = $video.canPlayType(file.type);
+            if (canPlayType === 'maybe' || canPlayType === 'probably') {
+                const url = URL.createObjectURL(file);
+                setVideoUrl(url);
+                toastr.success(`${t('uploadVideo')}: ${file.name}`);
+            } else {
+                toastr.error(`${t('uploadVideoErr')}: ${file.type || 'unknown'}`);
+            }
+            NProgress.done();
+        }
+    }
+
+    function confirm() {
+        getOption({
+            videoUrl,
+            subtitleUrl,
+            removeBlank,
+            audioWaveform,
+            subtitles,
+        });
+        setUpload(false);
+    }
 
     return (
-        <Upload onClick={() => setUpload(false)}>
+        <Upload onClick={() => setUpload(false)} style={{ display: uploadOpen ? 'flex' : 'none' }}>
             <Inner onClick={event => event.stopPropagation()}>
                 <div className="item">
                     <div className="title">Upload Subtitle</div>
                     <div className="centent">
                         <div className="upload">
                             <input
-                                defaultValue={subtitleUrl}
+                                value={subtitleUrl}
                                 type="text"
                                 className="input"
                                 spellCheck="false"
                                 placeholder="Upload from remote address or local file"
+                                onChange={event => setSubtitleUrl(event.target.value)}
                             />
                             <div className="file">
                                 Open
-                                <input type="file" />
+                                <input type="file" onChange={event => loadSubtitle(event.target.files[0])} />
                             </div>
                         </div>
                         <div className="info">Supports opening subtitles in vtt, srt and ass formats</div>
                         <div className="option">
                             <label>
-                                <input type="checkbox" value="" />
+                                <input
+                                    value={removeBlank}
+                                    type="checkbox"
+                                    onChange={event => setRemoveBlank(event.target.checked)}
+                                />
                                 Remove blank lines
                             </label>
                         </div>
@@ -139,27 +210,34 @@ export default function({ setUpload }) {
                     <div className="centent">
                         <div className="upload">
                             <input
-                                defaultValue={videoUrl}
+                                value={videoUrl}
                                 type="text"
                                 className="input"
                                 spellCheck="false"
                                 placeholder="Upload from remote address or local file"
+                                onChange={event => setVideoUrl(event.target.value)}
                             />
                             <div className="file">
                                 Open
-                                <input type="file" />
+                                <input type="file" onChange={event => loadVideo(event.target.files[0])} />
                             </div>
                         </div>
                         <div className="info">Supports opening mp4, webm and ogg video</div>
                         <div className="option">
                             <label>
-                                <input type="checkbox" value="" />
+                                <input
+                                    value={audioWaveform}
+                                    type="checkbox"
+                                    onChange={event => setAudioWaveform(event.target.checked)}
+                                />
                                 Generate audio waveform graph
                             </label>
                         </div>
                     </div>
                 </div>
-                <div className="bottom">Confirm</div>
+                <div className="bottom" onClick={confirm}>
+                    Confirm
+                </div>
             </Inner>
         </Upload>
     );

@@ -39,15 +39,17 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
-export default class App extends React.Component {
-    render() {
-        return (
-            <React.Fragment>
-                <GlobalStyle />
-                <Header />
-                <Main />
-                <Footer />
-            </React.Fragment>
-        );
+export default function() {
+    function getOption(option) {
+        console.log(option);
     }
+
+    return (
+        <React.Fragment>
+            <GlobalStyle />
+            <Header getOption={getOption} />
+            <Main />
+            <Footer />
+        </React.Fragment>
+    );
 }

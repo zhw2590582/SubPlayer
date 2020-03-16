@@ -90,7 +90,7 @@ const I18n = styled.div`
     }
 `;
 
-export default function() {
+export default function({ getOption }) {
     const [uploadOpen, setUpload] = useState(false);
 
     return (
@@ -119,7 +119,7 @@ export default function() {
                     </select>
                 </I18n>
             </Right>
-            {uploadOpen ? <Upload setUpload={setUpload} /> : null}
+            <Upload getOption={getOption} uploadOpen={uploadOpen} setUpload={setUpload} />
         </Header>
     );
 }

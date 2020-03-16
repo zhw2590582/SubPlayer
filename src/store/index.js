@@ -1,6 +1,6 @@
-import { useLocalStore } from 'mobx-react-lite';
+import { observable } from 'mobx-react';
 
-export default useLocalStore({
+export default observable({
     title: 'Test',
     done: true,
     toggle() {
