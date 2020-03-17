@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
+import { timeToSecond, secondToTime } from '../utils';
 
 const Subtitle = styled.div`
     .ReactVirtualized__Table {
@@ -34,7 +35,6 @@ const Subtitle = styled.div`
         .input,
         .textarea {
             border: none;
-            padding: 5px;
             width: 100%;
             color: #fff;
             font-size: 12px;
@@ -46,9 +46,13 @@ const Subtitle = styled.div`
 
         .input {
             height: 25px;
+            line-height: 25px;
+            cursor: col-resize;
+            user-select: none;
         }
 
         .textarea {
+            padding: 5px;
             height: 100%;
             line-height: 1.5;
         }
@@ -63,13 +67,45 @@ const Subtitle = styled.div`
 `;
 
 export default function({
+    player,
     subtitles,
+    addSubtitle,
     currentIndex,
     updateSubtitle,
     removeSubtitle,
-    addSubtitle,
     checkSubtitleIllegal,
 }) {
+    let isDroging = false;
+    let lastPageX = 0;
+    let lastSub = null;
+    let lastKey = '';
+    let lastValue = '';
+
+    function onMouseDown(event, sub, key) {
+        isDroging = true;
+        lastPageX = event.pageX;
+        lastSub = sub;
+        lastKey = key;
+    }
+
+    function onMouseMove(event, sub, key) {
+        if (isDroging) {
+            const time = Number(((event.pageX - lastPageX) / 10).toFixed(3));
+            lastValue = secondToTime(timeToSecond(sub[key]) + time);
+        }
+    }
+
+    document.addEventListener('mouseup', () => {
+        if (isDroging) {
+            updateSubtitle(lastSub, lastKey, lastValue);
+            isDroging = false;
+            lastPageX = 0;
+            lastSub = null;
+            lastKey = '';
+            lastValue = '';
+        }
+    });
+
     return (
         <Subtitle>
             <Table
@@ -94,6 +130,9 @@ export default function({
                                 .join(' ')
                                 .trim()}
                             style={props.style}
+                            onClick={() => {
+                                player.seek = props.rowData.startTime;
+                            }}
                         >
                             <div className="row operation" style={{ width: 30 }}>
                                 <i
@@ -104,22 +143,23 @@ export default function({
                                 <i className="icon-doc-new" onClick={() => addSubtitle(props.index + 1)}></i>
                             </div>
                             <div className="row time" style={{ width: 150 }}>
-                                <input
-                                    maxLength={20}
+                                <div
                                     className="input"
-                                    value={props.rowData.start}
-                                    onChange={event => updateSubtitle(props.rowData, 'start', event.target.value)}
+                                    onMouseDown={event => onMouseDown(event, props.rowData, 'start')}
+                                    onMouseMove={event => onMouseMove(event, props.rowData, 'start')}
                                     style={{ marginBottom: 10 }}
-                                />
-                                <div />
-                                <input
-                                    maxLength={20}
+                                >
+                                    {props.rowData.start}
+                                </div>
+                                <div
                                     className="input"
-                                    value={props.rowData.end}
-                                    onChange={event => updateSubtitle(props.rowData, 'end', event.target.value)}
-                                />
+                                    onMouseDown={event => onMouseDown(event, props.rowData, 'end')}
+                                    onMouseMove={event => onMouseMove(event, props.rowData, 'end')}
+                                >
+                                    {props.rowData.end}
+                                </div>
                             </div>
-                            <div className="row duration" style={{ width: 50 }}>
+                            <div className="row duration" style={{ width: 70 }}>
                                 {props.rowData.duration}
                             </div>
                             <div className="row text" style={{ flex: 1 }}>
