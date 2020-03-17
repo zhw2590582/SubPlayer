@@ -5,7 +5,6 @@ export default class Sub {
         this.start = start;
         this.end = end;
         this.text = text;
-        this.highlight = false;
     }
 
     get check() {

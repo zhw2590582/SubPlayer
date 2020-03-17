@@ -15,14 +15,10 @@ const Subtitle = styled.div`
                 background-color: rgb(35, 40, 64);
             }
             &.highlight {
-                color: #fff;
                 background-color: #2196f3;
-                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
             }
             &.illegal {
-                color: #fff;
                 background-color: #c75123;
-                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
             }
             .row {
                 display: flex;
@@ -66,7 +62,14 @@ const Subtitle = styled.div`
     }
 `;
 
-export default function({ subtitles, updateSubtitle, removeSubtitle, addSubtitle }) {
+export default function({
+    subtitles,
+    currentIndex,
+    updateSubtitle,
+    removeSubtitle,
+    addSubtitle,
+    checkSubtitleIllegal,
+}) {
     return (
         <Subtitle>
             <Table
@@ -74,7 +77,7 @@ export default function({ subtitles, updateSubtitle, removeSubtitle, addSubtitle
                 width={document.body.clientWidth / 2}
                 height={document.body.clientHeight - 220}
                 rowHeight={80}
-                scrollToIndex={1}
+                scrollToIndex={currentIndex}
                 rowCount={subtitles.length}
                 rowGetter={({ index }) => subtitles[index]}
                 headerRowRenderer={() => null}
@@ -85,8 +88,8 @@ export default function({ subtitles, updateSubtitle, removeSubtitle, addSubtitle
                             className={[
                                 props.className,
                                 props.index % 2 ? 'odd' : '',
-                                props.rowData.highlight ? 'highlight' : '',
-                                // checkSubtitleIllegal(props.rowData) ? 'illegal' : '',
+                                currentIndex === props.index ? 'highlight' : '',
+                                checkSubtitleIllegal(props.rowData) ? 'illegal' : '',
                             ]
                                 .join(' ')
                                 .trim()}

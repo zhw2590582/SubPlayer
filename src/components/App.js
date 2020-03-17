@@ -9,6 +9,7 @@ import { getSubFromVttUrl } from '../subtitle';
 
 export default function() {
     const [player, setPlayer] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(-1);
     const [currentTime, setCurrentTime] = useState(0);
     const [subtitles, setSubtitles] = useState([]);
     const [options, setOptions] = useState({
@@ -25,6 +26,14 @@ export default function() {
         setSubtitles(await getSubFromVttUrl(options.subtitleUrl));
     }, [setSubtitles, options.subtitleUrl]);
 
+    useMemo(() => {
+        setCurrentIndex(
+            subtitles.findIndex(item => {
+                return item.startTime <= currentTime && item.endTime >= currentTime;
+            }),
+        );
+    }, [subtitles, currentTime, setCurrentIndex]);
+
     const setOption = (key, value) => {
         setOptions({
             ...options,
@@ -32,7 +41,19 @@ export default function() {
         });
     };
 
+    const checkSub = sub => {
+        return subtitles.includes(sub);
+    };
+
+    const checkSubtitleIllegal = sub => {
+        if (!checkSub(sub)) return;
+        const index = subtitles.indexOf(sub);
+        const previous = subtitles[index - 1];
+        return (previous && sub.startTime < previous.endTime) || !sub.check;
+    };
+
     const updateSubtitle = (sub, key, value) => {
+        if (!checkSub(sub)) return;
         const index = subtitles.indexOf(sub);
         const subs = [...subtitles];
         const { clone } = sub;
@@ -42,6 +63,7 @@ export default function() {
     };
 
     const removeSubtitle = sub => {
+        if (!checkSub(sub)) return;
         const index = subtitles.indexOf(sub);
         const subs = [...subtitles];
         subs.splice(index, 1);
@@ -56,21 +78,39 @@ export default function() {
         const sub = new Sub(start, end, '');
         subs.splice(index, 0, sub);
         setSubtitles(subs);
+        setCurrentIndex(index);
+    };
+
+    const mergeSubtitle = sub => {
+        if (!checkSub(sub)) return;
+        const index = subtitles.indexOf(sub);
+        const next = subtitles[index + 1];
+        if (!checkSub(next)) return;
+        const merge = new Sub(sub.start, next.end, sub.text + '\n' + next.text);
+        const subs = [...subtitles];
+        subs[index] = merge;
+        subs.splice(index + 1, 1);
+        setSubtitles(subs);
     };
 
     const props = {
         player,
         options,
+        checkSub,
         subtitles,
         setPlayer,
         setOption,
         setOptions,
+        currentIndex,
         addSubtitle,
         currentTime,
         setSubtitles,
+        mergeSubtitle,
         removeSubtitle,
+        setCurrentIndex,
         setCurrentTime,
         updateSubtitle,
+        checkSubtitleIllegal,
     };
 
     return (
