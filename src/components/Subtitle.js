@@ -97,7 +97,9 @@ export default function({
 
     document.addEventListener('mouseup', () => {
         if (isDroging) {
-            updateSubtitle(lastSub, lastKey, lastValue);
+            if (lastSub && lastKey && lastValue) {
+                updateSubtitle(lastSub, lastKey, lastValue);
+            }
             isDroging = false;
             lastPageX = 0;
             lastSub = null;
