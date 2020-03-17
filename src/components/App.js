@@ -3,7 +3,6 @@ import GlobalStyle from './GlobalStyle';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
-import { debounce } from '../utils';
 
 export default function() {
     const [player, setPlayer] = useState(null);
@@ -26,18 +25,6 @@ export default function() {
             [key]: value,
         });
     };
-
-    // const uddateMainSize = () => {
-    //     setOption('mainWidth', document.body.clientWidth);
-    //     setOption('mainHeight', document.body.clientHeight - 250);
-    // };
-
-    // const resizeDebounce = debounce(() => {
-    //     uddateMainSize();
-    // }, 500);
-
-    // uddateMainSize();
-    // window.addEventListener('resize', resizeDebounce);
 
     const props = {
         player,

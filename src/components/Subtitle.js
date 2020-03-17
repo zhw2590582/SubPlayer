@@ -1,36 +1,20 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import dequal from 'dequal';
-import { Translate } from 'react-i18nify';
+import dequal from 'fast-deep-equal';
 import { getSubFromVttUrl } from '../subtitle';
-import { escapeHTML, unescapeHTML } from '../utils';
+import { unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
 
 const Subtitle = styled.div`
     .ReactVirtualized__Table {
         font-size: 12px;
-        background: #24292d;
         .ReactVirtualized__Table__Grid {
             outline: none;
         }
-        .ReactVirtualized__Table__headerRow {
-            background: rgb(46, 54, 60);
-            border-bottom: 1px solid rgb(10, 10, 10);
-            .row {
-                padding: 10px 5px;
-                font-style: normal;
-                font-weight: normal;
-                font-size: 14px;
-                text-align: center;
-                text-transform: none;
-            }
-        }
         .ReactVirtualized__Table__row {
-            background-color: #1c2022;
-            border-bottom: 1px solid rgb(36, 41, 45);
             transition: all 0.2s ease;
             &.odd {
-                background-color: rgb(46, 54, 60);
+                background-color: rgb(35, 40, 64);
             }
             &.highlight {
                 color: #fff;
@@ -43,32 +27,42 @@ const Subtitle = styled.div`
                 text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
             }
             .row {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                height: 100%;
                 padding: 10px 5px;
-                text-align: center;
+                border-bottom: 1px solid #000;
             }
         }
+
         .input,
         .textarea {
             border: none;
             padding: 5px;
-            min-height: 30px;
+            width: 100%;
+            color: #fff;
             font-size: 12px;
             text-align: center;
-            color: #fff;
-            background-color: #3a3a3a;
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            resize: none;
         }
+
+        .input {
+            height: 25px;
+        }
+
         .textarea {
-            resize: vertical;
-        }
-        p {
+            height: 100%;
             line-height: 1.5;
-            margin: 0;
         }
     }
 `;
 
 export default React.memo(
-    function({ options, subtitles = [], setSubtitles }) {
+    function({ options, subtitles, setSubtitles }) {
         useEffect(() => {
             async function getSubs() {
                 const subs = await getSubFromVttUrl(options.subtitleUrl);
@@ -77,8 +71,9 @@ export default React.memo(
             getSubs();
         });
 
-        function onChange() {
-            //
+        function onChange(sub, key, value) {
+            sub[key] = value;
+            setSubtitles(subtitles);
         }
 
         return (
@@ -87,7 +82,7 @@ export default React.memo(
                     headerHeight={40}
                     width={document.body.clientWidth / 2}
                     height={document.body.clientHeight - 220}
-                    rowHeight={60}
+                    rowHeight={80}
                     scrollToIndex={1}
                     rowCount={subtitles.length}
                     rowGetter={({ index }) => subtitles[index]}
@@ -99,7 +94,6 @@ export default React.memo(
                                 className={[
                                     props.className,
                                     props.index % 2 ? 'odd' : '',
-                                    props.rowData.editing ? 'editing' : '',
                                     props.rowData.highlight ? 'highlight' : '',
                                     // checkSubtitleIllegal(props.rowData) ? 'illegal' : '',
                                 ]
@@ -107,39 +101,34 @@ export default React.memo(
                                     .trim()}
                                 style={props.style}
                             >
-                                <div className="row" style={{ width: 50 }}>
+                                <div className="row" style={{ width: 40 }}>
                                     {props.index + 1}
                                 </div>
-                                <div className="row" style={{ width: 100 }}>
+                                <div className="row" style={{ width: 150 }}>
                                     <input
                                         maxLength={20}
-                                        className="input edit"
+                                        className="input"
                                         value={props.rowData.start}
-                                        onChange={event => onChange('start', event.target.value)}
+                                        onChange={event => onChange(props.rowData, 'start', event.target.value)}
+                                        style={{ marginBottom: 10 }}
                                     />
-                                </div>
-                                <div className="row" style={{ width: 100 }}>
+                                    <div />
                                     <input
                                         maxLength={20}
-                                        className="input edit"
+                                        className="input"
                                         value={props.rowData.end}
-                                        onChange={event => onChange('end', event.target.value)}
+                                        onChange={event => onChange(props.rowData, 'end', event.target.value)}
                                     />
                                 </div>
-                                <div className="row" style={{ width: 100 }}>
-                                    <input
-                                        disabled
-                                        maxLength={20}
-                                        className="input edit"
-                                        value={props.rowData.duration}
-                                    />
+                                <div className="row" style={{ width: 50 }}>
+                                    {props.rowData.duration}
                                 </div>
                                 <div className="row" style={{ flex: 1 }}>
                                     <textarea
-                                        maxLength={100}
-                                        className="textarea edit"
-                                        value={unescapeHTML(props.rowData.text || '')}
-                                        onChange={event => onChange('text', event.target.value)}
+                                        maxLength={200}
+                                        className="textarea"
+                                        value={unescapeHTML(props.rowData.text)}
+                                        onChange={event => onChange(props.rowData, 'text', event.target.value)}
                                     />
                                 </div>
                             </div>
@@ -150,9 +139,10 @@ export default React.memo(
         );
     },
     (prevProps, nextProps) => {
+        console.log(dequal(prevProps.subtitles, nextProps.subtitles));
         return (
             dequal(prevProps.subtitles, nextProps.subtitles) &&
-            prevProps.options.subtitleUrl === nextProps.options.subtitleUrl
+            dequal(prevProps.options.subtitleUrl, nextProps.options.subtitleUrl)
         );
     },
 );
