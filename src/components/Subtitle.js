@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import dequal from 'fast-deep-equal';
-import { getSubFromVttUrl } from '../subtitle';
 import { unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
 
@@ -58,91 +56,81 @@ const Subtitle = styled.div`
             height: 100%;
             line-height: 1.5;
         }
+
+        .operation {
+            i {
+                font-size: 12px;
+                cursor: pointer;
+            }
+        }
     }
 `;
 
-export default React.memo(
-    function({ options, subtitles, setSubtitles }) {
-        useEffect(() => {
-            async function getSubs() {
-                const subs = await getSubFromVttUrl(options.subtitleUrl);
-                setSubtitles(subs);
-            }
-            getSubs();
-        });
-
-        function onChange(sub, key, value) {
-            sub[key] = value;
-            setSubtitles(subtitles);
-        }
-
-        return (
-            <Subtitle>
-                <Table
-                    headerHeight={40}
-                    width={document.body.clientWidth / 2}
-                    height={document.body.clientHeight - 220}
-                    rowHeight={80}
-                    scrollToIndex={1}
-                    rowCount={subtitles.length}
-                    rowGetter={({ index }) => subtitles[index]}
-                    headerRowRenderer={() => null}
-                    rowRenderer={props => {
-                        return (
-                            <div
-                                key={props.key}
-                                className={[
-                                    props.className,
-                                    props.index % 2 ? 'odd' : '',
-                                    props.rowData.highlight ? 'highlight' : '',
-                                    // checkSubtitleIllegal(props.rowData) ? 'illegal' : '',
-                                ]
-                                    .join(' ')
-                                    .trim()}
-                                style={props.style}
-                            >
-                                <div className="row" style={{ width: 40 }}>
-                                    {props.index + 1}
-                                </div>
-                                <div className="row" style={{ width: 150 }}>
-                                    <input
-                                        maxLength={20}
-                                        className="input"
-                                        value={props.rowData.start}
-                                        onChange={event => onChange(props.rowData, 'start', event.target.value)}
-                                        style={{ marginBottom: 10 }}
-                                    />
-                                    <div />
-                                    <input
-                                        maxLength={20}
-                                        className="input"
-                                        value={props.rowData.end}
-                                        onChange={event => onChange(props.rowData, 'end', event.target.value)}
-                                    />
-                                </div>
-                                <div className="row" style={{ width: 50 }}>
-                                    {props.rowData.duration}
-                                </div>
-                                <div className="row" style={{ flex: 1 }}>
-                                    <textarea
-                                        maxLength={200}
-                                        className="textarea"
-                                        value={unescapeHTML(props.rowData.text)}
-                                        onChange={event => onChange(props.rowData, 'text', event.target.value)}
-                                    />
-                                </div>
+export default function({ subtitles, updateSubtitle, removeSubtitle, addSubtitle }) {
+    return (
+        <Subtitle>
+            <Table
+                headerHeight={40}
+                width={document.body.clientWidth / 2}
+                height={document.body.clientHeight - 220}
+                rowHeight={80}
+                scrollToIndex={1}
+                rowCount={subtitles.length}
+                rowGetter={({ index }) => subtitles[index]}
+                headerRowRenderer={() => null}
+                rowRenderer={props => {
+                    return (
+                        <div
+                            key={props.key}
+                            className={[
+                                props.className,
+                                props.index % 2 ? 'odd' : '',
+                                props.rowData.highlight ? 'highlight' : '',
+                                // checkSubtitleIllegal(props.rowData) ? 'illegal' : '',
+                            ]
+                                .join(' ')
+                                .trim()}
+                            style={props.style}
+                        >
+                            <div className="row operation" style={{ width: 30 }}>
+                                <i
+                                    className="icon-trash-empty"
+                                    onClick={() => removeSubtitle(props.rowData)}
+                                    style={{ marginBottom: 15 }}
+                                ></i>
+                                <i className="icon-doc-new" onClick={() => addSubtitle(props.index + 1)}></i>
                             </div>
-                        );
-                    }}
-                ></Table>
-            </Subtitle>
-        );
-    },
-    (prevProps, nextProps) => {
-        console.log(dequal(prevProps.subtitles, nextProps.subtitles));
-        return (
-            dequal(prevProps.subtitles, nextProps.subtitles) &&
-            dequal(prevProps.options.subtitleUrl, nextProps.options.subtitleUrl)
-        );
-    },
-);
+                            <div className="row time" style={{ width: 150 }}>
+                                <input
+                                    maxLength={20}
+                                    className="input"
+                                    value={props.rowData.start}
+                                    onChange={event => updateSubtitle(props.rowData, 'start', event.target.value)}
+                                    style={{ marginBottom: 10 }}
+                                />
+                                <div />
+                                <input
+                                    maxLength={20}
+                                    className="input"
+                                    value={props.rowData.end}
+                                    onChange={event => updateSubtitle(props.rowData, 'end', event.target.value)}
+                                />
+                            </div>
+                            <div className="row duration" style={{ width: 50 }}>
+                                {props.rowData.duration}
+                            </div>
+                            <div className="row text" style={{ flex: 1 }}>
+                                <textarea
+                                    maxLength={200}
+                                    className="textarea"
+                                    value={unescapeHTML(props.rowData.text)}
+                                    onChange={event => updateSubtitle(props.rowData, 'text', event.target.value)}
+                                />
+                            </div>
+                        </div>
+                    );
+                }}
+            ></Table>
+        </Subtitle>
+    );
+}
