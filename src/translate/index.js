@@ -3,7 +3,7 @@ import NProgress from 'nprogress';
 import toastr from 'toastr';
 import pLimit from 'p-limit';
 import MD5 from './md5';
-import { sleep } from './index';
+import { sleep } from '../utils/index';
 
 export function baiduTranslate(query, land) {
     return new Promise(resolve => {

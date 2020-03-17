@@ -1,4 +1,4 @@
-import { timeToSecond, secondToTime, clamp } from './index';
+import { timeToSecond, secondToTime, clamp } from '../utils';
 
 export default class Sub {
     constructor(start, end, text) {

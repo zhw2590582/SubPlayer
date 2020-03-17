@@ -1,6 +1,4 @@
 import DT from 'duration-time-conversion';
-import assToVtt from './assToVtt';
-import Sub from './sub';
 
 export function checkTime(time) {
     return /^(\d+):([0-5][0-9]):([0-5][0-9])\.\d{3}$/.test(time);
@@ -54,121 +52,6 @@ export function debounce(func, wait, context) {
     };
 }
 
-export function urlToArr(url) {
-    return new Promise((resolve, reject) => {
-        const $video = document.createElement('video');
-        const $track = document.createElement('track');
-        $track.default = true;
-        $track.kind = 'metadata';
-        $video.appendChild($track);
-        $track.onerror = error => {
-            reject(error);
-        };
-        $track.onload = () => {
-            resolve(
-                Array.from($track.track.cues).map(item => {
-                    const start = secondToTime(item.startTime);
-                    const end = secondToTime(item.endTime);
-                    const text = item.text;
-                    return new Sub(start, end, text);
-                }),
-            );
-        };
-        $track.src = url;
-    });
-}
-
-export function vttToUrl(vttText) {
-    return URL.createObjectURL(
-        new Blob([vttText], {
-            type: 'text/vtt',
-        }),
-    );
-}
-
-export function vttToUrlWorker() {
-    return URL.createObjectURL(
-        new Blob([
-            `onmessage = event => {
-                postMessage(URL.createObjectURL(
-                    new Blob([
-                        \`WEBVTT
-
-                        \${event.data.map((item, index) => \`
-                        \${index + 1}
-                        \${item.start} --> \${item.end}
-                        \${item.text}\`).join('\\n\\n')}
-                        \`
-                    ], {
-                        type: 'text/vtt',
-                    }),
-                ))
-            }`,
-        ]),
-    );
-}
-
-export function arrToVtt(arr) {
-    return (
-        'WEBVTT\n\n' +
-        arr
-            .map((item, index) => {
-                return index + 1 + '\n' + item.start + ' --> ' + item.end + '\n' + item.text;
-            })
-            .join('\n\n')
-    );
-}
-
-export function srtToVtt(srtText) {
-    return 'WEBVTT \r\n\r\n'.concat(
-        srtText
-            .replace(/\{\\([ibu])\}/g, '</$1>')
-            .replace(/\{\\([ibu])1\}/g, '<$1>')
-            .replace(/\{([ibu])\}/g, '<$1>')
-            .replace(/\{\/([ibu])\}/g, '</$1>')
-            .replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, '$1.$2')
-            .replace(/{[\s\S]*?}/g, '')
-            .concat('\r\n\r\n'),
-    );
-}
-
-export function readSubtitleFromFile(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        const type = getExt(file.name);
-        reader.onload = () => {
-            if (type === 'srt') {
-                resolve(srtToVtt(reader.result));
-            } else if (type === 'ass') {
-                resolve(assToVtt(reader.result));
-            } else {
-                resolve(reader.result.replace(/{[\s\S]*?}/g, ''));
-            }
-        };
-        reader.onerror = error => {
-            reject(error);
-        };
-        reader.readAsText(file);
-    });
-}
-
-export async function readSubtitleFromUrl(url) {
-    try {
-        const response = await fetch(url);
-        const text = await response.text();
-        const type = getExt(url);
-        if (type === 'srt') {
-            return srtToVtt(text);
-        }
-        if (type === 'ass') {
-            return assToVtt(text);
-        }
-        return text.replace(/{[\s\S]*?}/g, '');
-    } catch (error) {
-        throw error;
-    }
-}
-
 export function downloadFile(url, name) {
     const elink = document.createElement('a');
     elink.style.display = 'none';
@@ -205,9 +88,4 @@ export function unescapeHTML(str) {
                 '&quot;': '"',
             }[tag] || tag),
     );
-}
-
-export function getSearchParams(name) {
-    const locationUrl = new URL(window.location.href);
-    return decodeURIComponent(locationUrl.searchParams.get(name) || '');
 }
