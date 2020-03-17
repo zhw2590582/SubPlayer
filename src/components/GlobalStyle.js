@@ -22,7 +22,7 @@ export default createGlobalStyle`
         flex-direction: column;
         font-size: 14px;
         color: #ccc;
-        background: #1f2133;
+        background: #1c1f2f;
     }
 
     ::-webkit-scrollbar {

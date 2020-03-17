@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import toastr from 'toastr';
 import { t } from 'react-i18nify';
 import NProgress from 'nprogress';
-import { readSubtitleFromFile, vttToUrl, getExt } from '../utils';
+import { getVtt, vttToUrl } from '../subtitle';
 
 const Upload = styled.div`
     position: fixed;
-    z-index: 9;
+    z-index: 99;
     width: 100%;
     height: 100%;
     left: 0;
@@ -17,7 +17,7 @@ const Upload = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.8);
 
     .dialog {
         width: 500px;
@@ -107,30 +107,21 @@ const Upload = styled.div`
 `;
 
 export default function({ options, setOption }) {
-    function loadSubtitle(file) {
+    async function uploadSubtitle(file) {
         if (file) {
             NProgress.start().set(0.5);
-            const type = getExt(file.name);
-            if (['vtt', 'srt', 'ass'].includes(type)) {
-                readSubtitleFromFile(file, type)
-                    .then(data => {
-                        const url = vttToUrl(data);
-                        setOption('subtitleUrl', url);
-                        NProgress.done();
-                    })
-                    .catch(error => {
-                        toastr.error(error.message);
-                        NProgress.done();
-                        throw error;
-                    });
-            } else {
+            try {
+                const url = vttToUrl(await getVtt(file));
+                setOption('subtitleUrl', url);
                 NProgress.done();
-                toastr.error(t('uploadSubtitleErr'));
+            } catch (error) {
+                toastr.error(error.message);
+                NProgress.done();
             }
         }
     }
 
-    function loadVideo(file) {
+    function uploadVideo(file) {
         if (file) {
             NProgress.start().set(0.5);
             const $video = document.createElement('video');
@@ -140,7 +131,7 @@ export default function({ options, setOption }) {
                 setOption('videoUrl', url);
                 toastr.success(`${t('uploadVideo')}: ${file.name}`);
             } else {
-                toastr.error(`${t('uploadVideoErr')}: ${file.type || 'unknown'}`);
+                toastr.error(`${t('uploadVideoErr')}: ${file.name}}`);
             }
             NProgress.done();
         }
@@ -166,7 +157,7 @@ export default function({ options, setOption }) {
                             />
                             <div className="file">
                                 Open
-                                <input type="file" onChange={event => loadSubtitle(event.target.files[0])} />
+                                <input type="file" onChange={event => uploadSubtitle(event.target.files[0])} />
                             </div>
                         </div>
                         <div className="info">Supports opening subtitles in vtt, srt and ass formats</div>
@@ -186,7 +177,7 @@ export default function({ options, setOption }) {
                             />
                             <div className="file">
                                 Open
-                                <input type="file" onChange={event => loadVideo(event.target.files[0])} />
+                                <input type="file" onChange={event => uploadVideo(event.target.files[0])} />
                             </div>
                         </div>
                         <div className="info">Supports opening mp4, webm and ogg video</div>

@@ -5,7 +5,7 @@ const Footer = styled.div`
     position: relative;
     display: flex;
     height: 200px;
-    background-color: #30324a;
+    background-color: #252524;
 `;
 
 export default function() {

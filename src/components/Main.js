@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Player from './Player';
 import Tool from './Tool';
+import Subtitle from './Subtitle';
 
 const Main = styled.div`
     position: relative;
@@ -16,25 +17,26 @@ const Left = styled.div`
     align-items: center;
     justify-content: center;
     height: 100%;
-    width: 40%;
+    width: 50%;
     border-right: 1px solid #000;
 `;
 
 const Right = styled.div`
     display: flex;
-    align-items: center;
     height: 100%;
     flex: 1;
 `;
 
-export default function() {
+export default function(props) {
     return (
         <Main>
             <Left>
-                <Player />
-                <Tool />
+                <Player {...props} />
+                <Tool {...props} />
             </Left>
-            <Right>Right</Right>
+            <Right>
+                <Subtitle {...props} />
+            </Right>
         </Main>
     );
 }

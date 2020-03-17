@@ -1,4 +1,4 @@
-import { getExt, secondToTime } from './utils';
+import { getExt, secondToTime } from '../utils';
 import Sub from './sub';
 
 export function checkIsFile(source) {
