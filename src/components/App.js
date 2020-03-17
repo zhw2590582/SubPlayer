@@ -5,8 +5,9 @@ import Main from './Main';
 import Footer from './Footer';
 import Sub from '../subtitle/sub';
 import { secondToTime } from '../utils';
-import { getSubFromVttUrl } from '../subtitle';
+import { getSubFromVttUrl, vttToUrlUseWorker } from '../subtitle';
 
+const worker = new Worker(vttToUrlUseWorker());
 export default function() {
     const [player, setPlayer] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(-1);
@@ -18,8 +19,6 @@ export default function() {
         uploadDialog: false,
         downloadDialog: false,
         audioWaveform: false,
-        mainHeight: 100,
-        mainWidth: 100,
     });
 
     useMemo(async () => {
@@ -41,6 +40,15 @@ export default function() {
         });
     };
 
+    const updateSubtitles = subs => {
+        setSubtitles(subs);
+        worker.postMessage(subs);
+    };
+
+    worker.onmessage = event => {
+        player.subtitle.switch(event.data);
+    };
+
     const checkSub = sub => {
         return subtitles.includes(sub);
     };
@@ -59,7 +67,7 @@ export default function() {
         const { clone } = sub;
         clone[key] = value;
         subs[index] = clone;
-        setSubtitles(subs);
+        updateSubtitles(subs);
     };
 
     const removeSubtitle = sub => {
@@ -67,7 +75,7 @@ export default function() {
         const index = subtitles.indexOf(sub);
         const subs = [...subtitles];
         subs.splice(index, 1);
-        setSubtitles(subs);
+        updateSubtitles(subs);
     };
 
     const addSubtitle = index => {
@@ -77,7 +85,7 @@ export default function() {
         const end = previous ? secondToTime(previous.endTime + 1.001) : '00:00:01.001';
         const sub = new Sub(start, end, '');
         subs.splice(index, 0, sub);
-        setSubtitles(subs);
+        updateSubtitles(subs);
         setCurrentIndex(index);
     };
 
@@ -90,7 +98,7 @@ export default function() {
         const subs = [...subtitles];
         subs[index] = merge;
         subs.splice(index + 1, 1);
-        setSubtitles(subs);
+        updateSubtitles(subs);
     };
 
     const props = {
@@ -110,6 +118,7 @@ export default function() {
         setCurrentIndex,
         setCurrentTime,
         updateSubtitle,
+        updateSubtitles,
         checkSubtitleIllegal,
     };
 

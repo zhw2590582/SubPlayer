@@ -106,12 +106,13 @@ const Upload = styled.div`
     }
 `;
 
-export default function({ options, setOption }) {
+export default function({ player, options, setOption }) {
     async function uploadSubtitle(file) {
         if (file) {
             NProgress.start().set(0.5);
             try {
                 const url = vttToUrl(await getVtt(file));
+                player.subtitle.switch(url);
                 setOption('subtitleUrl', url);
                 NProgress.done();
             } catch (error) {
@@ -128,6 +129,7 @@ export default function({ options, setOption }) {
             const canPlayType = $video.canPlayType(file.type);
             if (canPlayType === 'maybe' || canPlayType === 'probably') {
                 const url = URL.createObjectURL(file);
+                player.url = url;
                 setOption('videoUrl', url);
                 toastr.success(`${t('uploadVideo')}: ${file.name}`);
             } else {
@@ -173,7 +175,7 @@ export default function({ options, setOption }) {
                                 className="input"
                                 spellCheck="false"
                                 placeholder="Upload from remote address or local file"
-                                onChange={event => setOption('videoUrl', event.target.value)}
+                                onChange={event => (player.url = event.target.value)}
                             />
                             <div className="file">
                                 Open

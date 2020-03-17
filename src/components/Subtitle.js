@@ -131,6 +131,7 @@ export default function({
                                 .trim()}
                             style={props.style}
                             onClick={() => {
+                                player.pause = true;
                                 player.seek = props.rowData.startTime;
                             }}
                         >
