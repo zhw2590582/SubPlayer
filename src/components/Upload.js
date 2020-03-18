@@ -111,9 +111,9 @@ export default function({ player, options, setOption }) {
         if (file) {
             NProgress.start().set(0.5);
             try {
-                const url = vttToUrl(await getVtt(file));
-                player.subtitle.switch(url);
-                setOption('subtitleUrl', url);
+                const subtitleUrl = vttToUrl(await getVtt(file));
+                player.subtitle.switch(subtitleUrl);
+                setOption('subtitleUrl', subtitleUrl);
                 NProgress.done();
             } catch (error) {
                 toastr.error(error.message);
@@ -128,9 +128,9 @@ export default function({ player, options, setOption }) {
             const $video = document.createElement('video');
             const canPlayType = $video.canPlayType(file.type);
             if (canPlayType === 'maybe' || canPlayType === 'probably') {
-                const url = URL.createObjectURL(file);
-                player.url = url;
-                setOption('videoUrl', url);
+                const videoUrl = URL.createObjectURL(file);
+                player.url = videoUrl;
+                setOption('videoUrl', videoUrl);
                 toastr.success(`${t('uploadVideo')}: ${file.name}`);
             } else {
                 toastr.error(`${t('uploadVideoErr')}: ${file.name}}`);
@@ -186,9 +186,9 @@ export default function({ player, options, setOption }) {
                         <div className="option">
                             <label>
                                 <input
-                                    value={options.audioWaveform}
+                                    value={options.useAudioWaveform}
                                     type="checkbox"
-                                    onChange={event => setOption('audioWaveform', event.target.checked)}
+                                    onChange={event => setOption('useAudioWaveform', event.target.checked)}
                                 />
                                 Generate audio waveform graph
                             </label>
