@@ -47,7 +47,6 @@ export default function() {
     // Only way to update all subtitles
     const updateSubtitles = useCallback(
         subs => {
-            console.log(subs.length);
             if (!equal(subs, subtitles)) {
                 setSubtitles(subs);
 
@@ -72,19 +71,20 @@ export default function() {
         }
     }, [options.subtitleUrl, updateSubtitles]);
 
+    // Run only once
     useEffect(() => {
-        initSubtitles();
-        // Player changes subtitle address
-        worker.onmessage = event => {
-            if (player) {
-                player.subtitle.switch(event.data);
-            }
-        };
-    });
+        if (!initSubtitles.init) {
+            initSubtitles.init = true;
+            initSubtitles();
+        }
 
-    // useMemo(async () => {
-    //     updateSubtitles(await getSubFromVttUrl(options.subtitleUrl));
-    // }, [updateSubtitles, options.subtitleUrl]);
+        if (player && !player.init) {
+            player.init = true;
+            worker.onmessage = event => {
+                player.subtitle.switch(event.data);
+            };
+        }
+    }, [initSubtitles, player]);
 
     // Update current index from current time
     useMemo(() => {

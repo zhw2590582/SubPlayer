@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import toastr from 'toastr';
 import { t } from 'react-i18nify';
 import NProgress from 'nprogress';
-import { getVtt, vttToUrl } from '../subtitle';
+import { getVtt, vttToUrl, getSubFromVttUrl } from '../subtitle';
 
 const Upload = styled.div`
     position: fixed;
@@ -106,24 +105,27 @@ const Upload = styled.div`
     }
 `;
 
-export default function({ player, options, setOption }) {
-    async function uploadSubtitle(file) {
+export default function({ player, options, setOption, updateSubtitles }) {
+    async function openSubtitle(file) {
         if (file) {
             NProgress.start().set(0.5);
             try {
                 const subtitleUrl = vttToUrl(await getVtt(file));
+                updateSubtitles(await getSubFromVttUrl(subtitleUrl));
                 player.subtitle.switch(subtitleUrl);
                 setOption('subtitleUrl', subtitleUrl);
                 NProgress.done();
             } catch (error) {
-                toastr.error(error.message);
+                console.error(error.message);
                 NProgress.done();
             }
         }
     }
 
-    function uploadVideo(file) {
-        if (file) {
+    function openVideo(file) {
+        if (typeof file === 'string') {
+            setOption('videoUrl', file);
+        } else {
             NProgress.start().set(0.5);
             const $video = document.createElement('video');
             const canPlayType = $video.canPlayType(file.type);
@@ -131,9 +133,8 @@ export default function({ player, options, setOption }) {
                 const videoUrl = URL.createObjectURL(file);
                 player.url = videoUrl;
                 setOption('videoUrl', videoUrl);
-                toastr.success(`${t('uploadVideo')}: ${file.name}`);
             } else {
-                toastr.error(`${t('uploadVideoErr')}: ${file.name}}`);
+                console.error(`${t('uploadVideoErr')}: ${file.name}}`);
             }
             NProgress.done();
         }
@@ -146,7 +147,7 @@ export default function({ player, options, setOption }) {
         >
             <div className="dialog" onClick={event => event.stopPropagation()}>
                 <div className="item">
-                    <div className="title">Upload Subtitle</div>
+                    <div className="title">Open Subtitle</div>
                     <div className="centent">
                         <div className="upload">
                             <input
@@ -154,19 +155,19 @@ export default function({ player, options, setOption }) {
                                 type="text"
                                 className="input"
                                 spellCheck="false"
-                                placeholder="Upload from remote address or local file"
-                                onChange={event => setOption('subtitleUrl', event.target.value)}
+                                placeholder="Open from remote address or local file"
+                                onChange={event => openSubtitle(event.target.value)}
                             />
                             <div className="file">
                                 Open
-                                <input type="file" onChange={event => uploadSubtitle(event.target.files[0])} />
+                                <input type="file" onChange={event => openSubtitle(event.target.files[0])} />
                             </div>
                         </div>
                         <div className="info">Supports opening subtitles in vtt, srt and ass formats</div>
                     </div>
                 </div>
                 <div className="item">
-                    <div className="title">Upload Video</div>
+                    <div className="title">Open Video</div>
                     <div className="centent">
                         <div className="upload">
                             <input
@@ -174,12 +175,12 @@ export default function({ player, options, setOption }) {
                                 type="text"
                                 className="input"
                                 spellCheck="false"
-                                placeholder="Upload from remote address or local file"
-                                onChange={event => (player.url = event.target.value)}
+                                placeholder="Open from remote address or local file"
+                                onChange={event => openVideo(event.target.value)}
                             />
                             <div className="file">
                                 Open
-                                <input type="file" onChange={event => uploadVideo(event.target.files[0])} />
+                                <input type="file" onChange={event => openVideo(event.target.files[0])} />
                             </div>
                         </div>
                         <div className="info">Supports opening mp4, webm and ogg video</div>
