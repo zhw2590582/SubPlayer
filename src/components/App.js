@@ -9,14 +9,19 @@ import { getSubFromVttUrl, vttToUrlUseWorker } from '../subtitle';
 import Storage from '../utils/storage';
 import equal from 'fast-deep-equal';
 import { ToastContainer } from 'react-toastify';
+import translate from '../translate';
 
 const history = [];
+let inTranslation = false;
 const storage = new Storage();
 const worker = new Worker(vttToUrlUseWorker());
 
 export default function() {
     // Player instance
     const [player, setPlayer] = useState(null);
+
+    // Language
+    const [lang, setLang] = useState('en');
 
     // Subtitle currently playing index
     const [currentIndex, setCurrentIndex] = useState(-1);
@@ -34,6 +39,15 @@ export default function() {
         uploadDialog: false,
         useAudioWaveform: false,
     });
+
+    // Update language
+    const updateLang = useCallback(
+        value => {
+            setLang(value);
+            storage.set('lang', value);
+        },
+        [setLang],
+    );
 
     // Update an option
     const setOption = useCallback(
@@ -94,7 +108,12 @@ export default function() {
                 player.subtitle.switch(event.data);
             };
         }
-    }, [initSubtitles, player]);
+
+        if (!updateLang.init) {
+            updateLang.init = true;
+            setLang(storage.get('lang'));
+        }
+    }, [initSubtitles, player, updateLang]);
 
     // Update current index from current time
     useMemo(() => {
@@ -204,7 +223,32 @@ export default function() {
         notify('Empty all subtitles successfully');
     }, [removeSubtitles]);
 
+    // Translate all subtitles
+    const translateSubtitles = useCallback(
+        async lang => {
+            if (!inTranslation) {
+                if (subtitles.length <= 1000) {
+                    inTranslation = true;
+                    try {
+                        const subs = await translate(subtitles, lang);
+                        updateSubtitles([...subs]);
+                    } catch (error) {
+                        notify(error.message, 'error');
+                        inTranslation = false;
+                    }
+                } else {
+                    notify('Limit 1000 translations per batch', 'error');
+                }
+            } else {
+                notify('Translation in progress', 'error');
+            }
+        },
+        [subtitles, updateSubtitles],
+    );
+
     const props = {
+        lang,
+        updateLang,
         player,
         options,
         subtitles,
@@ -224,6 +268,7 @@ export default function() {
         removeSubtitles,
         updateSubtitle,
         cleanSubtitles,
+        translateSubtitles,
         checkSubtitleIllegal,
     };
 
