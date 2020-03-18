@@ -10,7 +10,6 @@ const Player = styled.div`
     width: 100%;
     padding: 20px;
     background-color: #000;
-    opacity: 0;
 `;
 
 export default React.memo(
@@ -21,6 +20,7 @@ export default React.memo(
                     style={{
                         width: '100%',
                         height: '100%',
+                        opacity: 0,
                     }}
                     option={{
                         url: options.videoUrl,

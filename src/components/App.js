@@ -4,7 +4,7 @@ import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 import Sub from '../subtitle/sub';
-import { secondToTime } from '../utils';
+import { secondToTime, notify } from '../utils';
 import { getSubFromVttUrl, vttToUrlUseWorker } from '../subtitle';
 import Storage from '../utils/storage';
 import equal from 'fast-deep-equal';
@@ -128,6 +128,9 @@ export default function() {
     const removeSubtitle = useCallback(
         sub => {
             if (!checkSub(sub)) return;
+            if (subtitles.length === 1) {
+                return notify('Please keep at least one subtitle', 'error');
+            }
             const index = subtitles.indexOf(sub);
             const subs = [...subtitles];
             subs.splice(index, 1);
@@ -143,7 +146,7 @@ export default function() {
             const previous = subtitles[index - 1];
             const start = previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.001';
             const end = previous ? secondToTime(previous.endTime + 1.001) : '00:00:01.001';
-            const sub = new Sub(start, end, '');
+            const sub = new Sub(start, end, '[Subtitle Text]');
             subs.splice(index, 0, sub);
             updateSubtitles(subs);
             setCurrentIndex(index);
@@ -167,6 +170,11 @@ export default function() {
         [checkSub, subtitles, updateSubtitles],
     );
 
+    // Remove all subtitles
+    const removeSubtitles = useCallback(() => {
+        updateSubtitles([new Sub('00:00:00.000', '00:00:01.000', '[Subtitle Text]')]);
+    }, [updateSubtitles]);
+
     const props = {
         player,
         options,
@@ -183,6 +191,7 @@ export default function() {
         addSubtitle,
         mergeSubtitle,
         removeSubtitle,
+        removeSubtitles,
         updateSubtitle,
         checkSubtitleIllegal,
     };
