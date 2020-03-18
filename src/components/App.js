@@ -174,7 +174,6 @@ export default function() {
         setOptions,
         currentIndex,
         currentTime,
-        setSubtitles,
         setCurrentIndex,
         setCurrentTime,
         updateSubtitles,

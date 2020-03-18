@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
@@ -108,12 +108,20 @@ export default function({
         }
     }
 
+    const [width, setWidth] = useState(100);
+    const [height, setHeight] = useState(100);
+    useEffect(() => {
+        const $subtitle = document.querySelector('.main-right');
+        setWidth($subtitle.clientWidth);
+        setHeight($subtitle.clientHeight + 40);
+    }, [setWidth, setHeight]);
+
     return (
         <Subtitle>
             <Table
                 headerHeight={40}
-                width={document.body.clientWidth / 2}
-                height={document.body.clientHeight - 220}
+                width={width}
+                height={height}
                 rowHeight={80}
                 scrollToIndex={currentIndex}
                 rowCount={subtitles.length}

@@ -3,5 +3,4 @@ node_modules
 .DS_Store
 yarn.lock
 package-lock.json
-public/*.mp4
 .idea/

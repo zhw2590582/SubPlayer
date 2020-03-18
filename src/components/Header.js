@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import i18n from '../i18n';
 import Upload from './Upload';
+import { downloadFile } from '../utils';
+import { vttToUrl, subToVtt } from '../subtitle';
 
 const Header = styled.div`
     position: relative;
@@ -84,7 +86,7 @@ export default function(props) {
             <Left>
                 <Logo href="/">SubPlayer</Logo>
                 <Menu onClick={() => props.setOption('uploadDialog', true)}>Open</Menu>
-                <Menu>Save</Menu>
+                <Menu onClick={() => downloadFile(vttToUrl(subToVtt(props.subtitles)), `${Date.now()}.vtt`)}>Save</Menu>
             </Left>
             <Right>
                 <I18n>
