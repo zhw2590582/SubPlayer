@@ -1,48 +1,6 @@
-import fetchJsonp from 'fetch-jsonp';
 import NProgress from 'nprogress';
-import toastr from 'toastr';
 import pLimit from 'p-limit';
-import MD5 from './md5';
-import { sleep } from '../utils/index';
-
-export function baiduTranslate(query, land) {
-    return new Promise(resolve => {
-        const appid = '20190926000337502';
-        const key = 'AyDT0yVJk43C8mgzspBY';
-        const salt = Date.now();
-
-        const url = new URL('https://fanyi-api.baidu.com/api/trans/vip/translate');
-        url.searchParams.append('q', query);
-        url.searchParams.append('appid', appid);
-        url.searchParams.append('salt', salt);
-        url.searchParams.append('from', 'auto');
-        url.searchParams.append('to', land);
-        url.searchParams.append('sign', MD5(appid + query + salt + key));
-
-        sleep().then(async () => {
-            try {
-                const data = await fetchJsonp(url.href);
-                const result = await data.json();
-                if (result.error_code) {
-                    toastr.error(result.error_msg);
-                    resolve('');
-                } else if (result.trans_result) {
-                    resolve(
-                        result.trans_result
-                            .map(item => item.dst)
-                            .join('\n')
-                            .trim(),
-                    );
-                } else {
-                    resolve('');
-                }
-            } catch (error) {
-                toastr.error(error.message);
-                resolve('');
-            }
-        });
-    });
-}
+import { sleep, notify } from '../utils/index';
 
 export function googleTranslate(query, land) {
     const url = new URL('https://translate.googleapis.com/translate_a/single');
@@ -64,28 +22,23 @@ export function googleTranslate(query, land) {
                     }
                 })
                 .catch(error => {
-                    toastr.error(error.message);
+                    notify(error.message, 'error');
                     resolve('');
                 });
         });
     });
 }
 
-export default async function translate(subtitles, land, translatorName = 'google') {
+export default async function translate(subtitles, land) {
     NProgress.start();
     const limit = pLimit(1);
     let index = 0;
-
-    const translator = {
-        baidu: baiduTranslate,
-        google: googleTranslate,
-    }[translatorName];
 
     try {
         const result = await Promise.all(
             subtitles.map(item =>
                 limit(async () => {
-                    const data = await translator(item.text, land);
+                    const data = await googleTranslate(item.text, land);
                     NProgress.set(++index / subtitles.length);
                     if (data) {
                         item.text = data;
@@ -98,6 +51,6 @@ export default async function translate(subtitles, land, translatorName = 'googl
         return result;
     } catch (error) {
         NProgress.done();
-        toastr.error(error.message);
+        notify(error.message, 'error');
     }
 }
