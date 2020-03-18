@@ -97,6 +97,9 @@ export default function(props) {
                 <Menu onClick={() => downloadFile(vttToUrl(subToVtt(props.subtitles)), `${Date.now()}.vtt`)}>
                     <i className="icon-download"></i> Save
                 </Menu>
+                <Menu onClick={() => props.undoSubtitles()}>
+                    <i className="icon-ccw"></i> Undo
+                </Menu>
                 <Menu onClick={() => props.setOption('uploadHelp', true)}>
                     <i className="icon-help-circled"></i> Help
                 </Menu>

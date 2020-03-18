@@ -12,6 +12,8 @@ import { ToastContainer } from 'react-toastify';
 
 const storage = new Storage();
 const worker = new Worker(vttToUrlUseWorker());
+const history = [];
+window.hi = history;
 
 export default function() {
     // Player instance
@@ -47,9 +49,17 @@ export default function() {
 
     // Only way to update all subtitles
     const updateSubtitles = useCallback(
-        subs => {
-            if (!equal(subs, subtitles)) {
+        (subs, saveToHistory = true) => {
+            if (subs.length && !equal(subs, subtitles)) {
                 setSubtitles(subs);
+
+                // Save 100 subtitles to history
+                if (saveToHistory) {
+                    if (history.length >= 100) {
+                        history.shift();
+                    }
+                    history.push(subs.map(sub => sub.clone));
+                }
 
                 // Save to storage
                 storage.set('subtitles', subs);
@@ -63,9 +73,9 @@ export default function() {
 
     // Initialize subtitles from url or storage
     const initSubtitles = useCallback(async () => {
-        const storageSubtitles = storage.get('subtitles');
-        if (storageSubtitles) {
-            updateSubtitles(storageSubtitles.map(item => new Sub(item.start, item.end, item.text)));
+        const storageSubs = storage.get('subtitles');
+        if (storageSubs) {
+            updateSubtitles(storageSubs.map(item => new Sub(item.start, item.end, item.text)));
         } else {
             const subs = await getSubFromVttUrl(options.subtitleUrl);
             updateSubtitles(subs);
@@ -175,6 +185,18 @@ export default function() {
         updateSubtitles([new Sub('00:00:00.000', '00:00:01.000', '[Subtitle Text]')]);
     }, [updateSubtitles]);
 
+    // Undo subtitles
+    const undoSubtitles = useCallback(() => {
+        if (history.length > 1) {
+            history.pop();
+            const subs = history[history.length - 1];
+            updateSubtitles(subs, false);
+            notify('History rollback successful');
+        } else {
+            notify('History is empty', 'error');
+        }
+    }, [updateSubtitles]);
+
     const props = {
         player,
         options,
@@ -189,6 +211,7 @@ export default function() {
         checkSub,
         setOption,
         addSubtitle,
+        undoSubtitles,
         mergeSubtitle,
         removeSubtitle,
         removeSubtitles,
