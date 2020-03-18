@@ -16,7 +16,7 @@ const Upload = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.8);
 
     .dialog {
         width: 500px;
@@ -78,12 +78,19 @@ const Upload = styled.div`
                 }
                 .option {
                     font-size: 12px;
+                    margin-bottom: 10px;
                     label {
                         margin-right: 20px;
                         input {
                             margin-right: 5px;
                         }
                     }
+                }
+                .warning {
+                    font-size: 12px;
+                    padding: 5px;
+                    color: #fff;
+                    background-color: #c75123;
                 }
             }
         }
@@ -204,6 +211,12 @@ export default function({ player, options, setOption, updateSubtitles }) {
                                 Generate audio waveform graph
                             </label>
                         </div>
+                        {options.useAudioWaveform ? (
+                            <div className="warning">
+                                When creating an audio waveform graph, The browser may be blocked for a short time due
+                                to audio decoding, the larger the file, the more obvious it is.
+                            </div>
+                        ) : null}
                     </div>
                 </div>
                 <div className="bottom" onClick={() => setOption('uploadDialog', false)}>
