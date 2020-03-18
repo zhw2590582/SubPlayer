@@ -1,10 +1,6 @@
 import DT from 'duration-time-conversion';
 import { toast } from 'react-toastify';
 
-export function checkTime(time) {
-    return /^(\d+):([0-5][0-9]):([0-5][0-9])\.\d{3}$/.test(time);
-}
-
 export function isMobile() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
 }

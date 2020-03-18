@@ -10,6 +10,7 @@ const Player = styled.div`
     width: 100%;
     padding: 20px;
     background-color: #000;
+    opacity: 0;
 `;
 
 export default React.memo(

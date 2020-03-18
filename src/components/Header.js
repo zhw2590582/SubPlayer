@@ -32,43 +32,50 @@ const Logo = styled.a`
     align-items: center;
     justify-content: space-between;
     font-size: 14px;
-    line-height: 1;
     height: 100%;
-    padding: 0 15px;
-    margin-right: 15px;
-    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    padding: 0 25px;
+    color: rgba(255, 255, 255, 1);
+    transition: all 0.2s ease 0s;
     border-right: 1px solid rgb(0, 0, 0);
     text-decoration: none;
+
+    &:hover {
+        background-color: #2196f3;
+    }
 `;
 
 const Menu = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 13px;
-    line-height: 1;
+    height: 100%;
     cursor: pointer;
-    padding: 5px 15px;
-    margin-right: 15px;
-    border-radius: 3px;
-    color: rgba(255, 255, 255, 0.8);
-    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0 25px;
+    color: rgba(255, 255, 255, 1);
     transition: all 0.2s ease 0s;
+    border-right: 1px solid rgb(0, 0, 0);
 
     &:hover {
-        color: rgba(255, 255, 255, 1);
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: #2196f3;
+    }
+
+    i {
+        margin-right: 5px;
     }
 `;
 
 const I18n = styled.div`
     display: flex;
-    color: #fff;
     align-items: center;
     justify-content: center;
+    font-size: 13px;
     height: 100%;
     padding: 0 10px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-left: 10px;
-    border-left: 1px solid #000;
+    color: rgba(255, 255, 255, 1);
+    border-left: 1px solid rgb(0, 0, 0);
+    background-color: rgb(26, 83, 109);
 
     i {
         margin-right: 5px;
@@ -84,10 +91,18 @@ export default function(props) {
         <Header>
             <Left>
                 <Logo href="/">SubPlayer</Logo>
-                <Menu onClick={() => props.setOption('uploadDialog', true)}>Open</Menu>
-                <Menu onClick={() => downloadFile(vttToUrl(subToVtt(props.subtitles)), `${Date.now()}.vtt`)}>Save</Menu>
-                <Menu onClick={() => props.setOption('uploadDialog', true)}>Help</Menu>
-                <Menu onClick={() => props.setOption('uploadDialog', true)}>About</Menu>
+                <Menu onClick={() => props.setOption('uploadDialog', true)}>
+                    <i className="icon-upload"></i> Open
+                </Menu>
+                <Menu onClick={() => downloadFile(vttToUrl(subToVtt(props.subtitles)), `${Date.now()}.vtt`)}>
+                    <i className="icon-download"></i> Save
+                </Menu>
+                <Menu onClick={() => props.setOption('uploadHelp', true)}>
+                    <i className="icon-help-circled"></i> Help
+                </Menu>
+                <Menu onClick={() => window.open('https://github.com/zhw2590582/SubPlayer')}>
+                    <i className="icon-github"></i> Github
+                </Menu>
             </Left>
             <Right>
                 <I18n>

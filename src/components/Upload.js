@@ -57,7 +57,7 @@ const Upload = styled.div`
                         height: 100%;
                         width: 100px;
                         color: #fff;
-                        background-color: rgb(9, 113, 241);
+                        background-color: #2196f3;
 
                         input {
                             position: absolute;
@@ -95,7 +95,7 @@ const Upload = styled.div`
             color: #fff;
             height: 40px;
             cursor: pointer;
-            background-color: rgb(9, 113, 241);
+            background-color: #2196f3;
             transition: all 0.2s ease 0s;
 
             &:hover {

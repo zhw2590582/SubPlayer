@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
-import { timeToSecond, secondToTime, clamp } from '../utils';
+import { timeToSecond, secondToTime, clamp, debounce } from '../utils';
 
 const Subtitle = styled.div`
     .ReactVirtualized__Table {
@@ -26,6 +26,7 @@ const Subtitle = styled.div`
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
+                color: #fff;
                 height: 100%;
                 padding: 10px 5px;
                 border-bottom: 1px solid #000;
@@ -111,11 +112,20 @@ export default function({
 
     const [width, setWidth] = useState(100);
     const [height, setHeight] = useState(100);
-    useEffect(() => {
-        const $subtitle = document.querySelector('.main-right');
-        setWidth($subtitle.clientWidth);
-        setHeight($subtitle.clientHeight + 40);
+
+    const resize = useCallback(() => {
+        setWidth(document.body.clientWidth / 2);
+        setHeight(document.body.clientHeight - 210);
     }, [setWidth, setHeight]);
+
+    useEffect(() => {
+        resize();
+        if (!resize.init) {
+            resize.init = true;
+            const debounceResize = debounce(resize, 500);
+            window.addEventListener('resize', debounceResize);
+        }
+    }, [resize]);
 
     return (
         <Subtitle>
