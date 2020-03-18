@@ -74,7 +74,7 @@ export default function() {
     // Initialize subtitles from url or storage
     const initSubtitles = useCallback(async () => {
         const storageSubs = storage.get('subtitles');
-        if (storageSubs) {
+        if (storageSubs && storageSubs.length) {
             updateSubtitles(storageSubs.map(item => new Sub(item.start, item.end, item.text)));
         } else {
             const subs = await getSubFromVttUrl(options.subtitleUrl);
@@ -197,6 +197,13 @@ export default function() {
         }
     }, [updateSubtitles]);
 
+    const cleanSubtitles = useCallback(() => {
+        history.length = 0;
+        storage.set('subtitles', []);
+        removeSubtitles();
+        notify('Empty all subtitles successfully');
+    }, [removeSubtitles]);
+
     const props = {
         player,
         options,
@@ -216,6 +223,7 @@ export default function() {
         removeSubtitle,
         removeSubtitles,
         updateSubtitle,
+        cleanSubtitles,
         checkSubtitleIllegal,
     };
 

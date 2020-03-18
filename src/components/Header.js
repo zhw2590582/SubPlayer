@@ -100,6 +100,9 @@ export default function(props) {
                 <Menu onClick={() => props.undoSubtitles()}>
                     <i className="icon-ccw"></i> Undo
                 </Menu>
+                <Menu onClick={() => props.cleanSubtitles()}>
+                    <i className="icon-trash-empty"></i> Clear
+                </Menu>
                 <Menu onClick={() => props.setOption('uploadHelp', true)}>
                     <i className="icon-help-circled"></i> Help
                 </Menu>
