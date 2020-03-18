@@ -95,7 +95,7 @@ export function notify(text, type = 'info') {
     // info success warning error default
     return toast[type](text, {
         position: 'top-center',
-        autoClose: 10000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

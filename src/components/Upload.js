@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { t } from 'react-i18nify';
 import NProgress from 'nprogress';
 import { notify } from '../utils';
 import { getVtt, vttToUrl, getSubFromVttUrl } from '../subtitle';
@@ -111,32 +110,41 @@ export default function({ player, options, setOption, updateSubtitles }) {
         if (file) {
             NProgress.start().set(0.5);
             try {
-                const subtitleUrl = vttToUrl(await getVtt(file));
-                updateSubtitles(await getSubFromVttUrl(subtitleUrl));
-                player.subtitle.switch(subtitleUrl);
-                setOption('subtitleUrl', subtitleUrl);
+                const vttText = await getVtt(file);
+                if (vttText) {
+                    const subtitleUrl = vttToUrl(vttText);
+                    updateSubtitles(await getSubFromVttUrl(subtitleUrl));
+                    player.subtitle.switch(subtitleUrl);
+                    setOption('subtitleUrl', subtitleUrl);
+                    notify('Open subtitles successfully');
+                } else {
+                    notify('Failed to open subtitles', 'error');
+                }
             } catch (error) {
-                notify.error(error.message);
+                notify(error.message, 'error');
             }
             NProgress.done();
-        } else {
-            notify('不能为空');
         }
     }
 
     function openVideo(file) {
-        if (typeof file === 'string') {
-            setOption('videoUrl', file);
-        } else {
+        if (file) {
             NProgress.start().set(0.5);
-            const $video = document.createElement('video');
-            const canPlayType = $video.canPlayType(file.type);
-            if (canPlayType === 'maybe' || canPlayType === 'probably') {
-                const videoUrl = URL.createObjectURL(file);
-                player.url = videoUrl;
-                setOption('videoUrl', videoUrl);
+            if (typeof file === 'string') {
+                player.url = file;
+                setOption('videoUrl', file);
+                notify('Open video successfully');
             } else {
-                console.error(`${t('uploadVideoErr')}: ${file.name}}`);
+                const $video = document.createElement('video');
+                const canPlayType = $video.canPlayType(file.type);
+                if (canPlayType === 'maybe' || canPlayType === 'probably') {
+                    const videoUrl = URL.createObjectURL(file);
+                    player.url = videoUrl;
+                    setOption('videoUrl', videoUrl);
+                    notify('Open video successfully');
+                } else {
+                    notify('Does not support playing the file', 'error');
+                }
             }
             NProgress.done();
         }

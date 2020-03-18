@@ -73,6 +73,7 @@ export async function getVttFromFile(file) {
                     resolve(srtToVtt(reader.result));
                     break;
                 default:
+                    resolve();
                     break;
             }
         };
@@ -95,6 +96,7 @@ export async function getVttFromUrl(url) {
                 resolve(srtToVtt(result));
                 break;
             default:
+                resolve();
                 break;
         }
     });
