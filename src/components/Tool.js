@@ -16,7 +16,7 @@ const Tool = styled.div`
         border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 
         .title {
-            width: 100px;
+            width: 120px;
             text-align: right;
         }
 
@@ -51,33 +51,35 @@ const Tool = styled.div`
     }
 `;
 
-export default function(props) {
-    const [lang, setLang] = useState('en');
-
-    return (
-        <Tool>
-            <div className="item">
-                <div className="title">Batch Translate:</div>
-                <div className="value">
-                    <select value={lang} onChange={event => setLang(event.target.value)}>
-                        {languages[props.lang].map(item => (
-                            <option key={item.key} value={item.key}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </select>
-                    <button onClick={() => props.translateSubtitles(lang)}>Confirm</button>
+export default React.memo(
+    function(props) {
+        const [lang, setLang] = useState('en');
+        return (
+            <Tool>
+                <div className="item">
+                    <div className="title">Google Translate:</div>
+                    <div className="value">
+                        <select value={lang} onChange={event => setLang(event.target.value)}>
+                            {languages[props.lang].map(item => (
+                                <option key={item.key} value={item.key}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </select>
+                        <button onClick={() => props.translateSubtitles(lang)}>Confirm</button>
+                    </div>
                 </div>
-            </div>
-            <div className="item">
-                <div className="title">Time Offset:</div>
-                <div className="value">
-                    <button>-100ms</button>
-                    <button>+100ms</button>
-                    <button>-1000ms</button>
-                    <button>+1000ms</button>
+                <div className="item">
+                    <div className="title">Time Offset:</div>
+                    <div className="value">
+                        <button>-100ms</button>
+                        <button>+100ms</button>
+                        <button>-1000ms</button>
+                        <button>+1000ms</button>
+                    </div>
                 </div>
-            </div>
-        </Tool>
-    );
-}
+            </Tool>
+        );
+    },
+    (prevProps, nextProps) => prevProps.lang === nextProps.lang,
+);
