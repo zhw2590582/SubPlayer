@@ -9,7 +9,7 @@ const Player = styled.div`
     height: 70%;
     width: 100%;
     padding: 20px;
-    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.5);
 `;
 
 export default React.memo(
@@ -20,12 +20,17 @@ export default React.memo(
                     style={{
                         width: '100%',
                         height: '100%',
-                        opacity: 0,
+                        // opacity: 0,
                     }}
                     option={{
                         url: options.videoUrl,
                         loop: true,
                         autoSize: true,
+                        aspectRatio: true,
+                        playbackRate: true,
+                        fullscreen: true,
+                        fullscreenWeb: true,
+                        miniProgressBar: true,
                         subtitle: {
                             url: options.subtitleUrl,
                         },

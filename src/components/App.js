@@ -10,10 +10,9 @@ import Storage from '../utils/storage';
 import equal from 'fast-deep-equal';
 import { ToastContainer } from 'react-toastify';
 
+const history = [];
 const storage = new Storage();
 const worker = new Worker(vttToUrlUseWorker());
-const history = [];
-window.hi = history;
 
 export default function() {
     // Player instance
@@ -197,6 +196,7 @@ export default function() {
         }
     }, [updateSubtitles]);
 
+    // Clean all subtitles
     const cleanSubtitles = useCallback(() => {
         history.length = 0;
         storage.set('subtitles', []);

@@ -100,7 +100,13 @@ export default function(props) {
                 <Menu onClick={() => props.undoSubtitles()}>
                     <i className="icon-ccw"></i> Undo
                 </Menu>
-                <Menu onClick={() => props.cleanSubtitles()}>
+                <Menu
+                    onClick={() => {
+                        if (window.confirm('This step cannot be rolled back. Are you sure ?')) {
+                            props.cleanSubtitles();
+                        }
+                    }}
+                >
                     <i className="icon-trash-empty"></i> Clear
                 </Menu>
                 <Menu onClick={() => props.setOption('uploadHelp', true)}>
