@@ -84,7 +84,7 @@ export default function(props) {
             <Left>
                 <Logo href="/">SubPlayer</Logo>
                 <Menu onClick={() => props.setOption('uploadDialog', true)}>Open</Menu>
-                <Menu onClick={() => props.setOption('downloadDialog', true)}>Save</Menu>
+                <Menu>Save</Menu>
             </Left>
             <Right>
                 <I18n>

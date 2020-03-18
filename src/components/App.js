@@ -47,6 +47,7 @@ export default function() {
     // Only way to update all subtitles
     const updateSubtitles = useCallback(
         subs => {
+            console.log(subs.length);
             if (!equal(subs, subtitles)) {
                 setSubtitles(subs);
 
@@ -60,25 +61,30 @@ export default function() {
         [setSubtitles, subtitles],
     );
 
-    // Convert subtitles to vtt url
-    worker.onmessage = event => {
-        // Player changes subtitle address
-        player.subtitle.switch(event.data);
-    };
-
     // Initialize subtitles from url or storage
-    const storageSubtitles = storage.get('subtitles');
-    if (storageSubtitles) {
-        updateSubtitles(storageSubtitles.map(item => new Sub(item.start, item.end, item.text)));
-    } else {
-        getSubFromVttUrl(options.subtitleUrl).then(subs => {
+    const initSubtitles = useCallback(async () => {
+        const storageSubtitles = storage.get('subtitles');
+        if (storageSubtitles) {
+            updateSubtitles(storageSubtitles.map(item => new Sub(item.start, item.end, item.text)));
+        } else {
+            const subs = await getSubFromVttUrl(options.subtitleUrl);
             updateSubtitles(subs);
-        });
-    }
+        }
+    }, [options.subtitleUrl, updateSubtitles]);
 
-    useMemo(async () => {
-        updateSubtitles(await getSubFromVttUrl(options.subtitleUrl));
-    }, [updateSubtitles, options.subtitleUrl]);
+    useEffect(() => {
+        initSubtitles();
+        // Player changes subtitle address
+        worker.onmessage = event => {
+            if (player) {
+                player.subtitle.switch(event.data);
+            }
+        };
+    });
+
+    // useMemo(async () => {
+    //     updateSubtitles(await getSubFromVttUrl(options.subtitleUrl));
+    // }, [updateSubtitles, options.subtitleUrl]);
 
     // Update current index from current time
     useMemo(() => {

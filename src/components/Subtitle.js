@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
-import { timeToSecond, secondToTime } from '../utils';
+import { timeToSecond, secondToTime, clamp } from '../utils';
 
 const Subtitle = styled.div`
     .ReactVirtualized__Table {
@@ -91,7 +91,7 @@ export default function({
     function onMouseMove(event, sub, key) {
         if (isDroging) {
             const time = Number(((event.pageX - lastPageX) / 10).toFixed(3));
-            lastValue = secondToTime(timeToSecond(sub[key]) + time);
+            lastValue = secondToTime(clamp(timeToSecond(sub[key]) + time, 0, Infinity));
         }
     }
 
