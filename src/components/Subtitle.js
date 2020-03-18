@@ -95,7 +95,7 @@ export default function({
         }
     }
 
-    document.addEventListener('mouseup', () => {
+    function onMouseUp() {
         if (isDroging) {
             if (lastSub && lastKey && lastValue) {
                 updateSubtitle(lastSub, lastKey, lastValue);
@@ -106,7 +106,7 @@ export default function({
             lastKey = '';
             lastValue = '';
         }
-    });
+    }
 
     return (
         <Subtitle>
@@ -145,7 +145,7 @@ export default function({
                                 ></i>
                                 <i className="icon-doc-new" onClick={() => addSubtitle(props.index + 1)}></i>
                             </div>
-                            <div className="row time" style={{ width: 150 }}>
+                            <div className="row time" style={{ width: 150 }} onMouseUp={onMouseUp}>
                                 <div
                                     className="input"
                                     onMouseDown={event => onMouseDown(event, props.rowData, 'start')}
