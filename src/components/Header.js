@@ -86,6 +86,8 @@ export default function(props) {
                 <Logo href="/">SubPlayer</Logo>
                 <Menu onClick={() => props.setOption('uploadDialog', true)}>Open</Menu>
                 <Menu onClick={() => downloadFile(vttToUrl(subToVtt(props.subtitles)), `${Date.now()}.vtt`)}>Save</Menu>
+                <Menu onClick={() => props.setOption('uploadDialog', true)}>Help</Menu>
+                <Menu onClick={() => props.setOption('uploadDialog', true)}>About</Menu>
             </Left>
             <Right>
                 <I18n>

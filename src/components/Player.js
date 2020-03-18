@@ -6,10 +6,10 @@ const Player = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 80%;
+    height: 70%;
     width: 100%;
     padding: 20px;
-    border-bottom: 1px solid #000;
+    background-color: #000;
 `;
 
 export default React.memo(

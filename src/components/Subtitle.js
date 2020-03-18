@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
@@ -42,6 +42,7 @@ const Subtitle = styled.div`
             background-color: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.1);
             resize: none;
+            outline: none;
         }
 
         .input {
