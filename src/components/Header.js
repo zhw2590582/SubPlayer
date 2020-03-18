@@ -68,8 +68,7 @@ const I18n = styled.div`
     cursor: pointer;
     font-size: 14px;
     margin-left: 10px;
-    border-left: 1px solid #1f2133;
-    background-color: rgb(9, 113, 241);
+    border-left: 1px solid #000;
 
     i {
         margin-right: 5px;

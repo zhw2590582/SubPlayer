@@ -151,7 +151,7 @@ export default function({
                                     onClick={() => removeSubtitle(props.rowData)}
                                     style={{ marginBottom: 15 }}
                                 ></i>
-                                <i className="icon-doc-new" onClick={() => addSubtitle(props.index + 1)}></i>
+                                <i className="icon-plus" onClick={() => addSubtitle(props.index + 1)}></i>
                             </div>
                             <div className="row time" style={{ width: 150 }} onMouseUp={onMouseUp}>
                                 <div
