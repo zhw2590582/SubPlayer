@@ -8,6 +8,7 @@ import { secondToTime } from '../utils';
 import { getSubFromVttUrl, vttToUrlUseWorker } from '../subtitle';
 import Storage from '../utils/storage';
 import equal from 'fast-deep-equal';
+import { ToastContainer } from 'react-toastify';
 
 const storage = new Storage();
 const worker = new Worker(vttToUrlUseWorker());
@@ -192,6 +193,7 @@ export default function() {
             <Header {...props} />
             <Main {...props} />
             <Footer {...props} />
+            <ToastContainer />
         </React.Fragment>
     );
 }

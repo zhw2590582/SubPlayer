@@ -1,4 +1,5 @@
 import DT from 'duration-time-conversion';
+import { toast } from 'react-toastify';
 
 export function checkTime(time) {
     return /^(\d+):([0-5][0-9]):([0-5][0-9])\.\d{3}$/.test(time);
@@ -88,4 +89,16 @@ export function unescapeHTML(str) {
                 '&quot;': '"',
             }[tag] || tag),
     );
+}
+
+export function notify(text, type = 'info') {
+    // info success warning error default
+    return toast[type](text, {
+        position: 'top-center',
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+    });
 }

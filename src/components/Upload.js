@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { t } from 'react-i18nify';
 import NProgress from 'nprogress';
+import { notify } from '../utils';
 import { getVtt, vttToUrl, getSubFromVttUrl } from '../subtitle';
 
 const Upload = styled.div`
@@ -114,11 +115,12 @@ export default function({ player, options, setOption, updateSubtitles }) {
                 updateSubtitles(await getSubFromVttUrl(subtitleUrl));
                 player.subtitle.switch(subtitleUrl);
                 setOption('subtitleUrl', subtitleUrl);
-                NProgress.done();
             } catch (error) {
-                console.error(error.message);
-                NProgress.done();
+                notify.error(error.message);
             }
+            NProgress.done();
+        } else {
+            notify('不能为空');
         }
     }
 

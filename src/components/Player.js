@@ -12,42 +12,45 @@ const Player = styled.div`
     border-bottom: 1px solid #000;
 `;
 
-export default function({ options, setPlayer, setCurrentTime }) {
-    return (
-        <Player>
-            <ArtplayerComponent
-                style={{
-                    width: '100%',
-                    height: '100%',
-                }}
-                option={{
-                    url: options.videoUrl,
-                    loop: true,
-                    autoSize: true,
-                    subtitle: {
-                        url: options.subtitleUrl,
-                    },
-                    moreVideoAttr: {
-                        crossOrigin: 'anonymous',
-                    },
-                }}
-                getInstance={art => {
-                    setPlayer(art);
+export default React.memo(
+    function({ options, setPlayer, setCurrentTime }) {
+        return (
+            <Player>
+                <ArtplayerComponent
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                    }}
+                    option={{
+                        url: options.videoUrl,
+                        loop: true,
+                        autoSize: true,
+                        subtitle: {
+                            url: options.subtitleUrl,
+                        },
+                        moreVideoAttr: {
+                            crossOrigin: 'anonymous',
+                        },
+                    }}
+                    getInstance={art => {
+                        setPlayer(art);
 
-                    (function loop() {
-                        window.requestAnimationFrame(() => {
-                            if (art.playing) {
-                                setCurrentTime(art.currentTime);
-                            }
-                            loop();
+                        (function loop() {
+                            window.requestAnimationFrame(() => {
+                                if (art.playing) {
+                                    setCurrentTime(art.currentTime);
+                                }
+                                loop();
+                            });
+                        })();
+
+                        art.on('seek', () => {
+                            setCurrentTime(art.currentTime);
                         });
-                    })();
-
-                    art.on('seek', () => {
-                        setCurrentTime(art.currentTime);
-                    });
-                }}
-            />
-        </Player>
-    );
-}
+                    }}
+                />
+            </Player>
+        );
+    },
+    () => true,
+);

@@ -10,6 +10,7 @@ import 'normalize.css';
 import './fontello/css/fontello.css';
 import 'nprogress/nprogress.css';
 import 'react-virtualized/styles.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 setTranslations(i18n);
 NProgress.configure({ minimum: 0, showSpinner: false });
