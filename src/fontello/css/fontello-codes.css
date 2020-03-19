@@ -13,4 +13,6 @@
 .icon-ccw:before { content: '\e80b'; } /* '' */
 .icon-cw:before { content: '\e80c'; } /* '' */
 .icon-arrows-cw:before { content: '\e80d'; } /* '' */
+.icon-cancel:before { content: '\e80e'; } /* '' */
 .icon-github:before { content: '\f113'; } /* '' */
+.icon-cc:before { content: '\f20a'; } /* '' */

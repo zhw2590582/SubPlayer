@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import i18n from '../i18n';
 import Upload from './Upload';
+import Help from './Help';
+import Donate from './Donate';
 import Dialog from './Dialog';
 import { downloadFile } from '../utils';
 import { vttToUrl, subToVtt } from '../subtitle';
@@ -32,13 +34,14 @@ const Logo = styled.a`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 22px;
     height: 100%;
     cursor: pointer;
-    padding: 0 25px;
+    padding: 0 15px;
     color: rgba(255, 255, 255, 1);
     transition: all 0.2s ease 0s;
     border-right: 1px solid rgb(0, 0, 0);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
     text-decoration: none;
 
     &:hover {
@@ -57,6 +60,7 @@ const Menu = styled.div`
     color: rgba(255, 255, 255, 1);
     transition: all 0.2s ease 0s;
     border-right: 1px solid rgb(0, 0, 0);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
 
     &:hover {
         background-color: #2196f3;
@@ -91,7 +95,9 @@ export default function(props) {
     return (
         <Header>
             <Left>
-                <Logo href="/">SubPlayer</Logo>
+                <Logo href="/">
+                    <i className="icon-cc"></i>
+                </Logo>
                 <Menu onClick={() => props.setOption('uploadDialog', true)}>
                     <i className="icon-upload"></i> Open
                 </Menu>
@@ -133,8 +139,18 @@ export default function(props) {
                 </I18n>
             </Right>
             {props.options.uploadDialog ? (
-                <Dialog onClose={() => props.setOption('uploadDialog', false)}>
+                <Dialog title="Open" onClose={() => props.setOption('uploadDialog', false)}>
                     <Upload {...props} />
+                </Dialog>
+            ) : null}
+            {props.options.helpDialog ? (
+                <Dialog title="Help" onClose={() => props.setOption('helpDialog', false)}>
+                    <Help {...props} />
+                </Dialog>
+            ) : null}
+            {props.options.donateDialog ? (
+                <Dialog title="Donate" onClose={() => props.setOption('donateDialog', false)}>
+                    <Donate {...props} />
                 </Dialog>
             ) : null}
         </Header>
