@@ -25,28 +25,12 @@ export function sleep(ms = 0) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function clamp(num, a, b) {
-    return Math.max(Math.min(num, Math.max(a, b)), Math.min(a, b));
-}
-
 export function secondToTime(seconds = 0) {
     return DT.d2t(seconds.toFixed(3));
 }
 
 export function timeToSecond(time) {
     return DT.t2d(time);
-}
-
-export function debounce(func, wait, context) {
-    let timeout;
-    return function fn(...args) {
-        const later = function later() {
-            timeout = null;
-            func.apply(context, args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
 }
 
 export function downloadFile(url, name) {
@@ -57,34 +41,6 @@ export function downloadFile(url, name) {
     document.body.appendChild(elink);
     elink.click();
     document.body.removeChild(elink);
-}
-
-export function escapeHTML(str) {
-    return str.replace(
-        /[&<>'"]/g,
-        tag =>
-            ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                "'": '&#39;',
-                '"': '&quot;',
-            }[tag] || tag),
-    );
-}
-
-export function unescapeHTML(str) {
-    return str.replace(
-        /&amp;|&lt;|&gt;|&#39;|&quot;/g,
-        tag =>
-            ({
-                '&amp;': '&',
-                '&lt;': '<',
-                '&gt;': '>',
-                '&#39;': "'",
-                '&quot;': '"',
-            }[tag] || tag),
-    );
 }
 
 export function notify(text = '', type = 'info') {

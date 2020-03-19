@@ -1,4 +1,5 @@
-import { timeToSecond, secondToTime, clamp } from '../utils';
+import clamp from 'lodash/unescape';
+import { timeToSecond, secondToTime } from '../utils';
 
 export default class Sub {
     constructor(start, end, text) {

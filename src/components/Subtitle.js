@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
-import { timeToSecond, secondToTime, clamp, debounce } from '../utils';
+import debounce from 'lodash/debounce';
+import unescape from 'lodash/unescape';
+import clamp from 'lodash/clamp';
+import { timeToSecond, secondToTime } from '../utils';
 
 const Subtitle = styled.div`
     .ReactVirtualized__Table {
@@ -202,7 +204,7 @@ export default function({
                                     maxLength={200}
                                     spellCheck={false}
                                     className="textarea"
-                                    value={unescapeHTML(props.rowData.text)}
+                                    value={unescape(props.rowData.text)}
                                     onChange={event => updateSubtitle(props.rowData, 'text', event.target.value)}
                                 />
                             </div>

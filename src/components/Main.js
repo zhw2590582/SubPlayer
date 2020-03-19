@@ -9,6 +9,7 @@ const Main = styled.div`
     display: flex;
     justify-content: space-between;
     flex: 1;
+    border-bottom: 1px solid #000;
 `;
 
 const Left = styled.div`
