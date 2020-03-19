@@ -4,7 +4,7 @@ import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 import Sub from '../subtitle/sub';
-import { secondToTime, notify } from '../utils';
+import { secondToTime, notify, clamp } from '../utils';
 import { getSubFromVttUrl, vttToUrlUseWorker } from '../subtitle';
 import Storage from '../utils/storage';
 import equal from 'fast-deep-equal';
@@ -21,7 +21,8 @@ export default function() {
     const [player, setPlayer] = useState(null);
 
     // Language
-    const [lang, setLang] = useState(storage.get('lang') || navigator.language.toLowerCase());
+    const defaultLang = storage.get('lang') || navigator.language.toLowerCase();
+    const [lang, setLang] = useState(defaultLang);
 
     // Subtitle currently playing index
     const [currentIndex, setCurrentIndex] = useState(-1);
@@ -108,15 +109,14 @@ export default function() {
 
     // Update current index from current time
     useMemo(() => {
-        setCurrentIndex(
-            subtitles.findIndex(item => {
-                return item.startTime <= currentTime && item.endTime >= currentTime;
-            }),
-        );
+        setCurrentIndex(subtitles.findIndex(item => item.startTime <= currentTime && item.endTime >= currentTime));
     }, [subtitles, currentTime, setCurrentIndex]);
 
     // Detect if the subtitle exists
     const checkSub = useCallback(sub => subtitles.includes(sub), [subtitles]);
+
+    // Copy all subtitles
+    const copySubs = useCallback(() => subtitles.map(sub => sub.clone), [subtitles]);
 
     // Check if subtitle is legal
     const checkSubtitleIllegal = useCallback(
@@ -133,59 +133,59 @@ export default function() {
     const updateSubtitle = useCallback(
         (sub, key, value) => {
             if (!checkSub(sub)) return;
+            const subs = copySubs();
             const index = subtitles.indexOf(sub);
-            const subs = [...subtitles];
             const { clone } = sub;
             clone[key] = value;
             subs[index] = clone;
             updateSubtitles(subs);
         },
-        [checkSub, subtitles, updateSubtitles],
+        [checkSub, subtitles, copySubs, updateSubtitles],
     );
 
     // Delete a subtitle
     const removeSubtitle = useCallback(
         sub => {
             if (!checkSub(sub)) return;
-            if (subtitles.length === 1) {
+            const subs = copySubs();
+            if (subs.length === 1) {
                 return notify('Please keep at least one subtitle', 'error');
             }
             const index = subtitles.indexOf(sub);
-            const subs = [...subtitles];
             subs.splice(index, 1);
             updateSubtitles(subs);
         },
-        [checkSub, subtitles, updateSubtitles],
+        [checkSub, copySubs, subtitles, updateSubtitles],
     );
 
     // Add a subtitle
     const addSubtitle = useCallback(
         index => {
-            const subs = [...subtitles];
-            const previous = subtitles[index - 1];
+            const subs = copySubs();
+            const previous = subs[index - 1];
             const start = previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.001';
             const end = previous ? secondToTime(previous.endTime + 1.001) : '00:00:01.001';
             const sub = new Sub(start, end, '[Subtitle Text]');
             subs.splice(index, 0, sub);
             updateSubtitles(subs);
         },
-        [subtitles, updateSubtitles],
+        [copySubs, updateSubtitles],
     );
 
     // Merge two subtitles
     const mergeSubtitle = useCallback(
         sub => {
             if (!checkSub(sub)) return;
+            const subs = copySubs();
             const index = subtitles.indexOf(sub);
-            const next = subtitles[index + 1];
+            const next = subs[index + 1];
             if (!checkSub(next)) return;
             const merge = new Sub(sub.start, next.end, sub.text + '\n' + next.text);
-            const subs = [...subtitles];
             subs[index] = merge;
             subs.splice(index + 1, 1);
             updateSubtitles(subs);
         },
-        [checkSub, subtitles, updateSubtitles],
+        [checkSub, copySubs, subtitles, updateSubtitles],
     );
 
     // Remove all subtitles
@@ -205,6 +205,22 @@ export default function() {
         }
     }, [updateSubtitles]);
 
+    // Subtitle time offset
+    const timeOffsetSubtitles = useCallback(
+        time => {
+            const subs = copySubs();
+            updateSubtitles(
+                subs.map(item => {
+                    item.start = secondToTime(clamp(item.startTime + time, 0, Infinity));
+                    item.end = secondToTime(clamp(item.endTime + time, 0, Infinity));
+                    return item;
+                }),
+            );
+            notify('Time Offset' + time);
+        },
+        [copySubs, updateSubtitles],
+    );
+
     // Clean all subtitles
     const cleanSubtitles = useCallback(() => {
         history.length = 0;
@@ -216,13 +232,12 @@ export default function() {
     // Translate all subtitles
     const translateSubtitles = useCallback(
         async lang => {
-            console.log(subtitles);
             if (!inTranslation) {
-                if (subtitles.length && subtitles.length <= 1000) {
+                const subs = copySubs();
+                if (subs.length && subs.length <= 1000) {
                     inTranslation = true;
                     try {
-                        const subs = await translate(subtitles, lang);
-                        updateSubtitles(subs);
+                        updateSubtitles(await translate(subs, lang));
                         inTranslation = false;
                     } catch (error) {
                         notify(error.message, 'error');
@@ -235,7 +250,7 @@ export default function() {
                 notify('Translation in progress', 'error');
             }
         },
-        [subtitles, updateSubtitles],
+        [copySubs, updateSubtitles],
     );
 
     const props = {
@@ -261,6 +276,7 @@ export default function() {
         updateSubtitle,
         cleanSubtitles,
         translateSubtitles,
+        timeOffsetSubtitles,
         checkSubtitleIllegal,
     };
 
