@@ -12,7 +12,6 @@ const Footer = styled.div`
         align-items: center;
         justify-content: space-between;
         height: 35px;
-        padding: 0 10px;
         font-size: 12px;
         border-bottom: 1px solid #000;
         color: rgba(255, 255, 255, 0.5);
@@ -21,11 +20,16 @@ const Footer = styled.div`
         .timeline-header-left {
             display: flex;
             align-items: center;
+            height: 100%;
             .item {
                 display: flex;
-                margin-right: 20px;
+                padding: 0 15px;
+                height: 100%;
+                border-right: 1px solid #000;
 
                 .name {
+                    display: flex;
+                    align-items: center;
                     margin-right: 10px;
                 }
 
@@ -45,7 +49,11 @@ const Footer = styled.div`
         }
 
         .timeline-header-right {
-            cursor: pointer;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 15px;
+            border-left: 1px solid #000;
         }
     }
 
@@ -94,7 +102,9 @@ export default function(props) {
                 <div className="timeline-header-left">
                     <div className="item">
                         <div className="name">Decoding Progress:</div>
-                        <div className="value">0%</div>
+                        <div className="value" style={{ color: '#FF5722' }}>
+                            0%
+                        </div>
                     </div>
                     <div className="item">
                         <div className="name">Unit Duration:</div>
@@ -133,16 +143,26 @@ export default function(props) {
                             />
                         </div>
                     </div>
+                    <div className="item">
+                        <div className="name">Space Metronome:</div>
+                        <div className="value" style={{ color: '#4CAF50' }}>
+                            On
+                        </div>
+                    </div>
+                    <div className="item">
+                        <div
+                            style={{ cursor: 'pointer' }}
+                            className="value"
+                            onClick={() => {
+                                if (!wf) return;
+                                wf.exportImage();
+                            }}
+                        >
+                            Export Image
+                        </div>
+                    </div>
                 </div>
-                <div
-                    className="timeline-header-right"
-                    onClick={() => {
-                        if (!wf) return;
-                        wf.exportImage();
-                    }}
-                >
-                    Export Waveform Image
-                </div>
+                <div className="timeline-header-right">File Size: 14.108 M</div>
             </div>
             <div className="timeline-body">{props.player ? <Waveform {...props} /> : null}</div>
         </Footer>
