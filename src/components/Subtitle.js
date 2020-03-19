@@ -63,6 +63,11 @@ const Subtitle = styled.div`
             i {
                 font-size: 12px;
                 cursor: pointer;
+                transition: all 0.2s ease 0s;
+
+                &:hover {
+                    color: #2196f3;
+                }
             }
         }
     }
