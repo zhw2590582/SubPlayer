@@ -38,6 +38,8 @@ export default function() {
     const [options, setOptions] = useState({
         videoUrl: '/sample.mp4',
         subtitleUrl: '/sample.vtt',
+        helpDialog: false,
+        donateDialog: false,
         uploadDialog: false,
         useAudioWaveform: false,
         translationLanguage: 'en',

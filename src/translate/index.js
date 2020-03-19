@@ -2,7 +2,8 @@ import NProgress from 'nprogress';
 import pLimit from 'p-limit';
 import { sleep, notify } from '../utils/index';
 
-export function googleTranslate(query, lang) {
+export function googleTranslate(query = '', lang) {
+    if (!query.trim()) return Promise.resolve('');
     const url = new URL('https://translate.googleapis.com/translate_a/single');
     url.searchParams.append('client', 'gtx');
     url.searchParams.append('sl', 'auto');
