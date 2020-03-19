@@ -14,7 +14,7 @@ const Footer = styled.div`
         padding: 0 10px;
         font-size: 12px;
         border-bottom: 1px solid #000;
-        background-color: #232740;
+        background-color: rgba(0, 0, 0, 0.3);
 
         .item {
             display: flex;
@@ -46,6 +46,8 @@ const Footer = styled.div`
         .waveform {
             width: 100%;
             height: 100%;
+            user-select: none;
+            pointer-events: none;
         }
     }
 `;
@@ -81,17 +83,29 @@ export default function(props) {
         <Footer>
             <div className="timeline-header">
                 <div className="item">
-                    <div className="name">解码进度:</div>
+                    <div className="name">Decoding Progress:</div>
                     <div className="value">0%</div>
                 </div>
                 <div className="item">
-                    <div className="name">单位时长:</div>
+                    <div className="name">Unit Duration:</div>
                     <div className="value">
-                        <input defaultValue="10" type="range" min="5" max="20" step="1" />
+                        <input
+                            defaultValue="10"
+                            type="range"
+                            min="5"
+                            max="20"
+                            step="1"
+                            onChange={event => {
+                                if (!wf) return;
+                                wf.setOptions({
+                                    duration: Number(event.target.value || 10),
+                                });
+                            }}
+                        />
                     </div>
                 </div>
                 <div className="item">
-                    <div className="name">高度缩放:</div>
+                    <div className="name">Height Zoom:</div>
                     <div className="value">
                         <input
                             defaultValue="1"
@@ -100,6 +114,12 @@ export default function(props) {
                             max="2"
                             step="0.1"
                             disabled={!props.options.useAudioWaveform}
+                            onChange={event => {
+                                if (!wf) return;
+                                wf.setOptions({
+                                    waveScale: Number(event.target.value || 1),
+                                });
+                            }}
                         />
                     </div>
                 </div>

@@ -325,5 +325,6 @@ export default {
     zh,
     'zh-cn': zh,
     en,
+    'en-us': en,
     es,
 };

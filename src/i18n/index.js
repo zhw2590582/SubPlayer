@@ -3,7 +3,9 @@ import zh from './zh';
 import es from './es';
 
 export default {
-    en,
     zh,
+    'zh-cn': zh,
+    en,
+    'en-us': en,
     es,
 };
