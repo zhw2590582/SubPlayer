@@ -187,6 +187,7 @@ export default function({
                             <div className="row text" style={{ flex: 1 }}>
                                 <textarea
                                     maxLength={200}
+                                    spellCheck={false}
                                     className="textarea"
                                     value={unescapeHTML(props.rowData.text)}
                                     onChange={event => updateSubtitle(props.rowData, 'text', event.target.value)}

@@ -113,79 +113,79 @@ export default function() {
     }, [subtitles, currentTime, setCurrentIndex]);
 
     // Detect if the subtitle exists
-    const checkSub = useCallback(sub => subtitles.includes(sub), [subtitles]);
+    const hasSubtitle = useCallback(sub => subtitles.indexOf(sub), [subtitles]);
 
     // Copy all subtitles
-    const copySubs = useCallback(() => subtitles.map(sub => sub.clone), [subtitles]);
+    const copySubtitles = useCallback(() => subtitles.map(sub => sub.clone), [subtitles]);
 
     // Check if subtitle is legal
     const checkSubtitleIllegal = useCallback(
         sub => {
-            if (!checkSub(sub)) return;
-            const index = subtitles.indexOf(sub);
+            const index = hasSubtitle(sub);
+            if (index < 0) return;
             const previous = subtitles[index - 1];
             return (previous && sub.startTime < previous.endTime) || !sub.check;
         },
-        [checkSub, subtitles],
+        [hasSubtitle, subtitles],
     );
 
     // Update a single subtitle
     const updateSubtitle = useCallback(
         (sub, key, value) => {
-            if (!checkSub(sub)) return;
-            const subs = copySubs();
-            const index = subtitles.indexOf(sub);
+            const index = hasSubtitle(sub);
+            if (index < 0) return;
+            const subs = copySubtitles();
             const { clone } = sub;
             clone[key] = value;
             subs[index] = clone;
             updateSubtitles(subs);
         },
-        [checkSub, subtitles, copySubs, updateSubtitles],
+        [hasSubtitle, copySubtitles, updateSubtitles],
     );
 
     // Delete a subtitle
     const removeSubtitle = useCallback(
         sub => {
-            if (!checkSub(sub)) return;
-            const subs = copySubs();
+            const index = hasSubtitle(sub);
+            if (index < 0) return;
+            const subs = copySubtitles();
             if (subs.length === 1) {
                 return notify('Please keep at least one subtitle', 'error');
             }
-            const index = subtitles.indexOf(sub);
             subs.splice(index, 1);
             updateSubtitles(subs);
         },
-        [checkSub, copySubs, subtitles, updateSubtitles],
+        [hasSubtitle, copySubtitles, updateSubtitles],
     );
 
     // Add a subtitle
     const addSubtitle = useCallback(
         index => {
-            const subs = copySubs();
+            const subs = copySubtitles();
             const previous = subs[index - 1];
-            const start = previous ? secondToTime(previous.endTime + 0.001) : '00:00:00.001';
-            const end = previous ? secondToTime(previous.endTime + 1.001) : '00:00:01.001';
+            const start = previous ? secondToTime(previous.endTime + 0.1) : '00:00:00.001';
+            const end = previous ? secondToTime(previous.endTime + 1.1) : '00:00:01.001';
             const sub = new Sub(start, end, '[Subtitle Text]');
             subs.splice(index, 0, sub);
             updateSubtitles(subs);
         },
-        [copySubs, updateSubtitles],
+        [copySubtitles, updateSubtitles],
     );
 
     // Merge two subtitles
     const mergeSubtitle = useCallback(
         sub => {
-            if (!checkSub(sub)) return;
-            const subs = copySubs();
-            const index = subtitles.indexOf(sub);
+            const index = hasSubtitle(sub);
+            if (index < 0) return;
+            const subs = copySubtitles();
             const next = subs[index + 1];
-            if (!checkSub(next)) return;
+            if (!hasSubtitle(next)) return;
             const merge = new Sub(sub.start, next.end, sub.text + '\n' + next.text);
             subs[index] = merge;
             subs.splice(index + 1, 1);
             updateSubtitles(subs);
         },
-        [checkSub, copySubs, subtitles, updateSubtitles],
+        [hasSubtitle, copySubtitles, updateSubtitles],
     );
 
     // Remove all subtitles
@@ -208,7 +208,7 @@ export default function() {
     // Subtitle time offset
     const timeOffsetSubtitles = useCallback(
         time => {
-            const subs = copySubs();
+            const subs = copySubtitles();
             updateSubtitles(
                 subs.map(item => {
                     item.start = secondToTime(clamp(item.startTime + time, 0, Infinity));
@@ -216,9 +216,9 @@ export default function() {
                     return item;
                 }),
             );
-            notify('Time Offset' + time);
+            notify(`Time Offset: ${time}`);
         },
-        [copySubs, updateSubtitles],
+        [copySubtitles, updateSubtitles],
     );
 
     // Clean all subtitles
@@ -233,7 +233,7 @@ export default function() {
     const translateSubtitles = useCallback(
         async lang => {
             if (!inTranslation) {
-                const subs = copySubs();
+                const subs = copySubtitles();
                 if (subs.length && subs.length <= 1000) {
                     inTranslation = true;
                     try {
@@ -250,31 +250,32 @@ export default function() {
                 notify('Translation in progress', 'error');
             }
         },
-        [copySubs, updateSubtitles],
+        [copySubtitles, updateSubtitles],
     );
 
     const props = {
         lang,
-        updateLang,
         player,
         options,
         subtitles,
+        currentTime,
+        currentIndex,
+
+        setOption,
         setPlayer,
         setOptions,
-        currentIndex,
-        currentTime,
-        setCurrentIndex,
         setCurrentTime,
-        updateSubtitles,
-        checkSub,
-        setOption,
+        setCurrentIndex,
+
+        updateLang,
         addSubtitle,
         undoSubtitles,
         mergeSubtitle,
         removeSubtitle,
-        removeSubtitles,
         updateSubtitle,
         cleanSubtitles,
+        updateSubtitles,
+        removeSubtitles,
         translateSubtitles,
         timeOffsetSubtitles,
         checkSubtitleIllegal,
