@@ -8,6 +8,7 @@ import { secondToTime, notify, clamp } from '../utils';
 import { getSubFromVttUrl, vttToUrlUseWorker } from '../subtitle';
 import Storage from '../utils/storage';
 import equal from 'fast-deep-equal';
+import NProgress from 'nprogress';
 import { ToastContainer } from 'react-toastify';
 import translate, { googleTranslate } from '../translate';
 
@@ -235,14 +236,24 @@ export default function() {
     // Translate a subtitle
     const translateSubtitle = useCallback(
         async sub => {
-            const index = hasSubtitle(sub);
-            if (index < 0) return;
-            try {
-                const text = await googleTranslate(sub.text, options.translationLanguage);
-                updateSubtitle(sub, 'text', text);
-                notify('Translation successful');
-            } catch (error) {
-                notify(error.message, 'error');
+            if (!inTranslation) {
+                const index = hasSubtitle(sub);
+                if (index < 0) return;
+                try {
+                    inTranslation = true;
+                    NProgress.start().set(0.5);
+                    const text = await googleTranslate(sub.text, options.translationLanguage);
+                    updateSubtitle(sub, 'text', text);
+                    notify('Translation successful');
+                    inTranslation = false;
+                    NProgress.done();
+                } catch (error) {
+                    notify(error.message, 'error');
+                    inTranslation = false;
+                    NProgress.done();
+                }
+            } else {
+                notify('Translation in progress', 'error');
             }
         },
         [hasSubtitle, updateSubtitle, options.translationLanguage],
