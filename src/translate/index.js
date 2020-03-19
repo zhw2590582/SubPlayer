@@ -2,12 +2,12 @@ import NProgress from 'nprogress';
 import pLimit from 'p-limit';
 import { sleep, notify } from '../utils/index';
 
-export function googleTranslate(query, land) {
+export function googleTranslate(query, lang) {
     const url = new URL('https://translate.googleapis.com/translate_a/single');
     url.searchParams.append('client', 'gtx');
     url.searchParams.append('sl', 'auto');
     url.searchParams.append('dt', 't');
-    url.searchParams.append('tl', land);
+    url.searchParams.append('tl', lang);
     url.searchParams.append('q', query);
 
     return new Promise(resolve => {
@@ -29,7 +29,7 @@ export function googleTranslate(query, land) {
     });
 }
 
-export default async function translate(subtitles, land) {
+export default async function translate(subtitles, lang) {
     NProgress.start();
     const limit = pLimit(1);
     let index = 0;
@@ -38,7 +38,7 @@ export default async function translate(subtitles, land) {
         const result = await Promise.all(
             subtitles.map(item =>
                 limit(async () => {
-                    const data = await googleTranslate(item.text, land);
+                    const data = await googleTranslate(item.text, lang);
                     NProgress.set(++index / subtitles.length);
                     if (data) {
                         item.text = data;

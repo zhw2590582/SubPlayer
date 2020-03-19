@@ -12,7 +12,7 @@ const Tool = styled.div`
     .item {
         display: flex;
         align-items: center;
-        padding: 10px 10px;
+        padding: 5px 10px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 
         .title {

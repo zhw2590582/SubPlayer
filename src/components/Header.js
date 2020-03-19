@@ -109,8 +109,11 @@ export default function(props) {
                 >
                     <i className="icon-trash-empty"></i> Clear
                 </Menu>
-                <Menu onClick={() => props.setOption('uploadHelp', true)}>
+                <Menu onClick={() => props.setOption('helpDialog', true)}>
                     <i className="icon-help-circled"></i> Help
+                </Menu>
+                <Menu onClick={() => props.setOption('donateDialog', true)}>
+                    <i className="icon-money"></i> Donate
                 </Menu>
                 <Menu onClick={() => window.open('https://github.com/zhw2590582/SubPlayer')}>
                     <i className="icon-github"></i> Github

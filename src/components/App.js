@@ -21,7 +21,7 @@ export default function() {
     const [player, setPlayer] = useState(null);
 
     // Language
-    const [lang, setLang] = useState('en');
+    const [lang, setLang] = useState(storage.get('lang') || navigator.language.toLowerCase());
 
     // Subtitle currently playing index
     const [currentIndex, setCurrentIndex] = useState(-1);
@@ -97,23 +97,14 @@ export default function() {
 
     // Run only once
     useEffect(() => {
-        if (!initSubtitles.init) {
-            initSubtitles.init = true;
-            initSubtitles();
-        }
-
-        if (player && !player.init) {
-            player.init = true;
+        initSubtitles();
+        if (player) {
             worker.onmessage = event => {
                 player.subtitle.switch(event.data);
             };
         }
-
-        if (!updateLang.init) {
-            updateLang.init = true;
-            setLang(storage.get('lang'));
-        }
-    }, [initSubtitles, player, updateLang]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [player]);
 
     // Update current index from current time
     useMemo(() => {
@@ -177,7 +168,6 @@ export default function() {
             const sub = new Sub(start, end, '[Subtitle Text]');
             subs.splice(index, 0, sub);
             updateSubtitles(subs);
-            setCurrentIndex(index);
         },
         [subtitles, updateSubtitles],
     );
@@ -230,8 +220,10 @@ export default function() {
                 if (subtitles.length <= 1000) {
                     inTranslation = true;
                     try {
+                        console.log(subtitles);
                         const subs = await translate(subtitles, lang);
-                        updateSubtitles([...subs]);
+                        updateSubtitles(subs);
+                        inTranslation = false;
                     } catch (error) {
                         notify(error.message, 'error');
                         inTranslation = false;
