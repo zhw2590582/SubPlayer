@@ -216,11 +216,11 @@ export default function() {
     // Translate all subtitles
     const translateSubtitles = useCallback(
         async lang => {
+            console.log(subtitles);
             if (!inTranslation) {
-                if (subtitles.length <= 1000) {
+                if (subtitles.length && subtitles.length <= 1000) {
                     inTranslation = true;
                     try {
-                        console.log(subtitles);
                         const subs = await translate(subtitles, lang);
                         updateSubtitles(subs);
                         inTranslation = false;
