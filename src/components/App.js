@@ -22,7 +22,7 @@ export default function() {
     const [player, setPlayer] = useState(null);
 
     // Language
-    const defaultLang = storage.get('language') || navigator.language.toLowerCase();
+    const defaultLang = storage.get('language') || navigator.language.toLowerCase() || 'en';
     const [language, setLanguage] = useState(defaultLang);
 
     // Subtitle currently playing index
