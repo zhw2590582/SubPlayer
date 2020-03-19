@@ -6,15 +6,16 @@ import { getVtt, vttToUrl, getSubFromVttUrl } from '../subtitle';
 
 const Upload = styled.div`
     .item {
-        padding: 10px 0;
+        margin-bottom: 20px;
         .title {
             color: #fff;
             font-size: 14px;
             padding: 5px 10px;
+            margin-bottom: 10px;
             border-left: 2px solid #03a9f4;
         }
         .centent {
-            padding: 15px 10px;
+            padding: 0 10px;
             .upload {
                 position: relative;
                 margin-bottom: 10px;

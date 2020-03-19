@@ -35,6 +35,7 @@ const Dialog = styled.div`
             align-items: center;
             justify-content: center;
             padding: 10px 0;
+            margin-bottom: 10px;
             font-size: 16px;
         }
 

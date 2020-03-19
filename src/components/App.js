@@ -244,8 +244,10 @@ export default function() {
                     inTranslation = true;
                     NProgress.start().set(0.5);
                     const text = await googleTranslate(sub.text, options.translationLanguage);
-                    updateSubtitle(sub, 'text', text);
-                    notify('Translation successful');
+                    if (text) {
+                        updateSubtitle(sub, 'text', text);
+                        notify('Translation successful');
+                    }
                     inTranslation = false;
                     NProgress.done();
                 } catch (error) {
