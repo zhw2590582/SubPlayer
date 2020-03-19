@@ -43,8 +43,6 @@ export default function() {
         translationLanguage: 'en',
     });
 
-    // 翻译语言
-
     // Update language
     const updateLang = useCallback(
         value => {
