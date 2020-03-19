@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import i18n from '../i18n';
 import Upload from './Upload';
+import Dialog from './Dialog';
 import { downloadFile } from '../utils';
 import { vttToUrl, subToVtt } from '../subtitle';
 
@@ -131,7 +132,11 @@ export default function(props) {
                     </select>
                 </I18n>
             </Right>
-            <Upload {...props} />
+            {props.options.uploadDialog ? (
+                <Dialog onClose={() => props.setOption('uploadDialog', false)}>
+                    <Upload {...props} />
+                </Dialog>
+            ) : null}
         </Header>
     );
 }

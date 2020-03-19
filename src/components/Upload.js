@@ -5,109 +5,91 @@ import { notify } from '../utils';
 import { getVtt, vttToUrl, getSubFromVttUrl } from '../subtitle';
 
 const Upload = styled.div`
-    position: fixed;
-    z-index: 99;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.8);
+    .item {
+        padding: 10px 0;
+        .title {
+            color: #fff;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-left: 2px solid #03a9f4;
+        }
+        .centent {
+            padding: 15px 10px;
+            .upload {
+                position: relative;
+                margin-bottom: 10px;
+                .input {
+                    width: 100%;
+                    height: 30px;
+                    line-height: 30px;
+                    padding: 0 10px;
+                    outline: none;
+                    border: none;
+                    color: #fff;
+                    background-color: #363952;
+                }
+                .file {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    line-height: 1;
+                    height: 100%;
+                    width: 100px;
+                    color: #fff;
+                    background-color: #2196f3;
 
-    .dialog {
-        width: 500px;
-        background-color: #1f2133;
-
-        .item {
-            padding: 10px 0;
-            .title {
-                color: #fff;
-                font-size: 14px;
-                padding: 5px 10px;
-                border-left: 2px solid #03a9f4;
-            }
-            .centent {
-                padding: 15px 10px;
-                .upload {
-                    position: relative;
-                    margin-bottom: 10px;
-                    .input {
-                        width: 100%;
-                        height: 30px;
-                        line-height: 30px;
-                        padding: 0 10px;
-                        outline: none;
-                        border: none;
-                        color: #fff;
-                        background-color: #363952;
-                    }
-                    .file {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
+                    input {
                         position: absolute;
+                        left: 0;
                         top: 0;
                         right: 0;
                         bottom: 0;
-                        line-height: 1;
+                        width: 100%;
                         height: 100%;
-                        width: 100px;
-                        color: #fff;
-                        background-color: #2196f3;
-
-                        input {
-                            position: absolute;
-                            left: 0;
-                            top: 0;
-                            right: 0;
-                            bottom: 0;
-                            width: 100%;
-                            height: 100%;
-                            opacity: 0;
-                        }
+                        opacity: 0;
                     }
                 }
-                .info {
-                    font-size: 12px;
-                    color: rgba(255, 255, 255, 0.5);
-                    margin-bottom: 10px;
-                }
-                .option {
-                    font-size: 12px;
-                    margin-bottom: 10px;
-                    label {
-                        margin-right: 20px;
-                        input {
-                            margin-right: 5px;
-                        }
+            }
+            .info {
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.5);
+                margin-bottom: 10px;
+            }
+            .option {
+                font-size: 12px;
+                margin-bottom: 10px;
+                label {
+                    margin-right: 20px;
+                    input {
+                        margin-right: 5px;
                     }
                 }
-                .warning {
-                    font-size: 12px;
-                    padding: 5px;
-                    color: #fff;
-                    background-color: #c75123;
-                }
+            }
+            .warning {
+                font-size: 12px;
+                padding: 5px;
+                color: #fff;
+                background-color: #c75123;
             }
         }
+    }
 
-        .bottom {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            height: 40px;
-            cursor: pointer;
-            background-color: #2196f3;
-            transition: all 0.2s ease 0s;
+    .bottom {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        height: 40px;
+        cursor: pointer;
+        background-color: #2196f3;
+        transition: all 0.2s ease 0s;
 
-            &:hover {
-                background-color: rgb(91, 148, 255);
-            }
+        &:hover {
+            background-color: rgb(91, 148, 255);
         }
     }
 `;
@@ -158,70 +140,65 @@ export default function({ player, options, setOption, updateSubtitles }) {
     }
 
     return (
-        <Upload
-            onClick={() => setOption('uploadDialog', false)}
-            style={{ display: options.uploadDialog ? 'flex' : 'none' }}
-        >
-            <div className="dialog" onClick={event => event.stopPropagation()}>
-                <div className="item">
-                    <div className="title">Open Subtitle</div>
-                    <div className="centent">
-                        <div className="upload">
-                            <input
-                                value={options.subtitleUrl}
-                                type="text"
-                                className="input"
-                                spellCheck="false"
-                                placeholder="Open from remote address or local file"
-                                onChange={event => openSubtitle(event.target.value)}
-                            />
-                            <div className="file">
-                                Open
-                                <input type="file" onChange={event => openSubtitle(event.target.files[0])} />
-                            </div>
+        <Upload>
+            <div className="item">
+                <div className="title">Open Subtitle</div>
+                <div className="centent">
+                    <div className="upload">
+                        <input
+                            value={options.subtitleUrl}
+                            type="text"
+                            className="input"
+                            spellCheck="false"
+                            placeholder="Open from remote address or local file"
+                            onChange={event => openSubtitle(event.target.value)}
+                        />
+                        <div className="file">
+                            Open
+                            <input type="file" onChange={event => openSubtitle(event.target.files[0])} />
                         </div>
-                        <div className="info">Supports opening subtitles in vtt, srt and ass formats</div>
                     </div>
+                    <div className="info">Supports opening subtitles in vtt, srt and ass formats</div>
                 </div>
-                <div className="item">
-                    <div className="title">Open Video</div>
-                    <div className="centent">
-                        <div className="upload">
-                            <input
-                                value={options.videoUrl}
-                                type="text"
-                                className="input"
-                                spellCheck="false"
-                                placeholder="Open from remote address or local file"
-                                onChange={event => openVideo(event.target.value)}
-                            />
-                            <div className="file">
-                                Open
-                                <input type="file" onChange={event => openVideo(event.target.files[0])} />
-                            </div>
+            </div>
+            <div className="item">
+                <div className="title">Open Video</div>
+                <div className="centent">
+                    <div className="upload">
+                        <input
+                            value={options.videoUrl}
+                            type="text"
+                            className="input"
+                            spellCheck="false"
+                            placeholder="Open from remote address or local file"
+                            onChange={event => openVideo(event.target.value)}
+                        />
+                        <div className="file">
+                            Open
+                            <input type="file" onChange={event => openVideo(event.target.files[0])} />
                         </div>
-                        <div className="info">Supports opening mp4, webm and ogg video</div>
-                        <div className="option">
-                            <label>
-                                <input
-                                    value={options.useAudioWaveform}
-                                    type="checkbox"
-                                    onChange={event => setOption('useAudioWaveform', event.target.checked)}
-                                />
-                                Generate audio waveform graph
-                            </label>
-                        </div>
-                        {options.useAudioWaveform ? (
-                            <div className="warning">
-                                When creating an audio waveform graph, The browser may be blocked for a short time due
-                                to audio decoding, the larger the file, the more obvious it is.
-                            </div>
-                        ) : null}
                     </div>
+                    <div className="info">Supports opening mp4, webm and ogg video</div>
+                    <div className="option">
+                        <label>
+                            <input
+                                checked={options.useAudioWaveform}
+                                type="checkbox"
+                                onChange={event => setOption('useAudioWaveform', event.target.checked)}
+                            />
+                            Generate audio waveform graph
+                        </label>
+                    </div>
+                    {options.useAudioWaveform ? (
+                        <div className="warning">
+                            When creating an audio waveform graph, The browser may be blocked for a short time due to
+                            audio decoding, the larger the file, the more obvious it is.
+                        </div>
+                    ) : null}
                 </div>
-                <div className="bottom" onClick={() => setOption('uploadDialog', false)}>
-                    Confirm
-                </div>
+            </div>
+            <div className="bottom" onClick={() => setOption('uploadDialog', false)}>
+                Confirm
             </div>
         </Upload>
     );
