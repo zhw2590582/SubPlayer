@@ -77,21 +77,6 @@ const Upload = styled.div`
             }
         }
     }
-
-    .bottom {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        height: 40px;
-        cursor: pointer;
-        background-color: #2196f3;
-        transition: all 0.2s ease 0s;
-
-        &:hover {
-            background-color: rgb(91, 148, 255);
-        }
-    }
 `;
 
 export default function({ player, options, setOption, updateSubtitles }) {
@@ -196,9 +181,6 @@ export default function({ player, options, setOption, updateSubtitles }) {
                         </div>
                     ) : null}
                 </div>
-            </div>
-            <div className="bottom" onClick={() => setOption('uploadDialog', false)}>
-                Confirm
             </div>
         </Upload>
     );
