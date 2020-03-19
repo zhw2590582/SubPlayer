@@ -154,7 +154,9 @@ export default function({
                             style={props.style}
                             onClick={() => {
                                 player.pause = true;
-                                player.seek = props.rowData.startTime;
+                                if (player.duration >= props.rowData.startTime) {
+                                    player.seek = props.rowData.startTime;
+                                }
                             }}
                         >
                             <div className="row operation" style={{ width: 30 }}>
