@@ -174,12 +174,10 @@ export default function({ player, options, setOption, updateSubtitles }) {
                             Generate audio waveform graph
                         </label>
                     </div>
-                    {options.useAudioWaveform ? (
-                        <div className="warning">
-                            When creating an audio waveform graph, The browser may be blocked for a short time due to
-                            audio decoding, the larger the file, the more obvious it is.
-                        </div>
-                    ) : null}
+                    <div className="warning">
+                        When creating an audio waveform graph, The browser may be blocked for a short time due to audio
+                        decoding, the larger the file, the more obvious it is.
+                    </div>
                 </div>
             </div>
         </Upload>
