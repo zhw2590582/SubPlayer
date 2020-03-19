@@ -122,7 +122,7 @@ export default function(props) {
             <Right>
                 <I18n>
                     <i className="icon-language"></i>
-                    <select value={props.lang} onChange={event => props.updateLang(event.target.value)}>
+                    <select value={props.language} onChange={event => props.updateLang(event.target.value)}>
                         {Object.keys(i18n).map(key => (
                             <option key={key} value={key}>
                                 {key.toUpperCase()}
