@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import languages from '../translate/languages';
 
@@ -51,30 +51,32 @@ const Tool = styled.div`
     }
 `;
 
-export default function(props) {
-    const [lang, setLang] = useState('en');
+export default function({ language, options, setOption, translateSubtitles, timeOffsetSubtitles }) {
     return (
         <Tool>
             <div className="item">
                 <div className="title">Google Translate:</div>
                 <div className="value">
-                    <select value={lang} onChange={event => setLang(event.target.value)}>
-                        {languages[props.lang].map(item => (
+                    <select
+                        value={options.translationLanguage}
+                        onChange={event => setOption('translationLanguage', event.target.value)}
+                    >
+                        {languages[language].map(item => (
                             <option key={item.key} value={item.key}>
                                 {item.name}
                             </option>
                         ))}
                     </select>
-                    <button onClick={() => props.translateSubtitles(lang)}>Confirm</button>
+                    <button onClick={() => translateSubtitles()}>Confirm</button>
                 </div>
             </div>
             <div className="item">
                 <div className="title">Time Offset:</div>
                 <div className="value">
-                    <button onClick={() => props.timeOffsetSubtitles(-0.1)}>-100ms</button>
-                    <button onClick={() => props.timeOffsetSubtitles(0.1)}>+100ms</button>
-                    <button onClick={() => props.timeOffsetSubtitles(-1)}>-1000ms</button>
-                    <button onClick={() => props.timeOffsetSubtitles(1)}>+1000ms</button>
+                    <button onClick={() => timeOffsetSubtitles(-0.1)}>-100ms</button>
+                    <button onClick={() => timeOffsetSubtitles(0.1)}>+100ms</button>
+                    <button onClick={() => timeOffsetSubtitles(-1)}>-1000ms</button>
+                    <button onClick={() => timeOffsetSubtitles(1)}>+1000ms</button>
                 </div>
             </div>
         </Tool>

@@ -75,6 +75,7 @@ export default function({
     currentIndex,
     updateSubtitle,
     removeSubtitle,
+    translateSubtitle,
     checkSubtitleIllegal,
 }) {
     let isDroging = false;
@@ -160,7 +161,12 @@ export default function({
                                 <i
                                     className="icon-trash-empty"
                                     onClick={() => removeSubtitle(props.rowData)}
-                                    style={{ marginBottom: 15 }}
+                                    style={{ marginBottom: 5 }}
+                                ></i>
+                                <i
+                                    className="icon-language"
+                                    onClick={() => translateSubtitle(props.rowData)}
+                                    style={{ marginBottom: 5 }}
                                 ></i>
                                 <i className="icon-plus" onClick={() => addSubtitle(props.index + 1)}></i>
                             </div>

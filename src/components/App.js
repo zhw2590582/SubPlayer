@@ -9,7 +9,7 @@ import { getSubFromVttUrl, vttToUrlUseWorker } from '../subtitle';
 import Storage from '../utils/storage';
 import equal from 'fast-deep-equal';
 import { ToastContainer } from 'react-toastify';
-import translate from '../translate';
+import translate, { googleTranslate } from '../translate';
 
 const history = [];
 let inTranslation = false;
@@ -21,8 +21,8 @@ export default function() {
     const [player, setPlayer] = useState(null);
 
     // Language
-    const defaultLang = storage.get('lang') || navigator.language.toLowerCase();
-    const [lang, setLang] = useState(defaultLang);
+    const defaultLang = storage.get('language') || navigator.language.toLowerCase();
+    const [language, setLanguage] = useState(defaultLang);
 
     // Subtitle currently playing index
     const [currentIndex, setCurrentIndex] = useState(-1);
@@ -39,15 +39,18 @@ export default function() {
         subtitleUrl: '/sample.vtt',
         uploadDialog: false,
         useAudioWaveform: false,
+        translationLanguage: 'en',
     });
+
+    // 翻译语言
 
     // Update language
     const updateLang = useCallback(
         value => {
-            setLang(value);
-            storage.set('lang', value);
+            setLanguage(value);
+            storage.set('language', value);
         },
-        [setLang],
+        [setLanguage],
     );
 
     // Update an option
@@ -229,34 +232,48 @@ export default function() {
         notify('Empty all subtitles successfully');
     }, [removeSubtitles]);
 
-    // Translate all subtitles
-    const translateSubtitles = useCallback(
-        async lang => {
-            if (!inTranslation) {
-                const subs = copySubtitles();
-                if (subs.length && subs.length <= 1000) {
-                    inTranslation = true;
-                    try {
-                        updateSubtitles(await translate(subs, lang));
-                        inTranslation = false;
-                    } catch (error) {
-                        notify(error.message, 'error');
-                        inTranslation = false;
-                    }
-                } else {
-                    notify('Limit 1000 translations per batch', 'error');
-                }
-            } else {
-                notify('Translation in progress', 'error');
+    // Translate a subtitle
+    const translateSubtitle = useCallback(
+        async sub => {
+            const index = hasSubtitle(sub);
+            if (index < 0) return;
+            try {
+                const text = await googleTranslate(sub.text, options.translationLanguage);
+                updateSubtitle(sub, 'text', text);
+                notify('Translation successful');
+            } catch (error) {
+                notify(error.message, 'error');
             }
         },
-        [copySubtitles, updateSubtitles],
+        [hasSubtitle, updateSubtitle, options.translationLanguage],
     );
 
+    // Translate all subtitles
+    const translateSubtitles = useCallback(async () => {
+        if (!inTranslation) {
+            const subs = copySubtitles();
+            if (subs.length && subs.length <= 1000) {
+                inTranslation = true;
+                try {
+                    updateSubtitles(await translate(subs, options.translationLanguage));
+                    notify('Translation successful');
+                    inTranslation = false;
+                } catch (error) {
+                    notify(error.message, 'error');
+                    inTranslation = false;
+                }
+            } else {
+                notify('Limit 1000 translations per batch', 'error');
+            }
+        } else {
+            notify('Translation in progress', 'error');
+        }
+    }, [copySubtitles, updateSubtitles, options.translationLanguage]);
+
     const props = {
-        lang,
         player,
         options,
+        language,
         subtitles,
         currentTime,
         currentIndex,
@@ -276,6 +293,7 @@ export default function() {
         cleanSubtitles,
         updateSubtitles,
         removeSubtitles,
+        translateSubtitle,
         translateSubtitles,
         timeOffsetSubtitles,
         checkSubtitleIllegal,

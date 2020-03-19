@@ -87,14 +87,17 @@ export function unescapeHTML(str) {
     );
 }
 
-export function notify(text, type = 'info') {
+export function notify(text = '', type = 'info') {
     // info success warning error default
-    return toast[type](text, {
-        position: 'top-center',
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-    });
+    return (
+        text.trim() &&
+        toast[type](text, {
+            position: 'top-center',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        })
+    );
 }
