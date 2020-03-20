@@ -136,7 +136,7 @@ export default function({ player, options, setOption, updateSubtitles }) {
                             <input type="file" onChange={event => openSubtitle(event.target.files[0])} />
                         </div>
                     </div>
-                    <div className="info">Supports opening subtitles in vtt, srt and ass formats</div>
+                    <div className="info">Supports opening .vtt, .srt and .ass subtitle</div>
                 </div>
             </div>
             <div className="item">
@@ -157,7 +157,7 @@ export default function({ player, options, setOption, updateSubtitles }) {
                             <input type="file" onChange={event => openVideo(event.target.files[0])} />
                         </div>
                     </div>
-                    <div className="info">Supports opening mp4, webm and ogg video</div>
+                    <div className="info">Supports opening .mp4, .webm and .ogg video</div>
                     <div className="warning">
                         When creating an audio waveform, The browser may be blocked for a short time due to audio
                         decoding
