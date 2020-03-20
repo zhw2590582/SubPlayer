@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import WF from '../waveform';
+import { sleep } from '../utils';
 
 const Footer = styled.div`
     display: flex;
@@ -74,25 +75,35 @@ const Footer = styled.div`
 `;
 
 let wf = null;
-let useWave = false;
 const Waveform = React.memo(
-    ({ options, player }) => {
+    ({ options, player, setDecodeing, setFileSize }) => {
         const $waveform = React.createRef();
+
         useEffect(() => {
             if (wf) wf.destroy();
+
             wf = new WF({
-                wave: useWave,
                 container: $waveform.current,
                 mediaElement: player.template.$video,
                 backgroundColor: 'rgb(20, 23, 38)',
+                waveColor: 'rgba(255, 255, 255, 0.1)',
+                progressColor: 'rgba(255, 255, 255, 0.5)',
+                gridColor: 'rgba(255, 255, 255, 0.05)',
+                rulerColor: 'rgba(255, 255, 255, 0.5)',
             });
-        }, [player, $waveform, options.videoUrl]);
+
+            wf.on('decodeing', setDecodeing);
+            wf.on('fileSize', setFileSize);
+            sleep(1000).then(() => wf.load(options.videoUrl));
+        }, [player, $waveform, options.videoUrl, setDecodeing, setFileSize]);
         return <div className="waveform" ref={$waveform} />;
     },
     (prevProps, nextProps) => prevProps.options.videoUrl === nextProps.options.videoUrl,
 );
 
 export default function(props) {
+    const [decodeing, setDecodeing] = useState(0);
+    const [fileSize, setFileSize] = useState(0);
     return (
         <Footer>
             <div className="timeline-header">
@@ -101,12 +112,12 @@ export default function(props) {
                         <div className="name">Audio Waveform:</div>
                         <div className="value">
                             <input
+                                defaultChecked={true}
                                 type="checkbox"
                                 onChange={event => {
                                     if (!wf) return;
-                                    useWave = event.target.checked;
                                     wf.setOptions({
-                                        wave: useWave,
+                                        wave: event.target.checked,
                                     });
                                 }}
                             />
@@ -115,7 +126,7 @@ export default function(props) {
                     <div className="item">
                         <div className="name">Decoding Progress:</div>
                         <div className="value" style={{ color: '#FF5722' }}>
-                            0%
+                            {(decodeing * 100).toFixed(2)}%
                         </div>
                     </div>
                     <div className="item">
@@ -173,9 +184,14 @@ export default function(props) {
                         </div>
                     </div>
                 </div>
-                <div className="timeline-header-right">File Size: 14.108 M</div>
+                <div className="timeline-header-right">
+                    File Size:
+                    <span style={{ color: '#4CAF50', marginLeft: 10 }}>{(fileSize / 1024 / 1024).toFixed(2)} M</span>
+                </div>
             </div>
-            <div className="timeline-body">{props.player ? <Waveform {...props} /> : null}</div>
+            <div className="timeline-body">
+                {props.player ? <Waveform {...props} setDecodeing={setDecodeing} setFileSize={setFileSize} /> : null}
+            </div>
         </Footer>
     );
 }
