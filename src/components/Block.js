@@ -208,23 +208,25 @@ export default React.memo(
                 const endTime = lastSub.endTime + timeDiff;
 
                 if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
-                    notify('操作错误', 'error');
+                    notify('Parameter error', 'error');
                 } else {
                     if (lastType === 'left') {
                         if (startTime >= 0 && startTime < lastSub.endTime) {
                             const start = secondToTime(startTime);
                             updateSubtitle(lastSub, 'start', start);
+                            player.seek = startTime;
                         } else {
                             lastTarget.style.width = `${lastWidth}px`;
-                            notify('移动错误了', 'error');
+                            notify('Parameter error', 'error');
                         }
                     } else if (lastType === 'right') {
                         if (endTime >= 0 && endTime > lastSub.startTime) {
                             const end = secondToTime(endTime);
                             updateSubtitle(lastSub, 'end', end);
+                            player.seek = startTime;
                         } else {
                             lastTarget.style.width = `${lastWidth}px`;
-                            notify('移动错误了', 'error');
+                            notify('Parameter error', 'error');
                         }
                     } else {
                         if (startTime > 0 && endTime > 0 && endTime > startTime) {
@@ -234,14 +236,14 @@ export default React.memo(
                                 start,
                                 end,
                             });
+                            player.seek = startTime;
                         } else {
                             lastTarget.style.width = `${lastWidth}px`;
-                            notify('移动错误了', 'error');
+                            notify('Parameter error', 'error');
                         }
                     }
                 }
 
-                player.seek = startTime;
                 lastTarget.style.transform = `translate(0)`;
             }
 
