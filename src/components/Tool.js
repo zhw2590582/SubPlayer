@@ -59,7 +59,7 @@ export default function({ language, options, setOption, translateSubtitles, time
                 <div className="value">
                     <select
                         value={options.translationLanguage}
-                        onChange={event => setOption('translationLanguage', event.target.value)}
+                        onChange={event => setOption({ translationLanguage: event.target.value })}
                     >
                         {languages[language].map(item => (
                             <option key={item.key} value={item.key}>

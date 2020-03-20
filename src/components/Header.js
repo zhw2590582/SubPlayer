@@ -98,7 +98,7 @@ export default function(props) {
                 <Logo href="/">
                     <i className="icon-cc"></i>
                 </Logo>
-                <Menu onClick={() => props.setOption('uploadDialog', true)}>
+                <Menu onClick={() => props.setOption({ uploadDialog: true })}>
                     <i className="icon-upload"></i> Open
                 </Menu>
                 <Menu onClick={() => downloadFile(vttToUrl(subToVtt(props.subtitles)), `${Date.now()}.vtt`)}>
@@ -116,10 +116,10 @@ export default function(props) {
                 >
                     <i className="icon-trash-empty"></i> Clear
                 </Menu>
-                <Menu onClick={() => props.setOption('helpDialog', true)}>
+                <Menu onClick={() => props.setOption({ helpDialog: true })}>
                     <i className="icon-help-circled"></i> Help
                 </Menu>
-                <Menu onClick={() => props.setOption('donateDialog', true)}>
+                <Menu onClick={() => props.setOption({ donateDialog: true })}>
                     <i className="icon-money"></i> Donate
                 </Menu>
                 <Menu onClick={() => window.open('https://github.com/zhw2590582/SubPlayer')}>
@@ -139,17 +139,17 @@ export default function(props) {
                 </I18n>
             </Right>
             {props.options.uploadDialog ? (
-                <Dialog title="Open" onClose={() => props.setOption('uploadDialog', false)}>
+                <Dialog title="Open" onClose={() => props.setOption({ uploadDialog: false })}>
                     <Upload {...props} />
                 </Dialog>
             ) : null}
             {props.options.helpDialog ? (
-                <Dialog title="Help" onClose={() => props.setOption('helpDialog', false)}>
+                <Dialog title="Help" onClose={() => props.setOption({ helpDialog: false })}>
                     <Help {...props} />
                 </Dialog>
             ) : null}
             {props.options.donateDialog ? (
-                <Dialog title="Donate" onClose={() => props.setOption('donateDialog', false)}>
+                <Dialog title="Donate" onClose={() => props.setOption({ donateDialog: false })}>
                     <Donate {...props} />
                 </Dialog>
             ) : null}

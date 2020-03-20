@@ -37,7 +37,11 @@ const Footer = styled.div`
                     display: flex;
                     align-items: center;
 
-                    input {
+                    input[type='checkbox'] {
+                        outline: none;
+                    }
+
+                    input[type='range'] {
                         height: 3px;
                         width: 100px;
                         outline: none;
@@ -73,26 +77,17 @@ let wf = null;
 const Waveform = React.memo(
     ({ options, player }) => {
         const $waveform = React.createRef();
-
         useEffect(() => {
             if (wf) wf.destroy();
             wf = new WF({
-                wave: options.useAudioWaveform,
                 container: $waveform.current,
                 mediaElement: player.template.$video,
+                backgroundColor: 'rgb(20, 23, 38)',
             });
-        }, [player, $waveform, options.videoUrl, options.useAudioWaveform]);
-
+        }, [player, $waveform, options.videoUrl]);
         return <div className="waveform" ref={$waveform} />;
     },
-    (prevProps, nextProps) => {
-        const prevOptions = prevProps.options;
-        const nextOptions = nextProps.options;
-        return (
-            prevOptions.videoUrl === nextOptions.videoUrl &&
-            prevOptions.useAudioWaveform === nextOptions.useAudioWaveform
-        );
-    },
+    (prevProps, nextProps) => prevProps.options.videoUrl === nextProps.options.videoUrl,
 );
 
 export default function(props) {
@@ -100,6 +95,21 @@ export default function(props) {
         <Footer>
             <div className="timeline-header">
                 <div className="timeline-header-left">
+                    <div className="item">
+                        <div className="name">Audio Waveform:</div>
+                        <div className="value">
+                            <input
+                                defaultChecked="true"
+                                type="checkbox"
+                                onChange={event => {
+                                    if (!wf) return;
+                                    wf.setOptions({
+                                        wave: event.target.checked,
+                                    });
+                                }}
+                            />
+                        </div>
+                    </div>
                     <div className="item">
                         <div className="name">Decoding Progress:</div>
                         <div className="value" style={{ color: '#FF5722' }}>
@@ -133,7 +143,6 @@ export default function(props) {
                                 min="0.1"
                                 max="2"
                                 step="0.1"
-                                disabled={!props.options.useAudioWaveform}
                                 onChange={event => {
                                     if (!wf) return;
                                     wf.setOptions({

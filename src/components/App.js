@@ -42,7 +42,6 @@ export default function() {
         helpDialog: false,
         donateDialog: false,
         uploadDialog: false,
-        useAudioWaveform: false,
         translationLanguage: 'en',
     });
 
@@ -57,10 +56,10 @@ export default function() {
 
     // Update an option
     const setOption = useCallback(
-        (key, value) => {
+        option => {
             setOptions({
                 ...options,
-                [key]: value,
+                ...option,
             });
         },
         [options, setOptions],
@@ -104,7 +103,7 @@ export default function() {
     // Run only once
     useEffect(() => {
         initSubtitles();
-        if (player) {
+        if (player && !worker.onmessage) {
             worker.onmessage = event => {
                 player.subtitle.switch(event.data);
             };
@@ -294,7 +293,6 @@ export default function() {
 
         setOption,
         setPlayer,
-        setOptions,
         setCurrentTime,
         setCurrentIndex,
 

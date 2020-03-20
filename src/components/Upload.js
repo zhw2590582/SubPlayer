@@ -60,22 +60,6 @@ const Upload = styled.div`
                 color: rgba(255, 255, 255, 0.5);
                 margin-bottom: 10px;
             }
-            .option {
-                font-size: 12px;
-                margin-bottom: 10px;
-                label {
-                    margin-right: 20px;
-                    input {
-                        margin-right: 5px;
-                    }
-                }
-            }
-            .warning {
-                font-size: 12px;
-                padding: 5px;
-                color: #fff;
-                background-color: #c75123;
-            }
         }
     }
 `;
@@ -90,7 +74,7 @@ export default function({ player, options, setOption, updateSubtitles }) {
                     const subtitleUrl = vttToUrl(vttText);
                     updateSubtitles(await getSubFromVttUrl(subtitleUrl));
                     player.subtitle.switch(subtitleUrl);
-                    setOption('subtitleUrl', subtitleUrl);
+                    setOption({ subtitleUrl, uploadDialog: false });
                     notify('Open subtitles successfully');
                 } else {
                     notify('Failed to open subtitles', 'error');
@@ -107,7 +91,7 @@ export default function({ player, options, setOption, updateSubtitles }) {
             NProgress.start().set(0.5);
             if (typeof file === 'string') {
                 player.url = file;
-                setOption('videoUrl', file);
+                setOption({ videoUrl: file, uploadDialog: false });
                 notify('Open video successfully');
             } else {
                 const $video = document.createElement('video');
@@ -115,7 +99,7 @@ export default function({ player, options, setOption, updateSubtitles }) {
                 if (canPlayType === 'maybe' || canPlayType === 'probably') {
                     const videoUrl = URL.createObjectURL(file);
                     player.url = videoUrl;
-                    setOption('videoUrl', videoUrl);
+                    setOption({ videoUrl: videoUrl, uploadDialog: false });
                     notify('Open video successfully');
                 } else {
                     notify('Does not support playing the file', 'error');
@@ -132,6 +116,7 @@ export default function({ player, options, setOption, updateSubtitles }) {
                 <div className="centent">
                     <div className="upload">
                         <input
+                            disabled
                             value={options.subtitleUrl}
                             type="text"
                             className="input"
@@ -152,6 +137,7 @@ export default function({ player, options, setOption, updateSubtitles }) {
                 <div className="centent">
                     <div className="upload">
                         <input
+                            disabled
                             value={options.videoUrl}
                             type="text"
                             className="input"
@@ -165,20 +151,6 @@ export default function({ player, options, setOption, updateSubtitles }) {
                         </div>
                     </div>
                     <div className="info">Supports opening mp4, webm and ogg video</div>
-                    <div className="option">
-                        <label>
-                            <input
-                                checked={options.useAudioWaveform}
-                                type="checkbox"
-                                onChange={event => setOption('useAudioWaveform', event.target.checked)}
-                            />
-                            Generate audio waveform graph
-                        </label>
-                    </div>
-                    <div className="warning">
-                        When creating an audio waveform graph, The browser may be blocked for a short time due to audio
-                        decoding, the larger the file, the more obvious it is.
-                    </div>
                 </div>
             </div>
         </Upload>
