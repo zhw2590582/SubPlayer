@@ -27,6 +27,7 @@ const Block = styled.div`
         top: 0;
         left: 0;
         height: 100%;
+        overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -86,7 +87,7 @@ function getCurrentSubs(subs, beginTime, duration) {
 }
 
 export default React.memo(
-    function({ subtitles, render, currentTime, checkSubtitleIllegal }) {
+    function({ player, subtitles, render, currentTime, checkSubtitleIllegal }) {
         const currentSubs = getCurrentSubs(subtitles, render.beginTime, render.duration);
         const gridGap = document.body.clientWidth / render.gridNum;
         const currentIndex = currentSubs.findIndex(item => item.startTime <= currentTime && item.endTime > currentTime);
@@ -113,6 +114,12 @@ export default React.memo(
                             style={{
                                 left: render.padding * gridGap + (sub.startTime - render.beginTime) * gridGap * 10,
                                 width: (sub.endTime - sub.startTime) * gridGap * 10,
+                            }}
+                            onClick={() => {
+                                player.pause = true;
+                                if (player.duration >= sub.startTime) {
+                                    player.seek = sub.startTime + 0.001;
+                                }
                             }}
                         >
                             <div
