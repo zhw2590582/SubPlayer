@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import escape from 'lodash/escape';
@@ -150,17 +150,33 @@ export default React.memo(
             setContextMenu(true);
         };
 
-        useEffect(() => {
-            const clickFn = event => {
+        const onDocumentClick = useCallback(
+            event => {
                 if (event.composedPath && event.composedPath().indexOf($contextMenuRef.current) < 0) {
                     setContextMenu(false);
                 }
-            };
-            document.addEventListener('click', clickFn);
+            },
+            [$contextMenuRef, setContextMenu],
+        );
+
+        const onDocumentMouseMove = useCallback(event => {
+            //
+        });
+
+        const onDocumentMouseUp = useCallback(event => {
+            //
+        });
+
+        useEffect(() => {
+            document.addEventListener('click', onDocumentClick);
+            document.addEventListener('mousemove', onDocumentMouseMove);
+            document.addEventListener('mouseup', onDocumentMouseUp);
             return () => {
-                document.removeEventListener('click', clickFn);
+                document.removeEventListener('click', onDocumentClick);
+                document.removeEventListener('mousemove', onDocumentMouseMove);
+                document.removeEventListener('mouseup', onDocumentMouseUp);
             };
-        }, [$contextMenuRef]);
+        }, [onDocumentClick, onDocumentMouseMove, onDocumentMouseUp]);
 
         return (
             <Block>
