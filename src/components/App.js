@@ -113,7 +113,7 @@ export default function() {
 
     // Update current index from current time
     useMemo(() => {
-        setCurrentIndex(subtitles.findIndex(item => item.startTime <= currentTime && item.endTime >= currentTime));
+        setCurrentIndex(subtitles.findIndex(item => item.startTime <= currentTime && item.endTime > currentTime));
     }, [subtitles, currentTime, setCurrentIndex]);
 
     // Detect if the subtitle exists
