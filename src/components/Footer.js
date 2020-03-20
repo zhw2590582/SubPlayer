@@ -165,7 +165,7 @@ export default function(props) {
                                     .fill()
                                     .map((_, index) => (
                                         <option key={index} value={index}>
-                                            {index}
+                                            {index + 1}
                                         </option>
                                     ))}
                             </select>
