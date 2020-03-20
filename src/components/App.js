@@ -145,8 +145,12 @@ export default function() {
             } else {
                 clone[key] = value;
             }
-            subs[index] = clone;
-            updateSubtitles(subs);
+            if (clone.check) {
+                subs[index] = clone;
+                updateSubtitles(subs);
+            } else {
+                notify('Parameter error', 'error');
+            }
         },
         [hasSubtitle, copySubtitles, updateSubtitles],
     );

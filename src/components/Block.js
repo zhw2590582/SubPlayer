@@ -13,16 +13,6 @@ const Block = styled.div`
     width: 100%;
     height: 100%;
 
-    .padding {
-        position: absolute;
-        z-index: 99;
-        top: 0;
-        bottom: 0;
-        height: 100%;
-        user-select: none;
-        pointer-events: none;
-    }
-
     .contextmenu {
         position: absolute;
         z-index: 4;
@@ -268,13 +258,6 @@ export default React.memo(
 
         return (
             <Block>
-                <div
-                    className="padding"
-                    style={{
-                        left: 0,
-                        width: render.padding * gridGap,
-                    }}
-                ></div>
                 <div ref={$subsRef}>
                     {currentSubs.map((sub, key) => {
                         return (
@@ -324,13 +307,6 @@ export default React.memo(
                         );
                     })}
                 </div>
-                <div
-                    className="padding"
-                    style={{
-                        right: 0,
-                        width: render.padding * gridGap,
-                    }}
-                ></div>
                 <div
                     ref={$contextMenuRef}
                     className="contextmenu"
