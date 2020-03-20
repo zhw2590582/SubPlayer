@@ -179,6 +179,11 @@ export default class WFPlayer extends Emitter {
         return this;
     }
 
+    changeChannel(channel) {
+        this.setOptions({ channel });
+        this.decoder.changeChannel(channel);
+    }
+
     exportImage() {
         this.template.exportImage();
         return this;

@@ -60,6 +60,13 @@ const Upload = styled.div`
                 color: rgba(255, 255, 255, 0.5);
                 margin-bottom: 10px;
             }
+            .warning {
+                font-size: 12px;
+                padding: 5px;
+                color: #fff;
+                background-color: rgba(199, 81, 35, 0.5);
+                border: 1px solid rgba(199, 81, 35, 1);
+            }
         }
     }
 `;
@@ -151,6 +158,10 @@ export default function({ player, options, setOption, updateSubtitles }) {
                         </div>
                     </div>
                     <div className="info">Supports opening mp4, webm and ogg video</div>
+                    <div className="warning">
+                        When creating an audio waveform, The browser may be blocked for a short time due to audio
+                        decoding
+                    </div>
                 </div>
             </div>
         </Upload>

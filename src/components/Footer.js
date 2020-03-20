@@ -24,7 +24,7 @@ const Footer = styled.div`
             height: 100%;
             .item {
                 display: flex;
-                padding: 0 15px;
+                padding: 0 10px;
                 height: 100%;
                 border-right: 1px solid #000;
 
@@ -48,6 +48,10 @@ const Footer = styled.div`
                         outline: none;
                         appearance: none;
                         background-color: rgba(255, 255, 255, 0.2);
+                    }
+
+                    select {
+                        outline: none;
                     }
                 }
             }
@@ -76,7 +80,7 @@ const Footer = styled.div`
 
 let wf = null;
 const Waveform = React.memo(
-    ({ options, player, setDecodeing, setFileSize }) => {
+    ({ options, player, setDecodeing, setFileSize, setChannelNum }) => {
         const $waveform = React.createRef();
 
         useEffect(() => {
@@ -94,8 +98,9 @@ const Waveform = React.memo(
 
             wf.on('decodeing', setDecodeing);
             wf.on('fileSize', setFileSize);
+            wf.on('audiobuffer', audiobuffer => setChannelNum(audiobuffer.numberOfChannels));
             sleep(1000).then(() => wf.load(options.videoUrl));
-        }, [player, $waveform, options.videoUrl, setDecodeing, setFileSize]);
+        }, [player, $waveform, options.videoUrl, setDecodeing, setFileSize, setChannelNum]);
         return <div className="waveform" ref={$waveform} />;
     },
     (prevProps, nextProps) => prevProps.options.videoUrl === nextProps.options.videoUrl,
@@ -104,6 +109,8 @@ const Waveform = React.memo(
 export default function(props) {
     const [decodeing, setDecodeing] = useState(0);
     const [fileSize, setFileSize] = useState(0);
+    const [channelNum, setChannelNum] = useState(1);
+
     return (
         <Footer>
             <div className="timeline-header">
@@ -124,9 +131,35 @@ export default function(props) {
                         </div>
                     </div>
                     <div className="item">
+                        <div className="name">File Size:</div>
+                        <div className="value" style={{ color: '#FF5722' }}>
+                            {((fileSize || 0) / 1024 / 1024).toFixed(2)} M
+                        </div>
+                    </div>
+                    <div className="item">
                         <div className="name">Decoding Progress:</div>
                         <div className="value" style={{ color: '#FF5722' }}>
-                            {(decodeing * 100).toFixed(2)}%
+                            {((decodeing || 0) * 100).toFixed(2)}%
+                        </div>
+                    </div>
+                    <div className="item">
+                        <div className="name">Render Channel:</div>
+                        <div className="value">
+                            <select
+                                defaultValue={0}
+                                onChange={event => {
+                                    if (!wf) return;
+                                    wf.changeChannel(Number(event.target.value || 0));
+                                }}
+                            >
+                                {Array(channelNum)
+                                    .fill()
+                                    .map((_, index) => (
+                                        <option key={index} value={index}>
+                                            {index}
+                                        </option>
+                                    ))}
+                            </select>
                         </div>
                     </div>
                     <div className="item">
@@ -184,13 +217,16 @@ export default function(props) {
                         </div>
                     </div>
                 </div>
-                <div className="timeline-header-right">
-                    File Size:
-                    <span style={{ color: '#4CAF50', marginLeft: 10 }}>{(fileSize / 1024 / 1024).toFixed(2)} M</span>
-                </div>
             </div>
             <div className="timeline-body">
-                {props.player ? <Waveform {...props} setDecodeing={setDecodeing} setFileSize={setFileSize} /> : null}
+                {props.player ? (
+                    <Waveform
+                        {...props}
+                        setDecodeing={setDecodeing}
+                        setFileSize={setFileSize}
+                        setChannelNum={setChannelNum}
+                    />
+                ) : null}
             </div>
         </Footer>
     );

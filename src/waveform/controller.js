@@ -1,5 +1,5 @@
 import throttle from 'lodash/throttle';
-import { clamp, setStyle } from './utils';
+import { clamp } from './utils';
 
 export default class Controller {
     constructor(wf) {
@@ -47,49 +47,15 @@ export default class Controller {
             template,
             drawer,
             events: { proxy },
-            options: { container },
         } = this.wf;
 
-        const object = document.createElement('object');
-        object.setAttribute('aria-hidden', 'true');
-        object.setAttribute('tabindex', -1);
-        object.type = 'text/html';
-        object.data = 'about:blank';
-
-        setStyle(object, {
-            display: 'block',
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            height: '100%',
-            width: '100%',
-            overflow: 'hidden',
-            pointerEvents: 'none',
-            zIndex: '-1',
-        });
-
-        let containerWidth = container.clientWidth;
-        let containerHeight = container.clientWidth;
-
         const throttleResize = throttle(() => {
-            containerWidth = container.clientWidth;
-            containerHeight = container.clientWidth;
             template.update();
             drawer.update();
             this.wf.emit('resize');
         }, 500);
 
-        proxy(object, 'load', () => {
-            proxy(object.contentDocument.defaultView, 'resize', () => {
-                if (container.clientWidth !== containerWidth || container.clientWidth !== containerHeight) {
-                    throttleResize();
-                }
-            });
-        });
-
-        container.appendChild(object);
-
-        proxy(window, 'orientationchange', () => {
+        proxy(window, ['resize', 'orientationchange'], () => {
             throttleResize();
         });
     }
