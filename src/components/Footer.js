@@ -74,12 +74,14 @@ const Footer = styled.div`
 `;
 
 let wf = null;
+let useWave = false;
 const Waveform = React.memo(
     ({ options, player }) => {
         const $waveform = React.createRef();
         useEffect(() => {
             if (wf) wf.destroy();
             wf = new WF({
+                wave: useWave,
                 container: $waveform.current,
                 mediaElement: player.template.$video,
                 backgroundColor: 'rgb(20, 23, 38)',
@@ -99,12 +101,12 @@ export default function(props) {
                         <div className="name">Audio Waveform:</div>
                         <div className="value">
                             <input
-                                defaultChecked="true"
                                 type="checkbox"
                                 onChange={event => {
                                     if (!wf) return;
+                                    useWave = event.target.checked;
                                     wf.setOptions({
-                                        wave: event.target.checked,
+                                        wave: useWave,
                                     });
                                 }}
                             />
