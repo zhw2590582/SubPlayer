@@ -248,7 +248,6 @@ export default React.memo(
             }
 
             lastTarget = null;
-            lastSub = null;
             lastType = '';
             lastX = 0;
             lastWidth = 0;
