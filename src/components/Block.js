@@ -92,6 +92,8 @@ const Block = styled.div`
         }
 
         .text {
+            width: 100%;
+            height: 100%;
             padding: 0 20px;
             p {
                 margin: 5px 0;
@@ -159,6 +161,10 @@ export default React.memo(
             [$contextMenuRef, setContextMenu],
         );
 
+        const onMouseDown = useCallback((sub, event, type) => {
+            console.log(type);
+        });
+
         const onDocumentMouseMove = useCallback(event => {
             //
         });
@@ -217,8 +223,9 @@ export default React.memo(
                                     left: 0,
                                     width: gridGap,
                                 }}
+                                onMouseDown={event => onMouseDown(sub, event, 'left')}
                             ></div>
-                            <div className="text">
+                            <div className="text" onMouseDown={event => onMouseDown(sub, event)}>
                                 {sub.text.split(/\r?\n/).map((line, index) => (
                                     <p key={index}>{escape(line)}</p>
                                 ))}
@@ -229,6 +236,7 @@ export default React.memo(
                                     right: 0,
                                     width: gridGap,
                                 }}
+                                onMouseDown={event => onMouseDown(sub, event, 'right')}
                             ></div>
                         </div>
                     );
