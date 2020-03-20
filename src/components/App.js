@@ -8,7 +8,7 @@ import clamp from 'lodash/clamp';
 import { secondToTime, notify } from '../utils';
 import { getSubFromVttUrl, vttToUrlUseWorker } from '../subtitle';
 import Storage from '../utils/storage';
-import equal from 'fast-deep-equal';
+import isEqual from 'lodash/isEqual';
 import NProgress from 'nprogress';
 import { ToastContainer } from 'react-toastify';
 import translate, { googleTranslate } from '../translate';
@@ -68,7 +68,7 @@ export default function() {
     // Only way to update all subtitles
     const updateSubtitles = useCallback(
         (subs, saveToHistory = true) => {
-            if (subs.length && !equal(subs, subtitles)) {
+            if (subs.length && !isEqual(subs, subtitles)) {
                 setSubtitles(subs);
 
                 // Save 100 subtitles to history
@@ -220,7 +220,7 @@ export default function() {
                     return item;
                 }),
             );
-            notify(`Time Offset: ${time}`);
+            notify(`Time Offset: ${time * 1000}ms`);
         },
         [copySubtitles, updateSubtitles],
     );

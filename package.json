@@ -6,7 +6,6 @@
   "dependencies": {
     "artplayer-react": "^3.4.2",
     "duration-time-conversion": "^1.0.1",
-    "fast-deep-equal": "^3.1.1",
     "lodash": "^4.17.15",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
