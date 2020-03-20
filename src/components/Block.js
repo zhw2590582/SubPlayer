@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import escape from 'lodash/escape';
+import { notify } from '../utils';
 
 const Block = styled.div`
     position: absolute;
@@ -114,7 +115,14 @@ function getCurrentSubs(subs, beginTime, duration) {
     });
 }
 
+let lastTarget = null;
 let lastSub = null;
+let lastType = '';
+let lastX = 0;
+let lastWidth = 0;
+let lastDiffX = 0;
+let isDroging = false;
+
 export default React.memo(
     function({
         player,
@@ -126,12 +134,14 @@ export default React.memo(
         addSubtitle,
         hasSubtitle,
         mergeSubtitle,
+        updateSubtitle,
     }) {
         const [contextMenu, setContextMenu] = useState(false);
         const [contextMenuX, setContextMenuX] = useState(0);
         const [contextMenuY, setContextMenuY] = useState(0);
 
         const $contextMenuRef = React.createRef();
+        const $subsRef = React.createRef();
         const currentSubs = getCurrentSubs(subtitles, render.beginTime, render.duration);
         const gridGap = document.body.clientWidth / render.gridNum;
         const currentIndex = currentSubs.findIndex(item => item.startTime <= currentTime && item.endTime > currentTime);
@@ -164,17 +174,80 @@ export default React.memo(
             [$contextMenuRef, setContextMenu],
         );
 
-        const onMouseDown = useCallback((sub, event, type) => {
-            console.log(type);
-        });
+        const onMouseDown = (sub, event, type) => {
+            isDroging = true;
+            lastSub = sub;
+            lastType = type;
+            lastX = event.pageX;
+            const index = currentSubs.indexOf(sub);
+            lastTarget = $subsRef.current.children[index];
+            lastWidth = parseFloat(lastTarget.style.width);
+        };
 
         const onDocumentMouseMove = useCallback(event => {
-            //
-        });
+            if (isDroging && lastTarget) {
+                lastDiffX = event.pageX - lastX;
+                if (lastType === 'left') {
+                    lastTarget.style.width = `${lastWidth - lastDiffX}px`;
+                    lastTarget.style.transform = `translate(${lastDiffX}px)`;
+                } else if (lastType === 'right') {
+                    lastTarget.style.width = `${lastWidth + lastDiffX}px`;
+                } else {
+                    lastTarget.style.transform = `translate(${lastDiffX}px)`;
+                }
+            }
+        }, []);
 
-        const onDocumentMouseUp = useCallback(event => {
-            //
-        });
+        const onDocumentMouseUp = useCallback(() => {
+            if (isDroging && lastTarget && lastDiffX) {
+                const timeDiff = lastDiffX / gridGap / 10;
+                const index = hasSubtitle(lastSub);
+                const previou = subtitles[index - 1];
+                const next = subtitles[index + 1];
+                const startTime = lastSub.startTime + timeDiff;
+                const endTime = lastSub.endTime + timeDiff;
+
+                if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
+                    notify('操作错误', 'error');
+                } else {
+                    if (lastType === 'left') {
+                        if (startTime >= 0 && startTime < lastSub.endTime) {
+                            updateSubtitle(lastSub, 'startTime', startTime);
+                        } else {
+                            lastTarget.style.width = `${lastWidth}px`;
+                            notify('移动错误了', 'error');
+                        }
+                    } else if (lastType === 'right') {
+                        if (endTime >= 0 && endTime > lastSub.startTime) {
+                            lastSub.endTime = endTime;
+                            updateSubtitle(lastSub, 'endTime', endTime);
+                        } else {
+                            lastTarget.style.width = `${lastWidth}px`;
+                            notify('移动错误了', 'error');
+                        }
+                    } else {
+                        if (startTime > 0 && endTime > 0 && endTime > startTime) {
+                            updateSubtitle(lastSub, 'startTime', startTime);
+                            updateSubtitle(lastSub, 'endTime', endTime);
+                        } else {
+                            lastTarget.style.width = `${lastWidth}px`;
+                            notify('移动错误了', 'error');
+                        }
+                    }
+                }
+
+                player.seek = startTime;
+                lastTarget.style.transform = `translate(0)`;
+            }
+
+            lastTarget = null;
+            lastSub = null;
+            lastType = '';
+            lastX = 0;
+            lastWidth = 0;
+            lastDiffX = 0;
+            isDroging = false;
+        }, [gridGap, hasSubtitle, player, subtitles, updateSubtitle]);
 
         useEffect(() => {
             document.addEventListener('click', onDocumentClick);
@@ -196,54 +269,55 @@ export default React.memo(
                         width: render.padding * gridGap,
                     }}
                 ></div>
-                {currentSubs.map((sub, key) => {
-                    return (
-                        <div
-                            className={[
-                                'sub-item',
-                                key === currentIndex ? 'highlight' : '',
-                                checkSubtitleIllegal(sub) ? 'illegal' : '',
-                            ]
-                                .join(' ')
-                                .trim()}
-                            key={key}
-                            style={{
-                                left: render.padding * gridGap + (sub.startTime - render.beginTime) * gridGap * 10,
-                                width: (sub.endTime - sub.startTime) * gridGap * 10,
-                            }}
-                            onClick={() => {
-                                player.pause = true;
-                                setContextMenu(false);
-                                if (player.duration >= sub.startTime) {
-                                    player.seek = sub.startTime + 0.001;
-                                }
-                            }}
-                            onContextMenu={event => onContextMenu(sub, event)}
-                        >
+                <div ref={$subsRef}>
+                    {currentSubs.map((sub, key) => {
+                        return (
                             <div
-                                className="handle"
+                                className={[
+                                    'sub-item',
+                                    key === currentIndex ? 'highlight' : '',
+                                    checkSubtitleIllegal(sub) ? 'illegal' : '',
+                                ]
+                                    .join(' ')
+                                    .trim()}
+                                key={key}
                                 style={{
-                                    left: 0,
-                                    width: gridGap,
+                                    left: render.padding * gridGap + (sub.startTime - render.beginTime) * gridGap * 10,
+                                    width: (sub.endTime - sub.startTime) * gridGap * 10,
                                 }}
-                                onMouseDown={event => onMouseDown(sub, event, 'left')}
-                            ></div>
-                            <div className="text" onMouseDown={event => onMouseDown(sub, event)}>
-                                {sub.text.split(/\r?\n/).map((line, index) => (
-                                    <p key={index}>{escape(line)}</p>
-                                ))}
+                                onClick={() => {
+                                    setContextMenu(false);
+                                    if (player.duration >= sub.startTime) {
+                                        player.seek = sub.startTime + 0.001;
+                                    }
+                                }}
+                                onContextMenu={event => onContextMenu(sub, event)}
+                            >
+                                <div
+                                    className="handle"
+                                    style={{
+                                        left: 0,
+                                        width: gridGap,
+                                    }}
+                                    onMouseDown={event => onMouseDown(sub, event, 'left')}
+                                ></div>
+                                <div className="text" onMouseDown={event => onMouseDown(sub, event)}>
+                                    {sub.text.split(/\r?\n/).map((line, index) => (
+                                        <p key={index}>{escape(line)}</p>
+                                    ))}
+                                </div>
+                                <div
+                                    className="handle"
+                                    style={{
+                                        right: 0,
+                                        width: gridGap,
+                                    }}
+                                    onMouseDown={event => onMouseDown(sub, event, 'right')}
+                                ></div>
                             </div>
-                            <div
-                                className="handle"
-                                style={{
-                                    right: 0,
-                                    width: gridGap,
-                                }}
-                                onMouseDown={event => onMouseDown(sub, event, 'right')}
-                            ></div>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
                 <div
                     className="padding"
                     style={{

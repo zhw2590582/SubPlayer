@@ -1,4 +1,4 @@
-import clamp from 'lodash/unescape';
+import clamp from 'lodash/clamp';
 import { timeToSecond, secondToTime } from '../utils';
 
 export default class Sub {
