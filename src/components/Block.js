@@ -11,6 +11,6 @@ const Block = styled.div`
     height: 100%;
 `;
 
-export default function() {
-    return <Block>Block</Block>;
+export default function(props) {
+    return <Block>{JSON.stringify(props.render)}</Block>;
 }

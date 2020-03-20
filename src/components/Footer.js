@@ -82,7 +82,7 @@ const Footer = styled.div`
 
 let wf = null;
 const Waveform = React.memo(
-    ({ options, player, setDecodeing, setFileSize, setChannelNum }) => {
+    ({ options, player, setDecodeing, setFileSize, setChannelNum, setRender }) => {
         const $waveform = React.createRef();
 
         useEffect(() => {
@@ -98,11 +98,12 @@ const Waveform = React.memo(
                 rulerColor: 'rgba(255, 255, 255, 0.5)',
             });
 
+            wf.on('render', setRender);
             wf.on('decodeing', setDecodeing);
             wf.on('fileSize', setFileSize);
             wf.on('audiobuffer', audiobuffer => setChannelNum(audiobuffer.numberOfChannels));
             sleep(1000).then(() => wf.load(options.videoUrl));
-        }, [player, $waveform, options.videoUrl, setDecodeing, setFileSize, setChannelNum]);
+        }, [player, $waveform, options.videoUrl, setDecodeing, setFileSize, setChannelNum, setRender]);
         return <div className="waveform" ref={$waveform} />;
     },
     (prevProps, nextProps) => prevProps.options.videoUrl === nextProps.options.videoUrl,
@@ -112,6 +113,12 @@ export default function(props) {
     const [decodeing, setDecodeing] = useState(0);
     const [fileSize, setFileSize] = useState(0);
     const [channelNum, setChannelNum] = useState(1);
+    const [render, setRender] = useState({
+        padding: 5,
+        duration: 10,
+        gridNum: 110,
+        beginTime: 0,
+    });
 
     return (
         <Footer>
@@ -227,9 +234,10 @@ export default function(props) {
                         setDecodeing={setDecodeing}
                         setFileSize={setFileSize}
                         setChannelNum={setChannelNum}
+                        setRender={setRender}
                     />
                 ) : null}
-                <Block />
+                <Block {...props} render={render} />
             </div>
         </Footer>
     );
