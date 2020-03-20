@@ -54,7 +54,6 @@ const Block = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
         text-align: center;
         color: #fff;
         font-size: 13px;
@@ -92,6 +91,10 @@ const Block = styled.div`
         }
 
         .text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
             width: 100%;
             height: 100%;
             padding: 0 20px;
