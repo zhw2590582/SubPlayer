@@ -63,9 +63,15 @@ export default class Controller {
     playInit() {
         const {
             drawer,
+            events: { proxy },
             options: { mediaElement },
         } = this.wf;
         if (!mediaElement) return;
+
+        proxy(mediaElement, 'seeked', () => {
+            drawer.update();
+        });
+
         (function loop() {
             this.playTimer = requestAnimationFrame(() => {
                 if (this.wf.playing) {
