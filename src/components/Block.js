@@ -230,9 +230,12 @@ export default React.memo(
                         if (startTime > 0 && endTime > 0 && endTime > startTime) {
                             const start = secondToTime(startTime);
                             const end = secondToTime(endTime);
-                            updateSubtitle(lastSub, 'start', start);
-                            updateSubtitle(lastSub, 'end', end);
+                            updateSubtitle(lastSub, {
+                                start,
+                                end,
+                            });
                         } else {
+                            lastTarget.style.width = `${lastWidth}px`;
                             notify('移动错误了', 'error');
                         }
                     }

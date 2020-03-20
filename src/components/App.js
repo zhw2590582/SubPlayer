@@ -140,7 +140,11 @@ export default function() {
             if (index < 0) return;
             const subs = copySubtitles();
             const { clone } = sub;
-            clone[key] = value;
+            if (typeof key === 'object') {
+                Object.assign(clone, key);
+            } else {
+                clone[key] = value;
+            }
             subs[index] = clone;
             updateSubtitles(subs);
         },
