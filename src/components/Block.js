@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import escape from 'lodash/escape';
-import { notify } from '../utils';
+import { notify, secondToTime } from '../utils';
 
 const Block = styled.div`
     position: absolute;
@@ -212,25 +212,27 @@ export default React.memo(
                 } else {
                     if (lastType === 'left') {
                         if (startTime >= 0 && startTime < lastSub.endTime) {
-                            updateSubtitle(lastSub, 'startTime', startTime);
+                            const start = secondToTime(startTime);
+                            updateSubtitle(lastSub, 'start', start);
                         } else {
                             lastTarget.style.width = `${lastWidth}px`;
                             notify('移动错误了', 'error');
                         }
                     } else if (lastType === 'right') {
                         if (endTime >= 0 && endTime > lastSub.startTime) {
-                            lastSub.endTime = endTime;
-                            updateSubtitle(lastSub, 'endTime', endTime);
+                            const end = secondToTime(endTime);
+                            updateSubtitle(lastSub, 'end', end);
                         } else {
                             lastTarget.style.width = `${lastWidth}px`;
                             notify('移动错误了', 'error');
                         }
                     } else {
                         if (startTime > 0 && endTime > 0 && endTime > startTime) {
-                            updateSubtitle(lastSub, 'startTime', startTime);
-                            updateSubtitle(lastSub, 'endTime', endTime);
+                            const start = secondToTime(startTime);
+                            const end = secondToTime(endTime);
+                            updateSubtitle(lastSub, 'start', start);
+                            updateSubtitle(lastSub, 'end', end);
                         } else {
-                            lastTarget.style.width = `${lastWidth}px`;
                             notify('移动错误了', 'error');
                         }
                     }
