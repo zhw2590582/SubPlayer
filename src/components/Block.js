@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import escape from 'lodash/escape';
@@ -20,6 +20,29 @@ const Block = styled.div`
         height: 100%;
         user-select: none;
         pointer-events: none;
+    }
+
+    .contextmenu {
+        position: absolute;
+        z-index: 4;
+        left: 0;
+        top: 0;
+
+        .contextmenu-item {
+            height: 30px;
+            padding: 0 10px;
+            line-height: 30px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #ccc;
+            user-select: none;
+            background-color: rgba(0, 0, 0, 0.75);
+            transition: all 0.2s ease;
+            &:hover {
+                color: #fff;
+                background-color: #2196f3;
+            }
+        }
     }
 
     .sub-item {
@@ -86,11 +109,59 @@ function getCurrentSubs(subs, beginTime, duration) {
     });
 }
 
+let lastSub = null;
 export default React.memo(
-    function({ player, subtitles, render, currentTime, checkSubtitleIllegal }) {
+    function({
+        player,
+        subtitles,
+        render,
+        currentTime,
+        checkSubtitleIllegal,
+        removeSubtitle,
+        addSubtitle,
+        hasSubtitle,
+        mergeSubtitle,
+    }) {
+        const [contextMenu, setContextMenu] = useState(false);
+        const [contextMenuX, setContextMenuX] = useState(0);
+        const [contextMenuY, setContextMenuY] = useState(0);
+
+        const $contextMenuRef = React.createRef();
         const currentSubs = getCurrentSubs(subtitles, render.beginTime, render.duration);
         const gridGap = document.body.clientWidth / render.gridNum;
         const currentIndex = currentSubs.findIndex(item => item.startTime <= currentTime && item.endTime > currentTime);
+
+        const onContextMenu = (sub, event) => {
+            lastSub = sub;
+            event.preventDefault();
+            const $subs = event.target;
+            const subsTop = $subs.getBoundingClientRect().top;
+            const $contextMenu = $contextMenuRef.current;
+            const top =
+                event.pageY + $contextMenu.clientHeight > document.body.clientHeight
+                    ? document.body.clientHeight - $contextMenu.clientHeight - subsTop
+                    : event.pageY - subsTop;
+            const left =
+                event.pageX + $contextMenu.clientWidth > document.body.clientWidth
+                    ? document.body.clientWidth - $contextMenu.clientWidth
+                    : event.pageX;
+            setContextMenuX(left);
+            setContextMenuY(top);
+            setContextMenu(true);
+        };
+
+        useEffect(() => {
+            const clickFn = event => {
+                if (event.composedPath && event.composedPath().indexOf($contextMenuRef.current) < 0) {
+                    setContextMenu(false);
+                }
+            };
+            document.addEventListener('click', clickFn);
+            return () => {
+                document.removeEventListener('click', clickFn);
+            };
+        }, [$contextMenuRef]);
+
         return (
             <Block>
                 <div
@@ -117,10 +188,12 @@ export default React.memo(
                             }}
                             onClick={() => {
                                 player.pause = true;
+                                setContextMenu(false);
                                 if (player.duration >= sub.startTime) {
                                     player.seek = sub.startTime + 0.001;
                                 }
                             }}
+                            onContextMenu={event => onContextMenu(sub, event)}
                         >
                             <div
                                 className="handle"
@@ -151,6 +224,43 @@ export default React.memo(
                         width: render.padding * gridGap,
                     }}
                 ></div>
+                <div
+                    ref={$contextMenuRef}
+                    className="contextmenu"
+                    style={{
+                        visibility: contextMenu ? 'visible' : 'hidden',
+                        left: contextMenuX,
+                        top: contextMenuY,
+                    }}
+                >
+                    <div
+                        className="contextmenu-item"
+                        onClick={() => {
+                            removeSubtitle(lastSub);
+                            setContextMenu(false);
+                        }}
+                    >
+                        Delete
+                    </div>
+                    <div
+                        className="contextmenu-item"
+                        onClick={() => {
+                            addSubtitle(hasSubtitle(lastSub) + 1);
+                            setContextMenu(false);
+                        }}
+                    >
+                        Insert Next
+                    </div>
+                    <div
+                        className="contextmenu-item"
+                        onClick={() => {
+                            mergeSubtitle(lastSub);
+                            setContextMenu(false);
+                        }}
+                    >
+                        Merge Next
+                    </div>
+                </div>
             </Block>
         );
     },

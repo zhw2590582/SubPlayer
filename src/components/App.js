@@ -297,6 +297,7 @@ export default function() {
         setCurrentIndex,
 
         updateLang,
+        hasSubtitle,
         addSubtitle,
         undoSubtitles,
         mergeSubtitle,
