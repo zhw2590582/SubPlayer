@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import WF from '../waveform';
 import { sleep } from '../utils';
+import Block from './Block';
 
 const Footer = styled.div`
     display: flex;
@@ -67,6 +68,7 @@ const Footer = styled.div`
     }
 
     .timeline-body {
+        position: relative;
         flex: 1;
 
         .waveform {
@@ -227,6 +229,7 @@ export default function(props) {
                         setChannelNum={setChannelNum}
                     />
                 ) : null}
+                <Block />
             </div>
         </Footer>
     );
