@@ -20,7 +20,6 @@ export default class Template {
             );
             errorHandle(clientWidth && clientHeight, 'The width and height of the container cannot be 0');
             container.innerHTML = '';
-            container.style.position = 'relative';
             this.canvas = document.createElement('canvas');
             this.canvas.width = clientWidth * pixelRatio;
             this.canvas.height = clientHeight * pixelRatio;
