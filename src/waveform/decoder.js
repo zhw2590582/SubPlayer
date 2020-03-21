@@ -18,18 +18,19 @@ export default class Decoder {
         const {
             options: { channel },
         } = this.wf;
-        this.audioCtx
-            .decodeAudioData(uint8.buffer)
-            .then(audiobuffer => {
+        this.audioCtx.decodeAudioData(
+            uint8.buffer,
+            audiobuffer => {
                 this.audiobuffer = audiobuffer;
                 this.wf.emit('audiobuffer', this.audiobuffer);
                 this.wf.emit('decodeing', this.audiobuffer.duration / this.wf.duration);
                 this.channelData = audiobuffer.getChannelData(channel);
                 this.wf.emit('channelData', this.channelData);
-            })
-            .catch(error => {
+            },
+            error => {
                 errorHandle(false, `It seems that the AudioContext decoding get wrong: ${error.message.trim()}`);
-            });
+            },
+        );
     }
 
     changeChannel(channel) {
