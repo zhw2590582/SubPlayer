@@ -59,17 +59,17 @@ const Block = styled.div`
             background-color: rgba(255, 255, 255, 0.3);
         }
 
-        &.highlight {
+        &.sub-highlight {
             background-color: rgba(33, 150, 243, 0.5);
             border-left: 1px solid rgba(33, 150, 243, 0.5);
             border-right: 1px solid rgba(33, 150, 243, 0.5);
         }
 
-        &.illegal {
+        &.sub-illegal {
             background-color: rgba(199, 81, 35, 0.5);
         }
 
-        .handle {
+        .sub-handle {
             position: absolute;
             top: 0;
             bottom: 0;
@@ -81,7 +81,7 @@ const Block = styled.div`
             }
         }
 
-        .text {
+        .sub-text {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -275,8 +275,8 @@ export default React.memo(
                             <div
                                 className={[
                                     'sub-item',
-                                    key === currentIndex ? 'highlight' : '',
-                                    checkSubtitleIllegal(sub) ? 'illegal' : '',
+                                    key === currentIndex ? 'sub-highlight' : '',
+                                    checkSubtitleIllegal(sub) ? 'sub-illegal' : '',
                                 ]
                                     .join(' ')
                                     .trim()}
@@ -294,20 +294,20 @@ export default React.memo(
                                 onContextMenu={event => onContextMenu(sub, event)}
                             >
                                 <div
-                                    className="handle"
+                                    className="sub-handle"
                                     style={{
                                         left: 0,
                                         width: gridGap,
                                     }}
                                     onMouseDown={event => onMouseDown(sub, event, 'left')}
                                 ></div>
-                                <div className="text" onMouseDown={event => onMouseDown(sub, event)}>
+                                <div className="sub-text" onMouseDown={event => onMouseDown(sub, event)}>
                                     {sub.text.split(/\r?\n/).map((line, index) => (
                                         <p key={index}>{escape(line)}</p>
                                     ))}
                                 </div>
                                 <div
-                                    className="handle"
+                                    className="sub-handle"
                                     style={{
                                         right: 0,
                                         width: gridGap,
