@@ -91,6 +91,7 @@ const Block = styled.div`
             padding: 0 20px;
             p {
                 margin: 5px 0;
+                line-height: 1;
             }
         }
     }
@@ -119,6 +120,7 @@ export default React.memo(
         subtitles,
         render,
         currentTime,
+        setMetronome,
         checkSubtitleIllegal,
         removeSubtitle,
         addSubtitle,
@@ -130,6 +132,7 @@ export default React.memo(
         const [contextMenuX, setContextMenuX] = useState(0);
         const [contextMenuY, setContextMenuY] = useState(0);
 
+        const $blockRef = React.createRef();
         const $contextMenuRef = React.createRef();
         const $subsRef = React.createRef();
         const currentSubs = getCurrentSubs(subtitles, render.beginTime, render.duration);
@@ -157,11 +160,19 @@ export default React.memo(
 
         const onDocumentClick = useCallback(
             event => {
-                if (event.composedPath && event.composedPath().indexOf($contextMenuRef.current) < 0) {
-                    setContextMenu(false);
+                if (event.composedPath) {
+                    const composedPath = event.composedPath() || [];
+                    if (composedPath.includes($contextMenuRef.current)) {
+                        setContextMenu(false);
+                    }
+                    if (player.playing && composedPath.includes($blockRef.current)) {
+                        setMetronome(true);
+                    } else {
+                        setMetronome(false);
+                    }
                 }
             },
-            [$contextMenuRef, setContextMenu],
+            [player, $blockRef, $contextMenuRef, setContextMenu, setMetronome],
         );
 
         const onMouseDown = (sub, event, type) => {
@@ -257,7 +268,7 @@ export default React.memo(
         }, [onDocumentClick, onDocumentMouseMove, onDocumentMouseUp]);
 
         return (
-            <Block>
+            <Block ref={$blockRef}>
                 <div ref={$subsRef}>
                     {currentSubs.map((sub, key) => {
                         return (

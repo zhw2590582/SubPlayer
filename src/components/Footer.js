@@ -113,6 +113,7 @@ export default function(props) {
     const [decodeing, setDecodeing] = useState(0);
     const [fileSize, setFileSize] = useState(0);
     const [channelNum, setChannelNum] = useState(1);
+    const [metronome, setMetronome] = useState(false);
     const [render, setRender] = useState({
         padding: 5,
         duration: 10,
@@ -209,8 +210,12 @@ export default function(props) {
                     </div>
                     <div className="item">
                         <div className="name">Space Metronome:</div>
-                        <div className="value" style={{ color: '#4CAF50' }}>
-                            On
+                        <div className="value">
+                            {metronome ? (
+                                <span style={{ color: '#4CAF50' }}>ON</span>
+                            ) : (
+                                <span style={{ color: '#FF5722' }}>OFF</span>
+                            )}
                         </div>
                     </div>
                     <div className="item">
@@ -237,7 +242,7 @@ export default function(props) {
                         setRender={setRender}
                     />
                 ) : null}
-                <Block {...props} render={render} />
+                <Block {...props} render={render} setMetronome={setMetronome} />
             </div>
         </Footer>
     );
