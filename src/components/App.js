@@ -242,8 +242,9 @@ export default function() {
         history.length = 0;
         storage.set('subtitles', []);
         removeSubtitles();
+        player.seek = 0;
         notify('Empty all subtitles successfully');
-    }, [removeSubtitles]);
+    }, [player, removeSubtitles]);
 
     // Translate a subtitle
     const translateSubtitle = useCallback(
