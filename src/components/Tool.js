@@ -59,7 +59,7 @@ export default function({ language, options, setOption, translateSubtitles, time
                         value={options.translationLanguage}
                         onChange={event => setOption({ translationLanguage: event.target.value })}
                     >
-                        {(languages[language] || []).map(item => (
+                        {(languages[language] || languages.en).map(item => (
                             <option key={item.key} value={item.key}>
                                 {item.name}
                             </option>
