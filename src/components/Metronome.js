@@ -13,8 +13,6 @@ const Metronome = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    user-select: none;
-    pointer-events: none;
 
     .metronome {
         position: absolute;
