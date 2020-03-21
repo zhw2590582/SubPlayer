@@ -35,6 +35,7 @@ export default React.memo(
                         },
                         moreVideoAttr: {
                             crossOrigin: 'anonymous',
+                            preload: 'auto',
                         },
                     }}
                     getInstance={art => {
