@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
-import escape from 'lodash/escape';
 import { notify, secondToTime, getKeyCode } from '../utils';
 import { t } from 'react-i18nify';
 
@@ -337,7 +336,7 @@ export default React.memo(
                                 ></div>
                                 <div className="sub-text" onMouseDown={event => onMouseDown(sub, event)}>
                                     {sub.text.split(/\r?\n/).map((line, index) => (
-                                        <p key={index}>{escape(line)}</p>
+                                        <p key={index}>{line}</p>
                                     ))}
                                 </div>
                                 <div
