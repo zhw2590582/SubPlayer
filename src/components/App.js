@@ -12,6 +12,7 @@ import isEqual from 'lodash/isEqual';
 import NProgress from 'nprogress';
 import { ToastContainer } from 'react-toastify';
 import translate, { googleTranslate } from '../translate';
+import { t } from 'react-i18nify';
 
 const history = [];
 let inTranslation = false;
@@ -149,7 +150,7 @@ export default function() {
                 subs[index] = clone;
                 updateSubtitles(subs);
             } else {
-                notify('Parameter error', 'error');
+                notify(t('parameter-error'), 'error');
             }
         },
         [hasSubtitle, copySubtitles, updateSubtitles],
@@ -162,7 +163,7 @@ export default function() {
             if (index < 0) return;
             const subs = copySubtitles();
             if (subs.length === 1) {
-                return notify('Please keep at least one subtitle', 'error');
+                return notify(t('keep-one'), 'error');
             }
             subs.splice(index, 1);
             updateSubtitles(subs);
@@ -180,7 +181,7 @@ export default function() {
                 const previous = subs[index - 1];
                 const start = previous ? secondToTime(previous.endTime + 0.1) : '00:00:00.001';
                 const end = previous ? secondToTime(previous.endTime + 1.1) : '00:00:01.001';
-                const sub = new Sub(start, end, '[Subtitle Text]');
+                const sub = new Sub(start, end, t('subtitle-text'));
                 subs.splice(index, 0, sub);
             }
             updateSubtitles(subs);
@@ -206,7 +207,7 @@ export default function() {
 
     // Remove all subtitles
     const removeSubtitles = useCallback(() => {
-        updateSubtitles([new Sub('00:00:00.000', '00:00:01.000', '[Subtitle Text]')]);
+        updateSubtitles([new Sub('00:00:00.000', '00:00:01.000', t('subtitle-text'))]);
     }, [updateSubtitles]);
 
     // Undo subtitles
@@ -215,9 +216,9 @@ export default function() {
             history.pop();
             const subs = history[history.length - 1];
             updateSubtitles(subs, false);
-            notify('History rollback successful');
+            notify(t('history-rollback'));
         } else {
-            notify('History is empty', 'error');
+            notify(t('history-empty'), 'error');
         }
     }, [updateSubtitles]);
 
@@ -232,7 +233,7 @@ export default function() {
                     return item;
                 }),
             );
-            notify(`Time Offset: ${time * 1000}ms`);
+            notify(`${t('time-offset')} ${time * 1000}ms`);
         },
         [copySubtitles, updateSubtitles],
     );
@@ -243,7 +244,7 @@ export default function() {
         storage.set('subtitles', []);
         removeSubtitles();
         player.seek = 0;
-        notify('Empty all subtitles successfully');
+        notify(t('clear-success'));
     }, [player, removeSubtitles]);
 
     // Translate a subtitle
@@ -258,7 +259,7 @@ export default function() {
                     const text = await googleTranslate(sub.text, options.translationLanguage);
                     if (text) {
                         updateSubtitle(sub, 'text', text);
-                        notify('Translation successful');
+                        notify(t('translation-success'));
                     }
                     inTranslation = false;
                     NProgress.done();
@@ -268,7 +269,7 @@ export default function() {
                     NProgress.done();
                 }
             } else {
-                notify('Translation in progress', 'error');
+                notify(t('translation-progress'), 'error');
             }
         },
         [hasSubtitle, updateSubtitle, options.translationLanguage],
@@ -282,17 +283,17 @@ export default function() {
                 inTranslation = true;
                 try {
                     updateSubtitles(await translate(subs, options.translationLanguage));
-                    notify('Translation successful');
+                    notify(t('translation-success'));
                     inTranslation = false;
                 } catch (error) {
                     notify(error.message, 'error');
                     inTranslation = false;
                 }
             } else {
-                notify('Limit 1000 translations per batch', 'error');
+                notify(t('translation-limit'), 'error');
             }
         } else {
-            notify('Translation in progress', 'error');
+            notify(t('translation-progress'), 'error');
         }
     }, [copySubtitles, updateSubtitles, options.translationLanguage]);
 

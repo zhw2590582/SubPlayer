@@ -20,6 +20,7 @@ export default {
         'open-video-error': 'Does not support playing the file',
 
         'clear-warning': 'This step cannot be rolled back. Are you sure ?',
+        'clear-success': 'Clear all subtitles successfully',
 
         'help-info':
             'This editor is suitable for video with small volume and simple subtitle effect. For large file videos or more subtitle effect, please use professional desktop software.',
@@ -30,5 +31,17 @@ export default {
             'Or you can buy me a cup of coffee to encourage me to continue to update and improve the subtitle editor.',
         'donate-weChatPay': 'WeChat Pay:',
         'donate-alipay': 'Alipay:',
+
+        'parameter-error': 'Parameter error',
+        'keep-one': 'Please keep at least one subtitle',
+        'subtitle-text': '[Subtitle Text]',
+        'time-offset': 'Time Offset:',
+
+        'history-rollback': 'History rollback successful',
+        'history-empty': 'History is empty',
+
+        'translation-success': 'Translation successful',
+        'translation-progress': 'Translation in progress',
+        'translation-limit': 'Limit 1000 translations per batch',
     },
 };
