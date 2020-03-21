@@ -32,6 +32,7 @@ export default class Drawer {
         this.wf.emit('render', {
             padding,
             duration,
+            gridGap: this.gridGap,
             gridNum: this.gridNum,
             beginTime: this.beginTime,
         });
