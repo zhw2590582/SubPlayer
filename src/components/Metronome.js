@@ -15,7 +15,7 @@ const Metronome = styled.div`
     height: 100%;
     user-select: none;
 
-    .metronome {
+    .templet {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -23,6 +23,8 @@ const Metronome = styled.div`
         background-color: rgba(76, 175, 80, 0.5);
         border-left: 1px solid rgba(76, 175, 80, 0.8);
         border-right: 1px solid rgba(76, 175, 80, 0.8);
+        user-select: none;
+        pointer-events: none;
     }
 `;
 
@@ -38,7 +40,10 @@ function findIndex(subs, startTime) {
 
 let isDroging = false;
 export default function({ render, metronome, currentTime, subtitles, addSubtitle, player, setMetronome }) {
-    const [startTime, setStartTime] = useState(0);
+    const [metronomeStartTime, setMetronomeStartTime] = useState(0);
+    const [drogStartTime, setDrogStartTime] = useState(0);
+    const [drogEndTime, setDrogEndTime] = useState(0);
+
     const gridGap = document.body.clientWidth / render.gridNum;
     const $metronomeRef = React.createRef();
 
@@ -48,48 +53,74 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
                 const keyCode = getKeyCode(event);
                 if (keyCode === 32) {
                     event.preventDefault();
-                    if (!startTime) {
-                        setStartTime(currentTime);
+
+                    if (!metronomeStartTime) {
+                        setMetronomeStartTime(currentTime);
                     }
 
-                    if (startTime && currentTime > startTime) {
-                        const index = findIndex(subtitles, startTime) + 1;
-                        const start = secondToTime(startTime);
+                    if (metronomeStartTime && metronome && currentTime > metronomeStartTime) {
+                        const index = findIndex(subtitles, metronomeStartTime) + 1;
+                        const start = secondToTime(metronomeStartTime);
                         const end = secondToTime(currentTime);
                         addSubtitle(index, new Sub(start, end, t('subtitle-text')));
-                        setStartTime(0);
+                        setMetronomeStartTime(0);
                     }
                 }
             }
         },
-        [addSubtitle, currentTime, metronome, startTime, subtitles],
+        [addSubtitle, currentTime, metronome, metronomeStartTime, subtitles],
+    );
+
+    const getEventTime = useCallback(
+        event => {
+            return (event.pageX - render.padding * gridGap) / gridGap / 10 + render.beginTime;
+        },
+        [gridGap, render],
     );
 
     const onMouseDown = useCallback(
         event => {
-            const clickTime = (event.pageX - render.padding * gridGap) / gridGap / 10 + render.beginTime;
+            const clickTime = getEventTime(event);
             player.seek = clickTime;
             isDroging = true;
-            setMetronome(true);
+            setDrogStartTime(clickTime);
         },
-        [render, gridGap, player, setMetronome],
+        [getEventTime, player],
     );
 
-    const onMouseMove = useCallback(event => {
-        //
-    }, []);
+    const onMouseMove = useCallback(
+        event => {
+            if (isDroging) {
+                player.pause = true;
+                setDrogEndTime(getEventTime(event));
+            }
+        },
+        [setDrogEndTime, getEventTime, player],
+    );
 
-    const onDocumentMouseUp = useCallback(event => {
+    const onDocumentMouseUp = useCallback(() => {
+        if (isDroging) {
+            if (drogStartTime && drogEndTime && drogEndTime - drogStartTime >= 0.2) {
+                const index = findIndex(subtitles, drogStartTime) + 1;
+                const start = secondToTime(drogStartTime);
+                const end = secondToTime(drogEndTime);
+                addSubtitle(index, new Sub(start, end, t('subtitle-text')));
+            }
+        }
         isDroging = false;
-    }, []);
+        setDrogStartTime(0);
+        setDrogEndTime(0);
+    }, [addSubtitle, drogEndTime, drogStartTime, subtitles]);
 
     const onDocumentClick = useCallback(
         event => {
-            console.log(event);
             if (event.composedPath) {
                 const composedPath = event.composedPath() || [];
                 if (player.playing && composedPath.includes($metronomeRef.current)) {
                     setMetronome(true);
+                    isDroging = false;
+                    setDrogStartTime(0);
+                    setDrogEndTime(0);
                 } else {
                     setMetronome(false);
                 }
@@ -111,12 +142,21 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
 
     return (
         <Metronome onMouseDown={onMouseDown} onMouseMove={onMouseMove} ref={$metronomeRef}>
-            {startTime ? (
+            {player && player.playing && metronomeStartTime && metronome && currentTime > metronomeStartTime ? (
                 <div
-                    className="metronome"
+                    className="templet"
                     style={{
-                        left: render.padding * gridGap + (startTime - render.beginTime) * gridGap * 10,
-                        width: (currentTime - startTime) * gridGap * 10,
+                        left: render.padding * gridGap + (metronomeStartTime - render.beginTime) * gridGap * 10,
+                        width: (currentTime - metronomeStartTime) * gridGap * 10,
+                    }}
+                ></div>
+            ) : null}
+            {player && !player.playing && drogStartTime && drogEndTime && drogEndTime > drogStartTime ? (
+                <div
+                    className="templet"
+                    style={{
+                        left: render.padding * gridGap + (drogStartTime - render.beginTime) * gridGap * 10,
+                        width: (drogEndTime - drogStartTime) * gridGap * 10,
                     }}
                 ></div>
             ) : null}
