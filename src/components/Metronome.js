@@ -58,7 +58,7 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
                         setMetronomeStartTime(currentTime);
                     }
 
-                    if (metronomeStartTime && metronome && currentTime > metronomeStartTime) {
+                    if (metronomeStartTime && metronome && currentTime - metronomeStartTime >= 0.2) {
                         const index = findIndex(subtitles, metronomeStartTime) + 1;
                         const start = secondToTime(metronomeStartTime);
                         const end = secondToTime(currentTime);
@@ -100,6 +100,8 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
 
     const onDocumentMouseUp = useCallback(() => {
         if (isDroging) {
+            setMetronome(false);
+            setMetronomeStartTime(0);
             if (drogStartTime && drogEndTime && drogEndTime - drogStartTime >= 0.2) {
                 const index = findIndex(subtitles, drogStartTime) + 1;
                 const start = secondToTime(drogStartTime);
@@ -110,7 +112,7 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
         isDroging = false;
         setDrogStartTime(0);
         setDrogEndTime(0);
-    }, [addSubtitle, drogEndTime, drogStartTime, subtitles]);
+    }, [addSubtitle, drogEndTime, drogStartTime, setMetronome, subtitles]);
 
     const onDocumentClick = useCallback(
         event => {
@@ -123,6 +125,7 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
                     setDrogEndTime(0);
                 } else {
                     setMetronome(false);
+                    setMetronomeStartTime(0);
                 }
             }
         },

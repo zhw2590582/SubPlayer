@@ -4,9 +4,9 @@
 [![dependencies Status](https://david-dm.org/zhw2590582/subplayer/status.svg)](https://david-dm.org/zhw2590582/subplayer)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-> SubPlayer is a online subtitle editor
+> SubPlayer is an online subtitle editor
 
-![Screenshot](./images/screenshot.png)
+![Screenshot](./images/screenshot2.png)
 
 ## Homepage
 
@@ -14,15 +14,15 @@
 
 ## Features
 
--   Online and real-time preview of subtitles
--   Support `ass`, `srt`, `vtt` subtitle upload editing, and support export to `vtt`
+-   Support online and real-time preview of subtitles
+-   Support `ass`, `srt`, `vtt` subtitle upload editing
 -   Support subtitle insertion, deletion , offset and merging
--   Support large file list display, don't worry about too many subtitles
--   Support bulk Google translation or Baidu translation
+-   Support Google translation
 -   Support for subtitle history rollback
--   Support subtitle overall time offset
--   Save last subtitle edit locally
--   Real-time timeline display of subtitles
+-   Support saving to local storage
+-   Support multi-channel audio waveform
+-   Support space metronome
+-   Support drag time to generate subtitles
 -   And more...
 
 ## Donations
