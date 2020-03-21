@@ -6,11 +6,22 @@ import { notify, secondToTime, getKeyCode } from '../utils';
 import { t } from 'react-i18nify';
 
 const Block = styled.div`
+    position: absolute;
+    z-index: 9;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+
     .contextmenu {
         position: absolute;
         z-index: 4;
         left: 0;
         top: 0;
+        pointer-events: all;
 
         .contextmenu-item {
             height: 30px;
@@ -43,6 +54,7 @@ const Block = styled.div`
         font-size: 13px;
         cursor: move;
         user-select: none;
+        pointer-events: all;
         text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
         background-color: rgba(255, 255, 255, 0.2);
         border-left: 1px solid rgba(255, 255, 255, 0.2);
@@ -159,16 +171,9 @@ export default React.memo(
                     if (composedPath.includes($contextMenuRef.current)) {
                         setContextMenu(false);
                     }
-                    if (player.playing && composedPath.includes($blockRef.current)) {
-                        setMetronome(true);
-                    } else {
-                        lastIndex = -1;
-                        lastTarget = null;
-                        setMetronome(false);
-                    }
                 }
             },
-            [player, $blockRef, $contextMenuRef, setContextMenu, setMetronome],
+            [$contextMenuRef, setContextMenu],
         );
 
         const onMouseDown = (sub, event, type) => {

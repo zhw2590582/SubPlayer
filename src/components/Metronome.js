@@ -13,6 +13,7 @@ const Metronome = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
+    user-select: none;
 
     .metronome {
         position: absolute;
@@ -35,9 +36,11 @@ function findIndex(subs, startTime) {
     });
 }
 
-export default function({ render, metronome, currentTime, subtitles, addSubtitle }) {
+let isDroging = false;
+export default function({ render, metronome, currentTime, subtitles, addSubtitle, player, setMetronome }) {
     const [startTime, setStartTime] = useState(0);
     const gridGap = document.body.clientWidth / render.gridNum;
+    const $metronomeRef = React.createRef();
 
     const onKeyDown = useCallback(
         event => {
@@ -62,15 +65,52 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
         [addSubtitle, currentTime, metronome, startTime, subtitles],
     );
 
+    const onMouseDown = useCallback(
+        event => {
+            const clickTime = (event.pageX - render.padding * gridGap) / gridGap / 10 + render.beginTime;
+            player.seek = clickTime;
+            isDroging = true;
+            setMetronome(true);
+        },
+        [render, gridGap, player, setMetronome],
+    );
+
+    const onMouseMove = useCallback(event => {
+        //
+    }, []);
+
+    const onDocumentMouseUp = useCallback(event => {
+        isDroging = false;
+    }, []);
+
+    const onDocumentClick = useCallback(
+        event => {
+            console.log(event);
+            if (event.composedPath) {
+                const composedPath = event.composedPath() || [];
+                if (player.playing && composedPath.includes($metronomeRef.current)) {
+                    setMetronome(true);
+                } else {
+                    setMetronome(false);
+                }
+            }
+        },
+        [player, $metronomeRef, setMetronome],
+    );
+
     useEffect(() => {
         window.addEventListener('keydown', onKeyDown);
+        document.addEventListener('click', onDocumentClick);
+        document.addEventListener('mouseup', onDocumentMouseUp);
         return () => {
             window.removeEventListener('keydown', onKeyDown);
+            document.removeEventListener('click', onDocumentClick);
+            document.removeEventListener('mouseup', onDocumentMouseUp);
         };
-    }, [onKeyDown]);
+    }, [onKeyDown, onDocumentClick, onDocumentMouseUp]);
 
     return (
-        <Metronome>
+        <Metronome onMouseDown={onMouseDown} onMouseMove={onMouseMove} ref={$metronomeRef}>
             {startTime ? (
                 <div
                     className="metronome"
