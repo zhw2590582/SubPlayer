@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Translate } from 'react-i18nify';
 
 const Donate = styled.div`
     position: relative;
@@ -15,7 +16,7 @@ export default function() {
     return (
         <Donate>
             <p>
-                Or you can buy me a cup of coffee to encourage me to continue to update and improve the subtitle editor.
+                <Translate value="donate-info" />
             </p>
             <p>Paypal:</p>
             <p>
@@ -23,13 +24,17 @@ export default function() {
             </p>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div>
-                    <p>WeChat Pay:</p>
+                    <p>
+                        <Translate value="donate-weChatPay" />
+                    </p>
                     <p>
                         <img style={{ width: 210 }} src="/wechatpay.jpg" alt="WeChat Pay" />
                     </p>
                 </div>
                 <div>
-                    <p>Alipay:</p>
+                    <p>
+                        <Translate value="donate-alipay" />
+                    </p>
                     <p>
                         <img style={{ width: 210 }} src="/alipay.jpg" alt="Alipay" />
                     </p>
