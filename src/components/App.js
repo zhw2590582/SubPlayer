@@ -172,13 +172,17 @@ export default function() {
 
     // Add a subtitle
     const addSubtitle = useCallback(
-        index => {
+        (index, sub) => {
             const subs = copySubtitles();
-            const previous = subs[index - 1];
-            const start = previous ? secondToTime(previous.endTime + 0.1) : '00:00:00.001';
-            const end = previous ? secondToTime(previous.endTime + 1.1) : '00:00:01.001';
-            const sub = new Sub(start, end, '[Subtitle Text]');
-            subs.splice(index, 0, sub);
+            if (sub) {
+                subs.splice(index, 0, sub);
+            } else {
+                const previous = subs[index - 1];
+                const start = previous ? secondToTime(previous.endTime + 0.1) : '00:00:00.001';
+                const end = previous ? secondToTime(previous.endTime + 1.1) : '00:00:01.001';
+                const sub = new Sub(start, end, '[Subtitle Text]');
+                subs.splice(index, 0, sub);
+            }
             updateSubtitles(subs);
         },
         [copySubtitles, updateSubtitles],
