@@ -1,83 +1,70 @@
 import React from 'react';
 import styled from 'styled-components';
+import { names, getName } from '../i18n';
+import Upload from './Upload';
+import Help from './Help';
+import Donate from './Donate';
+import Dialog from './Dialog';
+import { downloadFile } from '../utils';
+import { vttToUrl, subToVtt } from '../subtitle';
 import { t, Translate } from 'react-i18nify';
-import toastr from 'toastr';
-import NProgress from 'nprogress';
-import { readSubtitleFromFile, urlToArr, vttToUrl, getExt } from '../utils';
-import { version } from '../../package.json';
 
-const Wrapper = styled.header`
+const Header = styled.div`
+    position: relative;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
     height: 50px;
-    border-bottom: 1px solid rgb(10, 10, 10);
-    background-color: rgb(28, 32, 34);
+    align-items: center;
+    justify-content: space-between;
+    background-color: #1f2133;
+    border-bottom: 1px solid rgb(0, 0, 0);
+`;
 
-    .left {
-        display: flex;
-        align-items: center;
-        height: 100%;
-        padding-left: 20px;
-    }
+const Left = styled.div`
+    display: flex;
+    align-items: center;
+    height: 100%;
+`;
 
-    .right {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        .links {
-            margin-right: 20px;
-            a {
-                color: #ccc;
-                text-decoration: none;
-                margin-left: 20px;
-
-                &:hover {
-                    color: #fff;
-                }
-            }
-        }
-    }
+const Right = styled.div`
+    display: flex;
+    align-items: center;
+    height: 100%;
 `;
 
 const Logo = styled.a`
-    color: #fff;
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 22px;
+    height: 100%;
+    cursor: pointer;
+    padding: 0 15px;
+    color: rgba(255, 255, 255, 1);
+    transition: all 0.2s ease 0s;
+    border-right: 1px solid rgb(0, 0, 0);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
     text-decoration: none;
 
-    .beta {
-        color: #67bf00;
-        font-size: 12px;
-        margin-left: 5px;
+    &:hover {
+        background-color: #2196f3;
     }
 `;
 
-const Description = styled.span`
-    font-size: 12px;
-    font-style: italic;
-    margin-left: 10px;
-    opacity: 0.4;
-`;
-
-const Btn = styled.div`
-    position: relative;
+const Menu = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 13px;
     height: 100%;
-    width: 170px;
     cursor: pointer;
-    overflow: hidden;
-    color: #ccc;
-    background-color: rgb(46, 54, 60);
-    border-left: 1px solid rgb(10, 10, 10);
-    transition: all 0.2s ease;
+    padding: 0 25px;
+    color: rgba(255, 255, 255, 1);
+    transition: all 0.2s ease 0s;
+    border-right: 1px solid rgb(0, 0, 0);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
 
     &:hover {
-        color: #fff;
-        background-color: rgb(66, 82, 95);
+        background-color: #2196f3;
     }
 
     i {
@@ -85,160 +72,94 @@ const Btn = styled.div`
     }
 `;
 
-const File = styled.input`
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-`;
-
-const Lang = styled.select`
+const I18n = styled.div`
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-left: 10px;
-    margin-right: 20px;
-    color: #ccc;
-    border: none;
-    background-color: #1a536d;
-    width: 45px;
-    padding: 4px 0;
-    font-size: 12px;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    justify-content: center;
+    font-size: 13px;
+    height: 100%;
+    padding: 0 10px;
+    color: rgba(255, 255, 255, 1);
+    border-left: 1px solid rgb(0, 0, 0);
+    background-color: rgb(26, 83, 109);
 
-    &:hover {
-        color: #fff;
-        background-color: #03a9f4;
+    i {
+        margin-right: 5px;
+    }
+
+    select {
+        outline: none;
     }
 `;
 
-export default class Header extends React.Component {
-    state = {
-        lang: this.props.getLocale() || 'en',
-        translators: {
-            zh:
-                {
-                    name: '中', key: 'chinese'
-                }
-            ,
-            en:
-                {
-                    name: 'EN', key: 'english'
-                }
-            ,
-            es:
-                {
-                    name: 'ES', key: 'spanish'
-                }
-            ,
-        },
-    };
-    $subtitle = React.createRef();
-    $video = React.createRef();
-
-    uploadSubtitle() {
-        if (this.$subtitle.current && this.$subtitle.current.files[0]) {
-            NProgress.start().set(0.5);
-            const file = this.$subtitle.current.files[0];
-            const type = getExt(file.name);
-            if (['vtt', 'srt', 'ass'].includes(type)) {
-                readSubtitleFromFile(file, type)
-                    .then(data => {
-                        const subtitleUrl = vttToUrl(data);
-                        urlToArr(subtitleUrl)
-                            .then(subtitles => {
-                                this.props.updateSubtitles(subtitles, true).then(() => {
-                                    toastr.success(`${t('uploadSubtitle')}: ${subtitles.length}`);
-                                    NProgress.done();
-                                });
-                            })
-                            .catch(error => {
-                                toastr.error(error.message);
-                                NProgress.done();
-                                throw error;
-                            });
-                    })
-                    .catch(error => {
-                        toastr.error(error.message);
-                        NProgress.done();
-                        throw error;
-                    });
-            } else {
-                NProgress.done();
-                toastr.error(t('uploadSubtitleErr'));
-            }
-        }
-    }
-
-    uploadVideo() {
-        if (this.$video.current && this.$video.current.files[0]) {
-            NProgress.start().set(0.5);
-            const file = this.$video.current.files[0];
-            const $video = document.createElement('video');
-            const canPlayType = $video.canPlayType(file.type);
-            if (canPlayType === 'maybe' || canPlayType === 'probably') {
-                const url = URL.createObjectURL(file);
-                this.props.updateVideoUrl(url);
-                toastr.success(`${t('uploadVideo')}: ${(file.size / 1024 / 1024).toFixed(3)}M`);
-            } else {
-                toastr.error(`${t('uploadVideoErr')}: ${file.type || 'unknown'}`);
-            }
-            NProgress.done();
-        }
-    }
-
-    render() {
-        return (
-            <Wrapper>
-                <div className="left">
-                    <Logo href="./">
-                        SubPlayer <span className="beta">Beta {version}</span>
-                        <Description>
-                            <Translate value="description" />
-                        </Description>
-                    </Logo>
-                </div>
-                <div className="right">
-                    <div className="links">
-                        <a href="https://github.com/zhw2590582/SubPlayer">Github</a>
-                    </div>
+export default function(props) {
+    return (
+        <Header>
+            <Left>
+                <Logo href="/">
+                    <i className="icon-cc"></i>
+                </Logo>
+                <Menu onClick={() => props.setOption({ uploadDialog: true })}>
+                    <i className="icon-upload"></i>
+                    <Translate value="open" />
+                </Menu>
+                <Menu onClick={() => downloadFile(vttToUrl(subToVtt(props.subtitles)), `${Date.now()}.vtt`)}>
+                    <i className="icon-download"></i>
+                    <Translate value="save" />
+                </Menu>
+                <Menu onClick={() => props.undoSubtitles()}>
+                    <i className="icon-ccw"></i>
+                    <Translate value="undo" />
+                </Menu>
+                <Menu
+                    onClick={() => {
+                        if (window.confirm(t('clear-warning'))) {
+                            props.cleanSubtitles();
+                        }
+                    }}
+                >
+                    <i className="icon-trash-empty"></i>
+                    <Translate value="clear" />
+                </Menu>
+                <Menu onClick={() => props.setOption({ helpDialog: true })}>
+                    <i className="icon-help-circled"></i>
+                    <Translate value="help" />
+                </Menu>
+                <Menu onClick={() => props.setOption({ donateDialog: true })}>
+                    <i className="icon-money"></i>
+                    <Translate value="donate" />
+                </Menu>
+                <Menu onClick={() => window.open('https://github.com/zhw2590582/SubPlayer')}>
+                    <i className="icon-github"></i> Github
+                </Menu>
+            </Left>
+            <Right>
+                <I18n>
                     <i className="icon-language"></i>
-                    <Lang
-                        value={this.state.lang}
-                        className={`lang-${this.props.lang}`}
-                        onChange={event => {
-                            this.setState({ lang: event.target.value });
-                            this.props.setLocale(event.target.value);
-                        }}
-                    >
-                        {Object.entries(this.state.translators).map(([key, item]) =>
+                    <select value={getName(props.language)} onChange={event => props.updateLang(event.target.value)}>
+                        {Object.keys(names).map(key => (
                             <option key={key} value={key}>
-                                 {item.name}
+                                {names[key]}
                             </option>
-                        )}
-                    </Lang>
-                    <Btn>
-                        <i className="icon-upload"></i>
-                        <Translate value="btnUploadSubtitle" />
-                        <File className="uploadSubtitle" type="file" name="file" ref={this.$subtitle} onChange={() => this.uploadSubtitle()} />
-                    </Btn>
-                    <Btn>
-                        <i className="icon-upload"></i>
-                        <Translate value="btnUploadVideo" />
-                        <File className="uploadVideo" type="file" name="file" ref={this.$video} onChange={() => this.uploadVideo()} />
-                    </Btn>
-                    <Btn onClick={this.props.downloadSubtitles.bind(this)}>
-                        <i className="icon-download"></i>
-                        <Translate value="btnDownloadSubtitle" />
-                    </Btn>
-                </div>
-            </Wrapper>
-        );
-    }
+                        ))}
+                    </select>
+                </I18n>
+            </Right>
+            {props.options.uploadDialog ? (
+                <Dialog title={t('open')} onClose={() => props.setOption({ uploadDialog: false })}>
+                    <Upload {...props} />
+                </Dialog>
+            ) : null}
+            {props.options.helpDialog ? (
+                <Dialog title={t('help')} onClose={() => props.setOption({ helpDialog: false })}>
+                    <Help {...props} />
+                </Dialog>
+            ) : null}
+            {props.options.donateDialog ? (
+                <Dialog title={t('donate')} onClose={() => props.setOption({ donateDialog: false })}>
+                    <Donate {...props} />
+                </Dialog>
+            ) : null}
+        </Header>
+    );
 }

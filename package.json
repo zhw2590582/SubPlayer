@@ -1,45 +1,43 @@
 {
-    "name": "subplayer",
-    "version": "1.0.2",
-    "description": "SubPlayer is a online subtitle editor",
-    "homepage": "https://subplayer.js.org",
-    "dependencies": {
-        "artplayer-react": "^3.4.2",
-        "dequal": "^1.0.0",
-        "duration-time-conversion": "^1.0.1",
-        "fetch-jsonp": "^1.1.3",
-        "normalize.css": "^8.0.1",
-        "nprogress": "^0.2.0",
-        "p-limit": "^2.2.2",
-        "react": "^16.13.0",
-        "react-dom": "^16.13.0",
-        "react-i18nify": "^3.1.2",
-        "react-scripts": "3.4.0",
-        "react-virtualized": "^9.21.2",
-        "styled-components": "^5.0.1",
-        "toastr": "^2.1.4",
-        "wfplayer": "^1.1.2"
-    },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build && rm -rf docs && mv build docs",
-        "lint": "npx eslint src",
-        "predeploy": "yarn build",
-        "deploy": "gh-pages -d build"
-    },
-    "eslintConfig": {
-        "extends": "react-app"
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
-    }
+  "name": "subplayer",
+  "version": "2.0.0",
+  "description": "SubPlayer is a online subtitle editor",
+  "homepage": "https://subplayer.js.org",
+  "dependencies": {
+    "artplayer-react": "^3.4.2",
+    "duration-time-conversion": "^1.0.1",
+    "lodash": "^4.17.15",
+    "normalize.css": "^8.0.1",
+    "nprogress": "^0.2.0",
+    "option-validator": "^2.0.5",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-i18nify": "^3.1.4",
+    "react-scripts": "3.4.0",
+    "react-toastify": "^5.5.0",
+    "react-virtualized": "^9.21.2",
+    "styled-components": "^5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build && rm -rf docs && mv build docs",
+    "lint": "npx eslint src",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

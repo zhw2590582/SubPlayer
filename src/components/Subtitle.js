@@ -1,310 +1,212 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { t, Translate } from 'react-i18nify';
-import toastr from 'toastr';
-import { checkTime, timeToSecond, escapeHTML, unescapeHTML } from '../utils';
 import { Table } from 'react-virtualized';
-import Sub from '../utils/sub';
+import debounce from 'lodash/debounce';
+import unescape from 'lodash/unescape';
+import clamp from 'lodash/clamp';
+import { timeToSecond, secondToTime } from '../utils';
 
-const Wrapper = styled.div`
-    flex: 1;
-    border-right: 1px solid rgb(10, 10, 10);
+const Subtitle = styled.div`
     .ReactVirtualized__Table {
         font-size: 12px;
-        background: #24292d;
-
         .ReactVirtualized__Table__Grid {
             outline: none;
         }
-
-        .ReactVirtualized__Table__headerRow {
-            background: rgb(46, 54, 60);
-            border-bottom: 1px solid rgb(10, 10, 10);
-
-            .row {
-                padding: 10px 5px;
-                font-style: normal;
-                font-weight: normal;
-                font-size: 14px;
-                text-align: center;
-                text-transform: none;
-            }
-        }
-
         .ReactVirtualized__Table__row {
-            background-color: #1c2022;
-            border-bottom: 1px solid rgb(36, 41, 45);
             transition: all 0.2s ease;
-
             &.odd {
-                background-color: rgb(46, 54, 60);
+                background-color: rgb(35, 40, 64);
             }
-
             &.highlight {
-                color: #fff;
                 background-color: #2196f3;
-                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
             }
-
             &.illegal {
-                color: #fff;
                 background-color: #c75123;
-                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
             }
-
             .row {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                color: #fff;
+                height: 100%;
                 padding: 10px 5px;
-                text-align: center;
+                border-bottom: 1px solid #000;
             }
         }
 
         .input,
         .textarea {
             border: none;
-            padding: 5px;
-            min-height: 30px;
+            width: 100%;
+            color: #fff;
             font-size: 12px;
             text-align: center;
-            color: #fff;
-            background-color: #3a3a3a;
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            resize: none;
+            outline: none;
+        }
+
+        .input {
+            height: 25px;
+            line-height: 25px;
+            cursor: col-resize;
+            user-select: none;
         }
 
         .textarea {
-            resize: vertical;
-        }
-
-        p {
+            padding: 5px;
+            height: 100%;
             line-height: 1.5;
-            margin: 0;
-        }
-    }
-
-    .operation {
-        display: flex;
-        justify-content: center;
-
-        i {
-            width: 25px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-    }
-
-    .edit {
-        display: none;
-        width: 100%;
-        height: 100%;
-    }
-
-    .editing {
-        .noedit {
-            display: none;
         }
 
-        .edit {
-            display: block;
+        .operation {
+            i {
+                font-size: 12px;
+                cursor: pointer;
+            }
         }
     }
 `;
 
-export default class Subtitle extends React.Component {
-    state = {
-        index: -1,
-        subtitle: {
-            start: '',
-            end: '',
-            text: '',
-            duration: '',
-        },
-    };
+export default function({
+    player,
+    subtitles,
+    addSubtitle,
+    currentIndex,
+    updateSubtitle,
+    removeSubtitle,
+    translateSubtitle,
+    checkSubtitle,
+}) {
+    let isDroging = false;
+    let lastPageX = 0;
+    let lastSub = null;
+    let lastKey = '';
+    let lastValue = '';
 
-    check() {
-        const { index, subtitle } = this.state;
-        const { subtitles } = this.props;
-        const startTime = timeToSecond(subtitle.start);
-        const endTime = timeToSecond(subtitle.end);
-        const previous = subtitles[index - 1];
-        const next = subtitles[index + 1];
-
-        if (index !== -1) {
-            if (!checkTime(subtitle.start)) {
-                toastr.error(t('startTime'));
-                return false;
-            }
-
-            if (!checkTime(subtitle.end)) {
-                toastr.error(t('endTime'));
-                return false;
-            }
-
-            if (startTime >= endTime) {
-                toastr.error(t('greater'));
-                return false;
-            }
-
-            if ((previous && endTime < previous.startTime) || (next && startTime > next.endTime)) {
-                toastr.error(t('moveAcross'));
-                return false;
-            }
-
-            if (previous && startTime < previous.endTime) {
-                toastr.warning(t('overlaps'));
-            }
-        }
-        return true;
+    function onMouseDown(event, sub, key) {
+        isDroging = true;
+        lastPageX = event.pageX;
+        lastSub = sub;
+        lastKey = key;
     }
 
-    onEdit(sub) {
-        const index = this.props.subtitles.indexOf(sub);
-        this.setState({
-            index: index,
-            subtitle: {
-                start: sub.start,
-                end: sub.end,
-                text: sub.text,
-                duration: sub.duration,
-            },
-        });
-        this.props.editSubtitle(sub);
-    }
-
-    onUpdate() {
-        if (this.check()) {
-            const { index, subtitle } = this.state;
-            this.props.updateSubtitle(index, new Sub(subtitle.start, subtitle.end, subtitle.text));
-            this.setState({
-                index: -1,
-                subtitle: {
-                    start: '',
-                    end: '',
-                    text: '',
-                    duration: '',
-                },
-            });
+    function onMouseMove(event, sub, key) {
+        if (isDroging) {
+            const time = Number(((event.pageX - lastPageX) / 10).toFixed(3));
+            lastValue = secondToTime(clamp(timeToSecond(sub[key]) + time, 0, Infinity));
         }
     }
 
-    onChange(name, value) {
-        const subtitle = this.state.subtitle;
-        subtitle[name] = value;
-        this.setState({
-            subtitle,
-        });
+    function onMouseUp() {
+        if (isDroging) {
+            if (lastSub && lastKey && lastValue) {
+                updateSubtitle(lastSub, lastKey, lastValue);
+            }
+            isDroging = false;
+            lastPageX = 0;
+            lastSub = null;
+            lastKey = '';
+            lastValue = '';
+        }
     }
 
-    onRemove(sub) {
-        this.props.removeSubtitle(sub);
-        this.setState({
-            index: -1,
-            subtitle: {
-                start: '',
-                end: '',
-                text: '',
-                duration: '',
-            },
-        });
-    }
+    const [width, setWidth] = useState(100);
+    const [height, setHeight] = useState(100);
 
-    render() {
-        const { subtitle } = this.state;
-        const { subtitles, mainHeight, mainWidth, currentIndex, checkSubtitleIllegal } = this.props;
-        return (
-            <Wrapper>
-                <Table
-                    headerHeight={40}
-                    width={mainWidth / 2}
-                    height={mainHeight}
-                    rowHeight={60}
-                    scrollToIndex={currentIndex}
-                    rowCount={subtitles.length}
-                    rowGetter={({ index }) => subtitles[index]}
-                    headerRowRenderer={() => {
-                        return (
-                            <div className="ReactVirtualized__Table__headerRow">
-                                <div className="row" style={{ width: 50 }} width="50">
-                                    #
+    const resize = useCallback(() => {
+        setWidth(document.body.clientWidth / 2);
+        setHeight(document.body.clientHeight - 210);
+    }, [setWidth, setHeight]);
+
+    useEffect(() => {
+        resize();
+        if (!resize.init) {
+            resize.init = true;
+            const debounceResize = debounce(resize, 500);
+            window.addEventListener('resize', debounceResize);
+        }
+    }, [resize]);
+
+    return (
+        <Subtitle>
+            <Table
+                headerHeight={40}
+                width={width}
+                height={height}
+                rowHeight={80}
+                scrollToIndex={currentIndex}
+                rowCount={subtitles.length}
+                rowGetter={({ index }) => subtitles[index]}
+                headerRowRenderer={() => null}
+                rowRenderer={props => {
+                    return (
+                        <div
+                            key={props.key}
+                            className={[
+                                props.className,
+                                props.index % 2 ? 'odd' : '',
+                                currentIndex === props.index ? 'highlight' : '',
+                                checkSubtitle(props.rowData) ? 'illegal' : '',
+                            ]
+                                .join(' ')
+                                .trim()}
+                            style={props.style}
+                            onClick={() => {
+                                player.pause = true;
+                                if (player.duration >= props.rowData.startTime) {
+                                    player.seek = props.rowData.startTime + 0.001;
+                                }
+                            }}
+                        >
+                            <div className="row operation" style={{ width: 30 }}>
+                                <i
+                                    className="icon-trash-empty"
+                                    onClick={() => removeSubtitle(props.rowData)}
+                                    style={{ marginBottom: 5 }}
+                                ></i>
+                                <i
+                                    className="icon-language"
+                                    onClick={() => translateSubtitle(props.rowData)}
+                                    style={{ marginBottom: 5 }}
+                                ></i>
+                                <i className="icon-plus" onClick={() => addSubtitle(props.index + 1)}></i>
+                            </div>
+                            <div className="row time" style={{ width: 150 }} onMouseUp={onMouseUp}>
+                                <div
+                                    className="input"
+                                    onMouseDown={event => onMouseDown(event, props.rowData, 'start')}
+                                    onMouseMove={event => onMouseMove(event, props.rowData, 'start')}
+                                    style={{ marginBottom: 10 }}
+                                >
+                                    {props.rowData.start}
                                 </div>
-                                <div className="row" style={{ width: 100 }} width="120">
-                                    <Translate value="start" />
-                                </div>
-                                <div className="row" style={{ width: 100 }} width="120">
-                                    <Translate value="end" />
-                                </div>
-                                <div className="row" style={{ width: 100 }} width="100">
-                                    <Translate value="duration" />
-                                </div>
-                                <div className="row" style={{ flex: 1 }}>
-                                    <Translate value="text" />
-                                </div>
-                                <div className="row" style={{ width: 90 }} width="100">
-                                    <Translate value="operation" />
+                                <div
+                                    className="input"
+                                    onMouseDown={event => onMouseDown(event, props.rowData, 'end')}
+                                    onMouseMove={event => onMouseMove(event, props.rowData, 'end')}
+                                >
+                                    {props.rowData.end}
                                 </div>
                             </div>
-                        );
-                    }}
-                    rowRenderer={props => {
-                        return (
-                            <div
-                                key={props.key}
-                                className={[
-                                    props.className,
-                                    props.index % 2 ? 'odd' : '',
-                                    props.rowData.editing ? 'editing' : '',
-                                    props.rowData.highlight ? 'highlight' : '',
-                                    checkSubtitleIllegal(props.rowData) ? 'illegal' : '',
-                                ]
-                                    .join(' ')
-                                    .trim()}
-                                style={props.style}
-                            >
-                                <div className="row" style={{ width: 50 }}>
-                                    {props.index + 1}
-                                </div>
-                                <div className="row" style={{ width: 100 }}>
-                                    <span className="noedit">{props.rowData.start}</span>
-                                    <input
-                                        maxLength={20}
-                                        className="input edit"
-                                        value={subtitle.start}
-                                        onChange={e => this.onChange('start', e.target.value)}
-                                    />
-                                </div>
-                                <div className="row" style={{ width: 100 }}>
-                                    <span className="noedit">{props.rowData.end}</span>
-                                    <input
-                                        maxLength={20}
-                                        className="input edit"
-                                        value={subtitle.end}
-                                        onChange={e => this.onChange('end', e.target.value)}
-                                    />
-                                </div>
-                                <div className="row" style={{ width: 100 }}>
-                                    <span className="noedit">{props.rowData.duration}</span>
-                                    <input disabled maxLength={20} className="input edit" value={subtitle.duration} />
-                                </div>
-                                <div className="row" style={{ flex: 1 }}>
-                                    <span className="noedit">
-                                        {props.rowData.text.split(/\r?\n/).map((item, index) => (
-                                            <p key={index}>{escapeHTML(item)}</p>
-                                        ))}
-                                    </span>
-                                    <textarea
-                                        maxLength={100}
-                                        className="textarea edit"
-                                        value={unescapeHTML(subtitle.text || '')}
-                                        onChange={e => this.onChange('text', e.target.value)}
-                                    />
-                                </div>
-                                <div className="row operation" style={{ width: 90 }}>
-                                    <i className="icon-pencil noedit" onClick={() => this.onEdit(props.rowData)}></i>
-                                    <i className="icon-ok edit" onClick={() => this.onUpdate(props.rowData)}></i>
-                                    <i className="icon-trash-empty" onClick={() => this.onRemove(props.rowData)}></i>
-                                </div>
+                            <div className="row duration" style={{ width: 70 }}>
+                                {props.rowData.duration}
                             </div>
-                        );
-                    }}
-                ></Table>
-            </Wrapper>
-        );
-    }
+                            <div className="row text" style={{ flex: 1 }}>
+                                <textarea
+                                    maxLength={200}
+                                    spellCheck={false}
+                                    className="textarea"
+                                    value={unescape(props.rowData.text)}
+                                    onChange={event => updateSubtitle(props.rowData, 'text', event.target.value)}
+                                />
+                            </div>
+                        </div>
+                    );
+                }}
+            ></Table>
+        </Subtitle>
+    );
 }
