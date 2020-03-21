@@ -78,7 +78,7 @@ export default function({
     updateSubtitle,
     removeSubtitle,
     translateSubtitle,
-    checkSubtitleIllegal,
+    checkSubtitle,
 }) {
     let isDroging = false;
     let lastPageX = 0;
@@ -149,7 +149,7 @@ export default function({
                                 props.className,
                                 props.index % 2 ? 'odd' : '',
                                 currentIndex === props.index ? 'highlight' : '',
-                                checkSubtitleIllegal(props.rowData) ? 'illegal' : '',
+                                checkSubtitle(props.rowData) ? 'illegal' : '',
                             ]
                                 .join(' ')
                                 .trim()}

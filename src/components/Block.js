@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import escape from 'lodash/escape';
-import { notify, secondToTime } from '../utils';
+import { notify, secondToTime, getKeyCode } from '../utils';
 
 const Block = styled.div`
     position: absolute;
@@ -111,6 +111,7 @@ let lastTarget = null;
 let lastSub = null;
 let lastType = '';
 let lastX = 0;
+let lastIndex = -1;
 let lastWidth = 0;
 let lastDiffX = 0;
 let isDroging = false;
@@ -122,7 +123,7 @@ export default React.memo(
         render,
         currentTime,
         setMetronome,
-        checkSubtitleIllegal,
+        checkSubtitle,
         removeSubtitle,
         addSubtitle,
         hasSubtitle,
@@ -169,6 +170,8 @@ export default React.memo(
                     if (player.playing && composedPath.includes($blockRef.current)) {
                         setMetronome(true);
                     } else {
+                        lastIndex = -1;
+                        lastTarget = null;
                         setMetronome(false);
                     }
                 }
@@ -181,8 +184,8 @@ export default React.memo(
             lastSub = sub;
             lastType = type;
             lastX = event.pageX;
-            const index = currentSubs.indexOf(sub);
-            lastTarget = $subsRef.current.children[index];
+            lastIndex = currentSubs.indexOf(sub);
+            lastTarget = $subsRef.current.children[lastIndex];
             lastWidth = parseFloat(lastTarget.style.width);
         };
 
@@ -249,7 +252,6 @@ export default React.memo(
                 lastTarget.style.transform = `translate(0)`;
             }
 
-            lastTarget = null;
             lastType = '';
             lastX = 0;
             lastWidth = 0;
@@ -257,16 +259,50 @@ export default React.memo(
             isDroging = false;
         }, [gridGap, hasSubtitle, player, subtitles, updateSubtitle]);
 
+        const onKeyDown = useCallback(
+            event => {
+                const sub = currentSubs[lastIndex];
+                if (sub && lastTarget) {
+                    const keyCode = getKeyCode(event);
+                    switch (keyCode) {
+                        case 37:
+                            updateSubtitle(sub, {
+                                start: secondToTime(sub.startTime - 0.1),
+                                end: secondToTime(sub.endTime - 0.1),
+                            });
+                            player.seek = sub.startTime - 0.1;
+                            break;
+                        case 39:
+                            updateSubtitle(sub, {
+                                start: secondToTime(sub.startTime + 0.1),
+                                end: secondToTime(sub.endTime + 0.1),
+                            });
+                            player.seek = sub.startTime + 0.1;
+                            break;
+                        case 8:
+                        case 46:
+                            removeSubtitle(sub);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            },
+            [currentSubs, player, removeSubtitle, updateSubtitle],
+        );
+
         useEffect(() => {
             document.addEventListener('click', onDocumentClick);
             document.addEventListener('mousemove', onDocumentMouseMove);
             document.addEventListener('mouseup', onDocumentMouseUp);
+            window.addEventListener('keydown', onKeyDown);
             return () => {
                 document.removeEventListener('click', onDocumentClick);
                 document.removeEventListener('mousemove', onDocumentMouseMove);
                 document.removeEventListener('mouseup', onDocumentMouseUp);
+                window.removeEventListener('keydown', onKeyDown);
             };
-        }, [onDocumentClick, onDocumentMouseMove, onDocumentMouseUp]);
+        }, [onDocumentClick, onDocumentMouseMove, onDocumentMouseUp, onKeyDown]);
 
         return (
             <Block ref={$blockRef}>
@@ -277,7 +313,7 @@ export default React.memo(
                                 className={[
                                     'sub-item',
                                     key === currentIndex ? 'sub-highlight' : '',
-                                    checkSubtitleIllegal(sub) ? 'sub-illegal' : '',
+                                    checkSubtitle(sub) ? 'sub-illegal' : '',
                                 ]
                                     .join(' ')
                                     .trim()}

@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import Sub from '../subtitle/sub';
-import { secondToTime } from '../utils';
+import { secondToTime, getKeyCode } from '../utils';
 
 const Metronome = styled.div`
     position: absolute;
@@ -43,22 +43,19 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
     const onKeyDown = useCallback(
         event => {
             if (metronome) {
-                const tag = document.activeElement.tagName.toUpperCase();
-                const editable = document.activeElement.getAttribute('contenteditable');
-                if (tag !== 'INPUT' && tag !== 'TEXTAREA' && editable !== '' && editable !== 'true') {
-                    if (event.keyCode === 32) {
-                        event.preventDefault();
-                        if (!startTime) {
-                            setStartTime(currentTime);
-                        }
+                const keyCode = getKeyCode(event);
+                if (keyCode === 32) {
+                    event.preventDefault();
+                    if (!startTime) {
+                        setStartTime(currentTime);
+                    }
 
-                        if (startTime && currentTime > startTime) {
-                            const index = findIndex(subtitles, startTime) + 1;
-                            const start = secondToTime(startTime);
-                            const end = secondToTime(currentTime);
-                            addSubtitle(index, new Sub(start, end, '[Subtitle Text]'));
-                            setStartTime(0);
-                        }
+                    if (startTime && currentTime > startTime) {
+                        const index = findIndex(subtitles, startTime) + 1;
+                        const start = secondToTime(startTime);
+                        const end = secondToTime(currentTime);
+                        addSubtitle(index, new Sub(start, end, '[Subtitle Text]'));
+                        setStartTime(0);
                     }
                 }
             }

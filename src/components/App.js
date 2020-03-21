@@ -123,7 +123,7 @@ export default function() {
     const copySubtitles = useCallback(() => subtitles.map(sub => sub.clone), [subtitles]);
 
     // Check if subtitle is legal
-    const checkSubtitleIllegal = useCallback(
+    const checkSubtitle = useCallback(
         sub => {
             const index = hasSubtitle(sub);
             if (index < 0) return;
@@ -311,6 +311,7 @@ export default function() {
         updateLang,
         hasSubtitle,
         addSubtitle,
+        checkSubtitle,
         undoSubtitles,
         mergeSubtitle,
         removeSubtitle,
@@ -321,7 +322,6 @@ export default function() {
         translateSubtitle,
         translateSubtitles,
         timeOffsetSubtitles,
-        checkSubtitleIllegal,
     };
 
     return (
