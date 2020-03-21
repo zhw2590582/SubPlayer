@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import i18n from '../i18n';
+import { names, getName } from '../i18n';
 import Upload from './Upload';
 import Help from './Help';
 import Donate from './Donate';
@@ -136,10 +136,10 @@ export default function(props) {
             <Right>
                 <I18n>
                     <i className="icon-language"></i>
-                    <select value={props.language} onChange={event => props.updateLang(event.target.value)}>
-                        {Object.keys(i18n).map(key => (
+                    <select value={getName(props.language)} onChange={event => props.updateLang(event.target.value)}>
+                        {Object.keys(names).map(key => (
                             <option key={key} value={key}>
-                                {key.toUpperCase()}
+                                {names[key]}
                             </option>
                         ))}
                     </select>

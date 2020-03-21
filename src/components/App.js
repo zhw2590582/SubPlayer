@@ -12,7 +12,7 @@ import isEqual from 'lodash/isEqual';
 import NProgress from 'nprogress';
 import { ToastContainer } from 'react-toastify';
 import translate, { googleTranslate } from '../translate';
-import { t } from 'react-i18nify';
+import { t, setLocale } from 'react-i18nify';
 
 const history = [];
 let inTranslation = false;
@@ -49,6 +49,7 @@ export default function() {
     // Update language
     const updateLang = useCallback(
         value => {
+            setLocale(value);
             setLanguage(value);
             storage.set('language', value);
         },
@@ -104,6 +105,7 @@ export default function() {
     // Run only once
     useEffect(() => {
         initSubtitles();
+        updateLang(language);
         if (player && !worker.onmessage) {
             worker.onmessage = event => {
                 player.subtitle.switch(event.data);
