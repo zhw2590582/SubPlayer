@@ -95,7 +95,7 @@ const zh = {
     'audio-waveform': '波形图:',
     'file-size': '文件大小:',
     'decoding-progress': '解码进度:',
-    'render-channel': '渲染通道:',
+    'render-channel': '渲染声道:',
     'unit-duration': '单位时长:',
     'height-zoom': '高度缩放:',
     'space-metronome': '空格节拍器:',
