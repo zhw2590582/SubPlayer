@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import WF from '../waveform';
 import { sleep } from '../utils';
 import Block from './Block';
+import Metronome from './Metronome';
 
 const Footer = styled.div`
     display: flex;
@@ -242,6 +243,7 @@ export default function(props) {
                         setRender={setRender}
                     />
                 ) : null}
+                <Metronome {...props} render={render} metronome={metronome} />
                 <Block {...props} render={render} setMetronome={setMetronome} />
             </div>
         </Footer>

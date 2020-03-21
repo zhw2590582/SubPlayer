@@ -6,6 +6,7 @@ import { notify, secondToTime } from '../utils';
 
 const Block = styled.div`
     position: absolute;
+    z-index: 9;
     top: 0;
     right: 0;
     bottom: 0;
