@@ -16,11 +16,6 @@ const Tool = styled.div`
         padding: 5px 10px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 
-        .title {
-            width: 120px;
-            text-align: right;
-        }
-
         .value {
             display: flex;
             align-items: center;
@@ -76,7 +71,9 @@ export default function({ language, options, setOption, translateSubtitles, time
                 </div>
             </div>
             <div className="item">
-                <div className="title">Time Offset:</div>
+                <div className="title">
+                    <Translate value="time-offset" />
+                </div>
                 <div className="value">
                     <button onClick={() => timeOffsetSubtitles(-0.1)}>-100ms</button>
                     <button onClick={() => timeOffsetSubtitles(0.1)}>+100ms</button>
