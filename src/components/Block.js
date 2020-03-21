@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import escape from 'lodash/escape';
 import { notify, secondToTime, getKeyCode } from '../utils';
+import { t } from 'react-i18nify';
 
 const Block = styled.div`
     position: absolute;
@@ -213,7 +214,7 @@ export default React.memo(
                 const endTime = lastSub.endTime + timeDiff;
 
                 if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
-                    notify('Parameter error', 'error');
+                    notify(t('parameter-error'), 'error');
                 } else {
                     if (lastType === 'left') {
                         if (startTime >= 0 && startTime < lastSub.endTime) {
@@ -222,7 +223,7 @@ export default React.memo(
                             player.seek = startTime;
                         } else {
                             lastTarget.style.width = `${lastWidth}px`;
-                            notify('Parameter error', 'error');
+                            notify(t('parameter-error'), 'error');
                         }
                     } else if (lastType === 'right') {
                         if (endTime >= 0 && endTime > lastSub.startTime) {
@@ -231,7 +232,7 @@ export default React.memo(
                             player.seek = startTime;
                         } else {
                             lastTarget.style.width = `${lastWidth}px`;
-                            notify('Parameter error', 'error');
+                            notify(t('parameter-error'), 'error');
                         }
                     } else {
                         if (startTime > 0 && endTime > 0 && endTime > startTime) {
@@ -244,7 +245,7 @@ export default React.memo(
                             player.seek = startTime;
                         } else {
                             lastTarget.style.width = `${lastWidth}px`;
-                            notify('Parameter error', 'error');
+                            notify(t('parameter-error'), 'error');
                         }
                     }
                 }

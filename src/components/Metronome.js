@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import Sub from '../subtitle/sub';
 import { secondToTime, getKeyCode } from '../utils';
+import { t } from 'react-i18nify';
 
 const Metronome = styled.div`
     position: absolute;
@@ -54,7 +55,7 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
                         const index = findIndex(subtitles, startTime) + 1;
                         const start = secondToTime(startTime);
                         const end = secondToTime(currentTime);
-                        addSubtitle(index, new Sub(start, end, '[Subtitle Text]'));
+                        addSubtitle(index, new Sub(start, end, t('subtitle-text')));
                         setStartTime(0);
                     }
                 }

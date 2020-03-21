@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import languages from '../translate/languages';
+import { Translate } from 'react-i18nify';
 
 const Tool = styled.div`
     flex: 1;
@@ -55,7 +56,9 @@ export default function({ language, options, setOption, translateSubtitles, time
     return (
         <Tool>
             <div className="item">
-                <div className="title">Google Translate:</div>
+                <div className="title">
+                    <Translate value="google-translate" />
+                </div>
                 <div className="value">
                     <select
                         value={options.translationLanguage}
@@ -67,7 +70,9 @@ export default function({ language, options, setOption, translateSubtitles, time
                             </option>
                         ))}
                     </select>
-                    <button onClick={() => translateSubtitles()}>Confirm</button>
+                    <button onClick={() => translateSubtitles()}>
+                        <Translate value="confirm" />
+                    </button>
                 </div>
             </div>
             <div className="item">

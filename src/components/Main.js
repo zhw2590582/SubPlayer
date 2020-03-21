@@ -35,7 +35,7 @@ export default function(props) {
                 <Player {...props} />
                 <Tool {...props} />
             </Left>
-            <Right className="main-right">
+            <Right>
                 <Subtitle {...props} />
             </Right>
         </Main>

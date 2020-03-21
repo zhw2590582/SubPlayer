@@ -6,6 +6,7 @@ export default {
         clear: 'Clear',
         help: 'Help',
         donate: 'Donate',
+        confirm: 'Confirm',
 
         'open-subtitle': 'Open Subtitle',
         'open-subtitle-supports': 'Supports opening .vtt, .srt and .ass subtitle',
@@ -32,16 +33,25 @@ export default {
         'donate-weChatPay': 'WeChat Pay:',
         'donate-alipay': 'Alipay:',
 
-        'parameter-error': 'Parameter error',
-        'keep-one': 'Please keep at least one subtitle',
-        'subtitle-text': '[Subtitle Text]',
-        'time-offset': 'Time Offset:',
-
         'history-rollback': 'History rollback successful',
         'history-empty': 'History is empty',
 
         'translation-success': 'Translation successful',
         'translation-progress': 'Translation in progress',
         'translation-limit': 'Limit 1000 translations per batch',
+
+        'audio-waveform': 'Audio Waveform:',
+        'file-size': 'File Size:',
+        'decoding-progress': 'Decoding Progress:',
+        'render-channel': 'Render Channel:',
+        'unit-duration': 'Unit Duration:',
+        'height-zoom': 'Height Zoom:',
+        'space-metronome': 'Space Metronome:',
+        'export-image': 'Export Image',
+        'parameter-error': 'Parameter error',
+        'keep-one': 'Please keep at least one subtitle',
+        'subtitle-text': '[Subtitle Text]',
+        'time-offset': 'Time Offset:',
+        'google-translate': 'Google Translate:',
     },
 };

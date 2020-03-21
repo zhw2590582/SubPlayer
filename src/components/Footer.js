@@ -4,6 +4,7 @@ import WF from '../waveform';
 import { sleep } from '../utils';
 import Block from './Block';
 import Metronome from './Metronome';
+import { Translate } from 'react-i18nify';
 
 const Footer = styled.div`
     display: flex;
@@ -132,7 +133,9 @@ export default function(props) {
             <div className="timeline-header">
                 <div className="timeline-header-left">
                     <div className="item">
-                        <div className="name">Audio Waveform:</div>
+                        <div className="name">
+                            <Translate value="audio-waveform" />
+                        </div>
                         <div className="value">
                             <input
                                 defaultChecked={true}
@@ -147,19 +150,25 @@ export default function(props) {
                         </div>
                     </div>
                     <div className="item">
-                        <div className="name">File Size:</div>
+                        <div className="name">
+                            <Translate value="file-size" />
+                        </div>
                         <div className="value" style={{ color: '#FF5722' }}>
                             {((fileSize || 0) / 1024 / 1024).toFixed(2)} M
                         </div>
                     </div>
                     <div className="item">
-                        <div className="name">Decoding Progress:</div>
+                        <div className="name">
+                            <Translate value="decoding-progress" />
+                        </div>
                         <div className="value" style={{ color: '#FF5722' }}>
                             {((decodeing || 0) * 100).toFixed(2)}%
                         </div>
                     </div>
                     <div className="item">
-                        <div className="name">Render Channel:</div>
+                        <div className="name">
+                            <Translate value="render-channel" />
+                        </div>
                         <div className="value">
                             <select
                                 defaultValue={0}
@@ -179,7 +188,9 @@ export default function(props) {
                         </div>
                     </div>
                     <div className="item">
-                        <div className="name">Unit Duration:</div>
+                        <div className="name">
+                            <Translate value="unit-duration" />
+                        </div>
                         <div className="value">
                             <input
                                 defaultValue="10"
@@ -197,7 +208,9 @@ export default function(props) {
                         </div>
                     </div>
                     <div className="item">
-                        <div className="name">Height Zoom:</div>
+                        <div className="name">
+                            <Translate value="height-zoom" />
+                        </div>
                         <div className="value">
                             <input
                                 defaultValue="1"
@@ -215,7 +228,9 @@ export default function(props) {
                         </div>
                     </div>
                     <div className="item">
-                        <div className="name">Space Metronome:</div>
+                        <div className="name">
+                            <Translate value="space-metronome" />
+                        </div>
                         <div className="value">
                             {metronome ? (
                                 <span style={{ color: '#4CAF50' }}>ON</span>
@@ -233,7 +248,7 @@ export default function(props) {
                                 wf.exportImage();
                             }}
                         >
-                            Export Image
+                            <Translate value="export-image" />
                         </div>
                     </div>
                 </div>
