@@ -6,6 +6,9 @@ const en = {
     help: 'Help',
     donate: 'Donate',
     confirm: 'Confirm',
+    delete: 'Delete',
+    insert: 'Insert Next',
+    merge: 'Merge Next',
 
     'open-subtitle': 'Open Subtitle',
     'open-subtitle-supports': 'Supports opening .vtt, .srt and .ass subtitle',
@@ -62,6 +65,10 @@ const zh = {
     help: '帮助',
     donate: '捐助',
     confirm: '确定',
+    
+    delete: '删除',
+    insert: '插入下一条',
+    merge: '合并下一条',
 
     'open-subtitle': '打开字幕',
     'open-subtitle-supports': '支持打开 .vtt, .srt 和 .ass 字幕',

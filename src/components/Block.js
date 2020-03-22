@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import { notify, secondToTime, getKeyCode } from '../utils';
-import { t } from 'react-i18nify';
+import { t, Translate } from 'react-i18nify';
 
 const Block = styled.div`
     position: absolute;
@@ -367,7 +367,7 @@ export default React.memo(
                             setContextMenu(false);
                         }}
                     >
-                        Delete
+                        <Translate value="delete" />
                     </div>
                     <div
                         className="contextmenu-item"
@@ -376,7 +376,7 @@ export default React.memo(
                             setContextMenu(false);
                         }}
                     >
-                        Insert Next
+                        <Translate value="insert" />
                     </div>
                     <div
                         className="contextmenu-item"
@@ -385,7 +385,7 @@ export default React.memo(
                             setContextMenu(false);
                         }}
                     >
-                        Merge Next
+                        <Translate value="merge" />
                     </div>
                 </div>
             </Block>
