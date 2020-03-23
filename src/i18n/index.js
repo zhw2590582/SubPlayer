@@ -18,7 +18,7 @@ const en = {
     'open-video': 'Open Video',
     'open-video-supports': 'Supports opening .mp4, .webm and .ogg video',
     'open-video-warning':
-        'When creating an audio waveform, The browser may be blocked for a short time due to audio decoding',
+        'The files are opened locally and no data is uploaded. When creating an audio waveform, The browser may be blocked for a short time due to audio decoding',
     'open-video-success': 'Open video successfully',
     'open-video-error': 'Failed to open video',
 
@@ -65,7 +65,7 @@ const zh = {
     help: '帮助',
     donate: '捐助',
     confirm: '确定',
-    
+
     delete: '删除',
     insert: '插入下一条',
     merge: '合并下一条',
@@ -77,7 +77,8 @@ const zh = {
 
     'open-video': '打开视频',
     'open-video-supports': '支持打开 .mp4, .webm 和 .ogg 视频',
-    'open-video-warning': '创建音频波形时，浏览器可能会由于音频解码而在短时间内被阻塞',
+    'open-video-warning':
+        '文件均为本地打开，不会上传任何数据。创建音频波形时，浏览器可能会由于音频解码而在短时间内被阻塞',
     'open-video-success': '打开视频成功',
     'open-video-error': '打开视频失败',
 
