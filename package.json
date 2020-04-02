@@ -20,7 +20,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf docs && mv build docs",
+    "build": "react-scripts build",
     "lint": "npx eslint src",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d build"
