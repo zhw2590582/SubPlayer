@@ -44,7 +44,7 @@ export default function() {
         helpDialog: false,
         donateDialog: false,
         uploadDialog: false,
-        playlistDialog: true,
+        playlistDialog: false,
         translationLanguage: 'en',
         playlist: [],
     });
