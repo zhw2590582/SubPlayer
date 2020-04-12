@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { names, getName } from '../i18n';
 import Upload from './Upload';
+import Playlist from './Playlist';
 import Help from './Help';
 import Donate from './Donate';
 import Dialog from './Dialog';
@@ -99,6 +100,10 @@ export default function(props) {
                 <Logo href="/">
                     <i className="icon-cc"></i>
                 </Logo>
+                <Menu onClick={() => props.setOption({ playlistDialog: true })}>
+                    <i className="icon-playlist"></i>
+                    <Translate value="playlist" />
+                </Menu>
                 <Menu onClick={() => props.setOption({ uploadDialog: true })}>
                     <i className="icon-upload"></i>
                     <Translate value="open" />
@@ -145,6 +150,11 @@ export default function(props) {
                     </select>
                 </I18n>
             </Right>
+            {props.options.playlistDialog ? (
+              <Dialog title={t('playlist')} onClose={() => props.setOption({ playlistDialog: false })}>
+                  <Playlist {...props} />
+              </Dialog>
+            ) : null}
             {props.options.uploadDialog ? (
                 <Dialog title={t('open')} onClose={() => props.setOption({ uploadDialog: false })}>
                     <Upload {...props} />

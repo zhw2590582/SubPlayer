@@ -38,12 +38,15 @@ export default function() {
 
     // All options
     const [options, setOptions] = useState({
+        apiBaseUrl: 'http://ocv.equine.bio:3000/',
         videoUrl: '/sample.mp4',
         subtitleUrl: '/sample.vtt',
         helpDialog: false,
         donateDialog: false,
         uploadDialog: false,
+        playlistDialog: true,
         translationLanguage: 'en',
+        playlist: [],
     });
 
     // Update language
@@ -111,6 +114,15 @@ export default function() {
                 player.subtitle.switch(event.data);
             };
         }
+
+        fetch(options.apiBaseUrl + 'files')
+            .then(data => data.json())
+            .then(data => {
+                setOption({playlist: data});
+            })
+            .catch(error => {
+                notify(error.message, 'error');
+            });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [player]);
 
