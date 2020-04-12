@@ -151,7 +151,7 @@ export default function(props) {
                 </I18n>
             </Right>
             {props.options.playlistDialog ? (
-              <Dialog title={t('playlist')} onClose={() => props.setOption({ playlistDialog: false })}>
+              <Dialog title={t('playlist-dialog')} onClose={() => props.setOption({ playlistDialog: false })}>
                   <Playlist {...props} />
               </Dialog>
             ) : null}

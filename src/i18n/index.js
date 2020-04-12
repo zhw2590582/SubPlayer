@@ -10,6 +10,12 @@ const en = {
     insert: 'Insert Next',
     merge: 'Merge Next',
 
+    'playlist': 'Playlist',
+    'playlist-dialog': 'Open from playlist',
+    'open-playlist-item': 'Select item from the list:',
+    'playlist-video': 'Video',
+    'playlist-subtitles': 'Subtitle',
+
     'open-subtitle': 'Open Subtitle',
     'open-subtitle-supports': 'Supports opening .vtt, .srt and .ass subtitle',
     'open-subtitle-success': 'Open subtitles successfully',
