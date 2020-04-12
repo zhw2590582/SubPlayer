@@ -19,6 +19,8 @@ const Playlist = styled.div`
         }
     }
     .item {
+        max-height: 500px;
+        overflow: auto;
         .title {
             color: #fff;
             font-size: 14px;
