@@ -53,6 +53,37 @@ export default React.memo(
                         art.on('seek', () => {
                             setCurrentTime(art.currentTime);
                         });
+
+                        art.option.controls = [
+                            {
+                                position: 'right',
+                                html: '0.5X',
+                                click: function() {
+                                    art.playbackRate = 0.5;
+                                },
+                            },
+                            {
+                                position: 'right',
+                                html: '1X',
+                                click: function() {
+                                    art.playbackRate = 1;
+                                },
+                            },
+                            {
+                                position: 'right',
+                                html: '1.5X',
+                                click: function() {
+                                    art.playbackRate = 1.5;
+                                },
+                            },
+                            {
+                                position: 'right',
+                                html: '2X',
+                                click: function() {
+                                    art.playbackRate = 2;
+                                },
+                            }
+                        ]
                     }}
                 />
             </Player>
