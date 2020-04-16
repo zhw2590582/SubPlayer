@@ -131,11 +131,13 @@ export default function ({player, options, setOption, updateSubtitles}) {
         NProgress.start().set(0.5);
         const videoUrl = openVideo(options.apiBaseUrl + item.video);
         const subtitleUrl = openSubtitle(options.apiBaseUrl + item.subtitles);
+        const currentVideo = item.video;
 
         setOption({
             playlistDialog: false,
             subtitleUrl: subtitleUrl,
             videoUrl: videoUrl,
+            currentVideo: currentVideo,
         });
         NProgress.done();
     }
