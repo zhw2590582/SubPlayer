@@ -5,6 +5,7 @@
   "homepage": "https://subplayer.js.org",
   "dependencies": {
     "artplayer-react": "^3.5.1",
+    "axios": "^0.19.2",
     "duration-time-conversion": "^1.0.1",
     "lodash": "^4.17.15",
     "normalize.css": "^8.0.1",
@@ -12,6 +13,7 @@
     "option-validator": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-flow-player": "^1.2.1",
     "react-i18nify": "^3.1.5",
     "react-scripts": "3.4.1",
     "react-toastify": "^5.5.0",

@@ -47,7 +47,7 @@ const Tool = styled.div`
     }
 `;
 
-export default function({ language, options, setOption, translateSubtitles, timeOffsetSubtitles }) {
+export default function({ language, options, setOption, translateSubtitles, timeOffsetSubtitles, addSubtitlesEvent }) {
     return (
         <Tool>
             <div className="item">
@@ -79,6 +79,37 @@ export default function({ language, options, setOption, translateSubtitles, time
                     <button onClick={() => timeOffsetSubtitles(0.1)}>+100ms</button>
                     <button onClick={() => timeOffsetSubtitles(-1)}>-1000ms</button>
                     <button onClick={() => timeOffsetSubtitles(1)}>+1000ms</button>
+                </div>
+            </div>
+            <div className="item">
+                <div className="title">
+                    <Translate value="add event" />
+                </div>
+                <div className="value">
+                    <button onClick={() => addSubtitlesEvent('Event 1')}>
+                        <Translate value="Event 1" />
+                    </button>
+                    <button onClick={() => addSubtitlesEvent('Event 2')}>
+                        <Translate value="Event 2" />
+                    </button>
+                    <button onClick={() => addSubtitlesEvent('Event 3')}>
+                        <Translate value="Event 3" />
+                    </button>
+                    <button onClick={() => addSubtitlesEvent('Event 4')}>
+                        <Translate value="Event 4" />
+                    </button>
+                    <button onClick={() => addSubtitlesEvent('Event 5')}>
+                        <Translate value="Event 5" />
+                    </button>
+                    <button onClick={() => addSubtitlesEvent('Event 6')}>
+                        <Translate value="Event 6" />
+                    </button>
+                    <button onClick={() => addSubtitlesEvent('Event 7')}>
+                        <Translate value="Event 7" />
+                    </button>
+                    <button onClick={() => addSubtitlesEvent('Event 8')}>
+                        <Translate value="Event 8" />
+                    </button>
                 </div>
             </div>
         </Tool>

@@ -13,6 +13,7 @@ import NProgress from 'nprogress';
 import { ToastContainer } from 'react-toastify';
 import translate, { googleTranslate } from '../translate';
 import { t, setLocale } from 'react-i18nify';
+import axios from 'axios'
 
 const history = [];
 let inTranslation = false;
@@ -41,6 +42,7 @@ export default function() {
         apiBaseUrl: 'http://ocv.equine.bio:3000/',
         videoUrl: '/sample.mp4',
         subtitleUrl: '/sample.vtt',
+        currentVideo: 'sample.mp4',
         helpDialog: false,
         donateDialog: false,
         uploadDialog: false,
@@ -96,13 +98,15 @@ export default function() {
 
     // Initialize subtitles from url or storage
     const initSubtitles = useCallback(async () => {
-        const storageSubs = storage.get('subtitles');
-        if (storageSubs && storageSubs.length) {
-            updateSubtitles(storageSubs.map(item => new Sub(item.start, item.end, item.text)));
-        } else {
-            const subs = await getSubFromVttUrl(options.subtitleUrl);
-            updateSubtitles(subs);
-        }
+        //const storageSubs = storage.get('subtitles');
+        //if (storageSubs && storageSubs.length) {
+        //    updateSubtitles(storageSubs.map(item => new Sub(item.start, item.end, item.text)));
+        //} else {
+        //    const subs = await getSubFromVttUrl(options.subtitleUrl);
+        //    updateSubtitles(subs);
+        //}
+        const subs = await getSubFromVttUrl(options.subtitleUrl);
+        updateSubtitles(subs);
     }, [options.subtitleUrl, updateSubtitles]);
 
     // Run only once
@@ -114,15 +118,11 @@ export default function() {
                 player.subtitle.switch(event.data);
             };
         }
-
-        fetch(options.apiBaseUrl + 'files')
-            .then(data => data.json())
-            .then(data => {
-                setOption({playlist: data});
-            })
-            .catch(error => {
-                notify(error.message, 'error');
-            });
+        axios.get(options.apiBaseUrl + 'files').then(response => {
+          setOption({playlist: response.data});
+        }, error => {
+          notify(error.message, 'error');
+        })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [player]);
 
@@ -252,6 +252,23 @@ export default function() {
         [copySubtitles, updateSubtitles],
     );
 
+    function findIndex(subs, startTime) {
+      return subs.findIndex((item, index) => {
+        return (
+          (startTime >= item.endTime && !subs[index + 1]) ||
+          (item.startTime <= startTime && item.endTime > startTime) ||
+          (startTime >= item.endTime && subs[index + 1] && startTime < subs[index + 1].startTime)
+        );
+      });
+    }
+
+    const addSubtitlesEvent = (sub) => {
+      const index = findIndex(subtitles, player.currentTime) + 1;
+      const start = secondToTime(player.currentTime);
+      const end = secondToTime(player.currentTime + 1);
+      addSubtitle(index, new Sub(start, end, t(sub)));
+    };
+
     // Clean all subtitles
     const cleanSubtitles = useCallback(() => {
         history.length = 0;
@@ -311,6 +328,19 @@ export default function() {
         }
     }, [copySubtitles, updateSubtitles, options.translationLanguage]);
 
+    const saveData = () => {
+      let payload = {
+        path: options.currentVideo,
+        subtitles: subtitles
+      }
+
+      axios.post(`${options.apiBaseUrl}subtitles`, payload).then(() => {
+        notify(t('success'));
+      }, error => {
+        notify(error.message, 'error');
+      })
+    };
+
     const props = {
         player,
         options,
@@ -338,6 +368,8 @@ export default function() {
         translateSubtitle,
         translateSubtitles,
         timeOffsetSubtitles,
+        addSubtitlesEvent,
+        saveData,
     };
 
     return (

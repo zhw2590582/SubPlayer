@@ -110,6 +110,9 @@ export default function(props) {
                 </Menu>
                 <Menu onClick={() => downloadFile(vttToUrl(subToVtt(props.subtitles)), `${Date.now()}.vtt`)}>
                     <i className="icon-download"></i>
+                    <Translate value="download" />
+                </Menu>
+                <Menu onClick={() => props.saveData()}>
                     <Translate value="save" />
                 </Menu>
                 <Menu onClick={() => props.undoSubtitles()}>
