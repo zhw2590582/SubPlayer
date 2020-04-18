@@ -333,7 +333,7 @@ export default function() {
             path: options.currentVideo,
             subtitles: subtitles
         };
-        console.log('payload', payload)
+
         axios.post(`${options.apiBaseUrl}subtitles`, payload).then(() => {
             notify(t('success'));
         }, error => {
