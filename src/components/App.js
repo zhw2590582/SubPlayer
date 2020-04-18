@@ -119,9 +119,9 @@ export default function() {
             };
         }
         axios.get(options.apiBaseUrl + 'files').then(response => {
-          setOption({playlist: response.data});
+            setOption({playlist: response.data});
         }, error => {
-          notify(error.message, 'error');
+            notify(error.message, 'error');
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [player]);
@@ -253,20 +253,20 @@ export default function() {
     );
 
     function findIndex(subs, startTime) {
-      return subs.findIndex((item, index) => {
-        return (
-          (startTime >= item.endTime && !subs[index + 1]) ||
-          (item.startTime <= startTime && item.endTime > startTime) ||
-          (startTime >= item.endTime && subs[index + 1] && startTime < subs[index + 1].startTime)
-        );
-      });
+        return subs.findIndex((item, index) => {
+            return (
+              (startTime >= item.endTime && !subs[index + 1]) ||
+              (item.startTime <= startTime && item.endTime > startTime) ||
+              (startTime >= item.endTime && subs[index + 1] && startTime < subs[index + 1].startTime)
+            );
+        });
     }
 
     const addSubtitlesEvent = (sub) => {
-      const index = findIndex(subtitles, player.currentTime) + 1;
-      const start = secondToTime(player.currentTime);
-      const end = secondToTime(player.currentTime + 1);
-      addSubtitle(index, new Sub(start, end, t(sub)));
+        const index = findIndex(subtitles, player.currentTime) + 1;
+        const start = secondToTime(player.currentTime);
+        const end = secondToTime(player.currentTime + 1);
+        addSubtitle(index, new Sub(start, end, t(sub)));
     };
 
     // Clean all subtitles
@@ -329,16 +329,16 @@ export default function() {
     }, [copySubtitles, updateSubtitles, options.translationLanguage]);
 
     const saveData = () => {
-      let payload = {
-        path: options.currentVideo,
-        subtitles: subtitles
-      }
-
-      axios.post(`${options.apiBaseUrl}subtitles`, payload).then(() => {
-        notify(t('success'));
-      }, error => {
-        notify(error.message, 'error');
-      })
+        let payload = {
+            path: options.currentVideo,
+            subtitles: subtitles
+        };
+        console.log('payload', payload)
+        axios.post(`${options.apiBaseUrl}subtitles`, payload).then(() => {
+            notify(t('success'));
+        }, error => {
+            notify(error.message, 'error');
+        })
     };
 
     const props = {
