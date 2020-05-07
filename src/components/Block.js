@@ -90,6 +90,7 @@ const Block = styled.div`
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            word-break: break-all;
             width: 100%;
             height: 100%;
             padding: 0 20px;
