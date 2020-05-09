@@ -133,6 +133,7 @@ export default React.memo(
         hasSubtitle,
         mergeSubtitle,
         updateSubtitle,
+        copySubtitlex
     }) {
         const [contextMenu, setContextMenu] = useState(false);
         const [contextMenuX, setContextMenuX] = useState(0);
@@ -387,6 +388,15 @@ export default React.memo(
                         }}
                     >
                         <Translate value="merge" />
+                    </div>
+                    <div
+                        className="contextmenu-item"
+                        onClick={() => {
+                            copySubtitlex(lastSub);
+                            setContextMenu(false);
+                        }}
+                    >
+                        <Translate value="copy" />
                     </div>
                 </div>
             </Block>

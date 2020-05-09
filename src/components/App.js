@@ -225,6 +225,39 @@ export default function() {
         }
     }, [updateSubtitles]);
 
+
+     // copy subtitle to the clipboard
+     const copySubtitlex = useCallback(
+        sub => {
+            const index = hasSubtitle(sub);
+            if (index < 0) return;
+            const subs = copySubtitles();
+            const next = subs[index + 1];
+            if (!hasSubtitle(next)) return;
+           
+            // finding the current sub html Node element
+            let subDivs = document.getElementsByClassName('sub-text');
+            let subDivsArr = [].slice.call(subDivs);
+            let filteredDivsArr = subDivsArr.filter((d) => { return   d.innerText === sub.text || d.textContent === sub.text })
+            let foucusedSubDivText = filteredDivsArr[0].innerText;
+
+            // appending temporary input to copy its value
+            let tempInput = document.createElement('textarea');
+            tempInput.value = foucusedSubDivText;
+            document.body.appendChild(tempInput);
+
+             /* Select the text field */
+             tempInput.select();
+             /*coopying */
+            document.execCommand("copy");
+
+            //removing temporary input
+            document.body.removeChild(tempInput);
+
+        },
+        [hasSubtitle, copySubtitles, updateSubtitles],
+    );
+
     // Subtitle time offset
     const timeOffsetSubtitles = useCallback(
         time => {
@@ -302,9 +335,8 @@ export default function() {
 
     // play/resume video on space press
     window.addEventListener('keyup', (e) => {
-        console.log(e.key)
         let videoIsPaused = videoBox[0].paused;
-        if (e.key === 'Tab'){
+        if (e.key === 's'){
         videoIsPaused = !videoIsPaused;
         videoIsPaused ? videoBox[0].pause() : videoBox[0].play();
         }
@@ -337,6 +369,7 @@ export default function() {
         translateSubtitle,
         translateSubtitles,
         timeOffsetSubtitles,
+        copySubtitlex
     };
 
     return (
