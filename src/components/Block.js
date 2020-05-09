@@ -81,7 +81,7 @@ const Block = styled.div`
             cursor: col-resize;
             user-select: none;
             &:hover {
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgb(230,38,0, 0.9);
             }
         }
 
