@@ -18,6 +18,7 @@ const history = [];
 let inTranslation = false;
 const storage = new Storage();
 const worker = new Worker(vttToUrlUseWorker());
+const videoBox = document.getElementsByTagName('video');
 
 export default function() {
     // Player instance
@@ -298,6 +299,16 @@ export default function() {
             notify(t('translation-progress'), 'error');
         }
     }, [copySubtitles, updateSubtitles, options.translationLanguage]);
+
+    // play/resume video on space press
+    window.addEventListener('keyup', (e) => {
+        console.log(e.key)
+        let videoIsPaused = videoBox[0].paused;
+        if (e.key === 'Tab'){
+        videoIsPaused = !videoIsPaused;
+        videoIsPaused ? videoBox[0].pause() : videoBox[0].play();
+        }
+    })
 
     const props = {
         player,
