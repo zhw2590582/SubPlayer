@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import languages from '../translate/languages';
 import { Translate } from 'react-i18nify';
@@ -47,7 +47,13 @@ const Tool = styled.div`
     }
 `;
 
-export default function({ language, options, setOption, translateSubtitles, timeOffsetSubtitles }) {
+export default function ({ language, options, setOption, translateSubtitles, timeOffsetSubtitles }) {
+    const [offset, setOffset] = useState(0);
+    function handleTimeOffsetChange(e) {
+        e.preventDefault();
+        timeOffsetSubtitles(Number(offset));
+        console.log('change', offset);
+    }
     return (
         <Tool>
             <div className="item">
@@ -57,9 +63,9 @@ export default function({ language, options, setOption, translateSubtitles, time
                 <div className="value">
                     <select
                         value={options.translationLanguage}
-                        onChange={event => setOption({ translationLanguage: event.target.value })}
+                        onChange={(event) => setOption({ translationLanguage: event.target.value })}
                     >
-                        {(languages[language] || languages.en).map(item => (
+                        {(languages[language] || languages.en).map((item) => (
                             <option key={item.key} value={item.key}>
                                 {item.name}
                             </option>
@@ -75,10 +81,18 @@ export default function({ language, options, setOption, translateSubtitles, time
                     <Translate value="time-offset" />
                 </div>
                 <div className="value">
-                    <button onClick={() => timeOffsetSubtitles(-0.1)}>-100ms</button>
-                    <button onClick={() => timeOffsetSubtitles(0.1)}>+100ms</button>
-                    <button onClick={() => timeOffsetSubtitles(-1)}>-1000ms</button>
-                    <button onClick={() => timeOffsetSubtitles(1)}>+1000ms</button>
+                    &nbsp;
+                    <input
+                        name="offsetTime"
+                        type="number"
+                        onChange={(e) => {
+                            setOffset(e.target.value);
+                        }}
+                    />
+                    &nbsp;
+                    <label for="offsetTime"> seconds </label>
+                    &nbsp;
+                    <button onClick={handleTimeOffsetChange}>change</button>
                 </div>
             </div>
         </Tool>
