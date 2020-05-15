@@ -256,21 +256,98 @@ export default function ({
                                 <i className="icon-plus" onClick={() => addSubtitle(props.index + 1)}></i>
                             </div>
                             <div className="row time" style={{ width: 150 }} onMouseUp={onMouseUp}>
-                                <div
-                                    className="input"
-                                    onMouseDown={event => onMouseDown(event, props.rowData, 'start')}
-                                    onMouseMove={event => onMouseMove(event, props.rowData, 'start')}
+                                {/* <input
+                                    // className="input"
+                                    // onMouseDown={event => onMouseDown(event, props.rowData, 'start')}
+                                    // onMouseMove={event => onMouseMove(event, props.rowData, 'start')}
                                     style={{ marginBottom: 10 }}
+                                    onKeyDown ={ (e)=>{
+                                        console.log(e.key)
+                                        if(e.key === 'Enter'){
+                                        console.log('start', props.rowData.start)
+                                        console.log('start time',props.rowData.startTime)
+                                        console.log(e.target.value)
+                                        props.rowData.start = timeToSecond(e.target.value)
+                                        e.target.innerText = props.rowData.startTime
+                                        }
+                                    } }
+                                    value = {props.rowData.start}
+                                /> */}
+                                <textarea rows="1"
+
+                                    className="textareaa"
+                                    // onMouseDown={event => onMouseDown(event, props.rowData, 'start')}
+                                    // onMouseMove={event => onMouseMove(event, props.rowData, 'start')}
+                                    id={'startTextArea' + props.index}
+                                    style={{ marginBottom: 10 }}
+                                    onChange={
+                                        (e) => {
+                                            let startInner = document.getElementById('startTextArea' + props.index)
+                                            startInner.value = e.target.value.replace(/(\r\n|\n|\r)/gm, "");
+
+                                        }
+                                    }
+
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+
+                                            try {
+                                                updateSubtitle(props.rowData, 'start', e.target.value)
+                                            } catch (err) {
+                                                // (err) => {  alert('error') }
+                                             //   alert(err)
+                                                notify('wrong Time format, please use the format "00:00:00.000" and your Time does not exceed the End time ', 'error', 5000)
+                                                let startInner = document.getElementById('startTextArea' + props.index)
+                                                startInner.value = props.rowData.start
+                                                return;
+                                            }
+
+                                        }
+                                    }
+                                    }
+                                    //value = {props.rowData.start}
                                 >
                                     {props.rowData.start}
-                                </div>
-                                <div
-                                    className="input"
-                                    onMouseDown={event => onMouseDown(event, props.rowData, 'end')}
-                                    onMouseMove={event => onMouseMove(event, props.rowData, 'end')}
+                                </textarea>
+
+                               
+
+                                <textarea rows="1"
+
+                                    className="textareaa"
+                                    // onMouseDown={event => onMouseDown(event, props.rowData, 'end')}
+                                    // onMouseMove={event => onMouseMove(event, props.rowData, 'end')}
+                                    id={'endTextArea' + props.index}
+                                    style={{ marginBottom: 10 }}
+                                    onChange={
+                                        (e) => {
+                                            let endInner = document.getElementById('endTextArea' + props.index)
+                                            endInner.value = e.target.value.replace(/(\r\n|\n|\r)/gm, "");
+
+                                        }
+                                    }
+
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+
+                                            try {
+                                                updateSubtitle(props.rowData, 'end', e.target.value)
+                                            } catch (err) {
+                                                // (err) => {  alert('error') }
+                                               // alert(err)
+                                                notify('wrong Time format, please use the format "00:00:00.000" and your Time does not exceed the End time ')
+                                                let endInner = document.getElementById('endTextArea' + props.index)
+                                                endInner.value = props.rowData.end
+                                                return;
+                                            }
+
+                                        }
+                                    }
+                                    }
+
                                 >
                                     {props.rowData.end}
-                                </div>
+                                </textarea>
                             </div>
                             <div className="row duration" style={{ width: 70 }}>
                                 {props.rowData.duration}
