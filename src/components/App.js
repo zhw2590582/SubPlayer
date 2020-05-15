@@ -13,6 +13,8 @@ import NProgress from 'nprogress';
 import { ToastContainer } from 'react-toastify';
 import translate, { googleTranslate } from '../translate';
 import { t, setLocale } from 'react-i18nify';
+import './css/player.css';
+
 
 const history = [];
 let inTranslation = false;
@@ -181,12 +183,14 @@ export default function() {
             if (sub) {
                 subs.splice(index, 0, sub);
             } else {
+    
                 const previous = subs[index - 1];
                 const start = previous ? secondToTime(previous.endTime + 0.1) : '00:00:00.001';
                 const end = previous ? secondToTime(previous.endTime + 1.1) : '00:00:01.001';
                 const sub = new Sub(start, end, t('subtitle-text'));
                 subs.splice(index, 0, sub);
             }
+            
             updateSubtitles(subs);
         },
         [copySubtitles, updateSubtitles],
@@ -250,12 +254,13 @@ export default function() {
              tempInput.select();
              /*coopying */
             document.execCommand("copy");
+            notify('copied', 'info', 1000)
 
             //removing temporary input
             document.body.removeChild(tempInput);
 
         },
-        [hasSubtitle, copySubtitles, updateSubtitles],
+        [hasSubtitle, copySubtitles],
     );
 
     // Subtitle time offset
@@ -336,7 +341,7 @@ export default function() {
     // play/resume video on space press
     window.addEventListener('keyup', (e) => {
         let videoIsPaused = videoBox[0].paused;
-        if (e.key === 's'){
+        if (e.key === ' ' && document.activeElement.tagName !== "TEXTAREA"){
         videoIsPaused = !videoIsPaused;
         videoIsPaused ? videoBox[0].pause() : videoBox[0].play();
         }
