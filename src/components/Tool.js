@@ -90,7 +90,7 @@ export default function ({ language, options, setOption, translateSubtitles, tim
                         }}
                     />
                     &nbsp;
-                    <label for="offsetTime"> seconds </label>
+                    <label htmlFor="offsetTime"> seconds </label>
                     &nbsp;
                     <button onClick={handleTimeOffsetChange}>change</button>
                 </div>
