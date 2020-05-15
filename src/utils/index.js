@@ -43,13 +43,13 @@ export function downloadFile(url, name) {
     document.body.removeChild(elink);
 }
 
-export function notify(text = '', type = 'info') {
+export function notify(text = '', type = 'info', autoClose = 2000) {
     // info success warning error default
     return (
         text.trim() &&
         toast[type](text, {
             position: 'top-center',
-            autoClose: 2000,
+            autoClose: autoClose,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
