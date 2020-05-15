@@ -1,0 +1,8 @@
+video::cue {
+    background-image: linear-gradient(to bottom, dimgray, lightgray);
+    color: papayawhip;
+  }
+  
+  video::cue(b) {
+    color: peachpuff;
+  }

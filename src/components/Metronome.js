@@ -39,7 +39,7 @@ function findIndex(subs, startTime) {
 }
 
 let isDroging = false;
-export default function({ render, metronome, currentTime, subtitles, addSubtitle, player, setMetronome }) {
+export default function({ render, metronome, currentTime, subtitles, addSubtitle, player, setMetronome,  }) {
     const [metronomeStartTime, setMetronomeStartTime] = useState(0);
     const [drogStartTime, setDrogStartTime] = useState(0);
     const [drogEndTime, setDrogEndTime] = useState(0);
@@ -100,15 +100,19 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
 
     const onDocumentMouseUp = useCallback(() => {
         if (isDroging) {
+           
             setMetronome(false);
             setMetronomeStartTime(0);
             if (drogStartTime && drogEndTime && drogEndTime - drogStartTime >= 0.2) {
+                console.log(subtitles)
                 const index = findIndex(subtitles, drogStartTime) + 1;
                 const start = secondToTime(drogStartTime);
                 const end = secondToTime(drogEndTime);
                 addSubtitle(index, new Sub(start, end, t('subtitle-text')));
             }
         }
+
+      //console.log(subtitles)
         isDroging = false;
         setDrogStartTime(0);
         setDrogEndTime(0);

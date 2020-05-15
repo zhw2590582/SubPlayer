@@ -89,7 +89,7 @@ const Footer = styled.div`
 
 let wf = null;
 const Waveform = React.memo(
-    ({ options, player, setDecodeing, setFileSize, setChannelNum, setRender }) => {
+    ({ options, player, setDecodeing, setFileSize, setChannelNum, setRender,  }) => {
         const $waveform = React.createRef();
 
         useEffect(() => {
