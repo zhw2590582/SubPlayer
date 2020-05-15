@@ -55,6 +55,7 @@ const en = {
     'subtitle-text': '[Subtitle Text]',
     'time-offset': 'Time Offset:',
     'google-translate': 'Google Translate:',
+    'copy': 'copy text'
 };
 
 const zh = {
