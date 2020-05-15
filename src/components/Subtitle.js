@@ -5,6 +5,8 @@ import debounce from 'lodash/debounce';
 import unescape from 'lodash/unescape';
 import clamp from 'lodash/clamp';
 import { timeToSecond, secondToTime } from '../utils';
+import { fixTime } from '../subtitle/index'
+import { notify } from '../utils/index'
 
 const Subtitle = styled.div`
     .ReactVirtualized__Table {
@@ -59,6 +61,22 @@ const Subtitle = styled.div`
             padding: 5px;
             height: 100%;
             line-height: 1.5;
+            
+        }
+        .textareaa {
+            border: none;
+            width: 100%;
+            color: #fff;
+            font-size: 12px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            resize: none;
+            outline: none;
+            ${'' /* padding: 5px;
+            height: 100%;
+            line-height: 1.5; */}
+            
         }
 
         .operation {
@@ -70,7 +88,7 @@ const Subtitle = styled.div`
     }
 `;
 
-export default function({
+export default function ({
     player,
     subtitles,
     addSubtitle,
@@ -85,6 +103,10 @@ export default function({
     let lastSub = null;
     let lastKey = '';
     let lastValue = '';
+    const [checkedSubs, setCheckedSubs] = useState([]);
+    const [checkedIndex, setCheckedIndex] = useState([]);
+    window.loopStart = null;
+    window.loopEnd = null;
 
     function onMouseDown(event, sub, key) {
         isDroging = true;
@@ -99,6 +121,9 @@ export default function({
             lastValue = secondToTime(clamp(timeToSecond(sub[key]) + time, 0, Infinity));
         }
     }
+
+    // update after a while
+
 
     function onMouseUp() {
         if (isDroging) {
@@ -149,6 +174,7 @@ export default function({
                                 props.className,
                                 props.index % 2 ? 'odd' : '',
                                 currentIndex === props.index ? 'highlight' : '',
+                                checkedIndex.includes(props.index) ? 'highlight' : '',
                                 checkSubtitle(props.rowData) ? 'illegal' : '',
                             ]
                                 .join(' ')
@@ -167,6 +193,61 @@ export default function({
                                     onClick={() => removeSubtitle(props.rowData)}
                                     style={{ marginBottom: 5 }}
                                 ></i>
+
+
+
+                                <input
+                                    type="checkbox"
+                                    id={'check' + props.index}
+                                    name={props.rowData.text}
+                                    value={props.rowData.text}
+                                    onChange={(e) => {
+                                        if (e.target.checked === true) {
+                                            //adding to the selected Array
+                                            checkedSubs.push(props.rowData);
+                                            //sort the array
+                                            checkedSubs.sort((a, b) => {
+                                                return a['start'].localeCompare(b['start']);
+                                            })
+                                            // adding blue color 
+                                            let subDiv = document.getElementById('check' + props.index).parentElement.parentElement;
+                                            subDiv.classList.add('highlight');
+                                            // adding to checked index
+                                            checkedIndex.push(props.index)
+                                            // managing loops
+                                            window.loopStart = checkedSubs[0].start;
+                                            window.loopEnd = checkedSubs[checkedSubs.length - 1].end;
+                                            console.log('checked start', window.loopStart)
+                                            console.log('checked end', window.loopEnd)
+                                            console.log(checkedSubs) 
+                                        }
+
+                                        if (e.target.checked === false) {
+                                            //removing from checked Subs
+                                            let i = checkedSubs.indexOf(props.rowData)
+                                            checkedSubs.splice(i, 1);
+
+                                            // removing from checked index
+                                            let j = checkedIndex.indexOf(props.index)
+                                            checkedIndex.splice(j, 1)
+                                            // managing loops
+                                            window.loopStart = checkedSubs.length > 0 ? checkedSubs[0].start : null;
+                                            window.loopEnd = checkedSubs.length > 0 ? checkedSubs[checkedSubs.length - 1].end : null;
+
+                                            console.log('unchecked start', window.loopStart)
+                                            console.log('unchecked end', window.loopEnd)
+                                            console.log(checkedSubs) 
+
+                                        }
+
+
+                                    }
+                                    }
+                                />
+
+
+
+
                                 <i
                                     className="icon-language"
                                     onClick={() => translateSubtitle(props.rowData)}
