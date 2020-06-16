@@ -103,10 +103,11 @@ const Block = styled.div`
 `;
 
 function getCurrentSubs(subs, beginTime, duration) {
-    return subs.filter(item => {
+    return subs.filter((item) => {
         return (
             (item.startTime >= beginTime && item.startTime <= beginTime + duration) ||
-            (item.endTime >= beginTime && item.endTime <= beginTime + duration)
+            (item.endTime >= beginTime && item.endTime <= beginTime + duration) ||
+            (item.startTime < beginTime && item.endTime > beginTime + duration)
         );
     });
 }
@@ -121,7 +122,7 @@ let lastDiffX = 0;
 let isDroging = false;
 
 export default React.memo(
-    function({
+    function ({
         player,
         subtitles,
         render,
@@ -143,7 +144,9 @@ export default React.memo(
         const $subsRef = React.createRef();
         const currentSubs = getCurrentSubs(subtitles, render.beginTime, render.duration);
         const gridGap = document.body.clientWidth / render.gridNum;
-        const currentIndex = currentSubs.findIndex(item => item.startTime <= currentTime && item.endTime > currentTime);
+        const currentIndex = currentSubs.findIndex(
+            (item) => item.startTime <= currentTime && item.endTime > currentTime,
+        );
 
         const onContextMenu = (sub, event) => {
             lastSub = sub;
@@ -165,7 +168,7 @@ export default React.memo(
         };
 
         const onDocumentClick = useCallback(
-            event => {
+            (event) => {
                 if (event.composedPath) {
                     const composedPath = event.composedPath() || [];
                     if (composedPath.includes($contextMenuRef.current)) {
@@ -186,7 +189,7 @@ export default React.memo(
             lastWidth = parseFloat(lastTarget.style.width);
         };
 
-        const onDocumentMouseMove = useCallback(event => {
+        const onDocumentMouseMove = useCallback((event) => {
             if (isDroging && lastTarget) {
                 lastDiffX = event.pageX - lastX;
                 if (lastType === 'left') {
@@ -257,7 +260,7 @@ export default React.memo(
         }, [gridGap, hasSubtitle, player, subtitles, updateSubtitle]);
 
         const onKeyDown = useCallback(
-            event => {
+            (event) => {
                 const sub = currentSubs[lastIndex];
                 if (sub && lastTarget) {
                     const keyCode = getKeyCode(event);
@@ -325,7 +328,7 @@ export default React.memo(
                                         player.seek = sub.startTime + 0.001;
                                     }
                                 }}
-                                onContextMenu={event => onContextMenu(sub, event)}
+                                onContextMenu={(event) => onContextMenu(sub, event)}
                             >
                                 <div
                                     className="sub-handle"
@@ -333,9 +336,9 @@ export default React.memo(
                                         left: 0,
                                         width: gridGap,
                                     }}
-                                    onMouseDown={event => onMouseDown(sub, event, 'left')}
+                                    onMouseDown={(event) => onMouseDown(sub, event, 'left')}
                                 ></div>
-                                <div className="sub-text" onMouseDown={event => onMouseDown(sub, event)}>
+                                <div className="sub-text" onMouseDown={(event) => onMouseDown(sub, event)}>
                                     {sub.text.split(/\r?\n/).map((line, index) => (
                                         <p key={index}>{line}</p>
                                     ))}
@@ -346,7 +349,7 @@ export default React.memo(
                                         right: 0,
                                         width: gridGap,
                                     }}
-                                    onMouseDown={event => onMouseDown(sub, event, 'right')}
+                                    onMouseDown={(event) => onMouseDown(sub, event, 'right')}
                                 ></div>
                             </div>
                         );
