@@ -112,6 +112,14 @@ function getCurrentSubs(subs, beginTime, duration) {
     });
 }
 
+function magnetically(time, closeTime) {
+    if (!closeTime) return time;
+    if (time > closeTime - 0.1 && closeTime + 0.1 > time) {
+        return closeTime;
+    }
+    return time;
+}
+
 let lastTarget = null;
 let lastSub = null;
 let lastType = '';
@@ -127,7 +135,6 @@ export default React.memo(
         subtitles,
         render,
         currentTime,
-        setMetronome,
         checkSubtitle,
         removeSubtitle,
         addSubtitle,
@@ -209,8 +216,9 @@ export default React.memo(
                 const index = hasSubtitle(lastSub);
                 const previou = subtitles[index - 1];
                 const next = subtitles[index + 1];
-                const startTime = lastSub.startTime + timeDiff;
-                const endTime = lastSub.endTime + timeDiff;
+                const startTime = magnetically(lastSub.startTime + timeDiff, previou ? previou.endTime : 0);
+                const endTime = magnetically(lastSub.endTime + timeDiff, next ? next.startTime : 0);
+                const width = (endTime - startTime) * 10 * gridGap;
 
                 if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
                     notify(t('parameter-error'), 'error');
@@ -221,7 +229,7 @@ export default React.memo(
                             updateSubtitle(lastSub, 'start', start);
                             player.seek = startTime;
                         } else {
-                            lastTarget.style.width = `${lastWidth}px`;
+                            lastTarget.style.width = `${width}px`;
                             notify(t('parameter-error'), 'error');
                         }
                     } else if (lastType === 'right') {
@@ -230,7 +238,7 @@ export default React.memo(
                             updateSubtitle(lastSub, 'end', end);
                             player.seek = startTime;
                         } else {
-                            lastTarget.style.width = `${lastWidth}px`;
+                            lastTarget.style.width = `${width}px`;
                             notify(t('parameter-error'), 'error');
                         }
                     } else {
@@ -243,7 +251,7 @@ export default React.memo(
                             });
                             player.seek = startTime;
                         } else {
-                            lastTarget.style.width = `${lastWidth}px`;
+                            lastTarget.style.width = `${width}px`;
                             notify(t('parameter-error'), 'error');
                         }
                     }
