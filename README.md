@@ -10,7 +10,7 @@
 
 ## Homepage
 
-[Checkout the homepage](https://subplayer.js.org) from Github Pages
+[https://subplayer.js.org](https://subplayer.js.org)
 
 ## Features
 
