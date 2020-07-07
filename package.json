@@ -14,7 +14,7 @@
     "react-dom": "^16.13.1",
     "react-i18nify": "^3.1.6",
     "react-scripts": "3.4.1",
-    "react-toastify": "^6.0.5",
+    "react-toastify": "^6.0.8",
     "react-virtualized": "^9.21.2",
     "styled-components": "^5.1.1"
   },
