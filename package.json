@@ -6,7 +6,7 @@
   "dependencies": {
     "artplayer-react": "^3.5.9",
     "duration-time-conversion": "^1.0.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
     "option-validator": "^2.0.5",
