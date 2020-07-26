@@ -12,7 +12,7 @@
     "option-validator": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-i18nify": "^3.1.6",
+    "react-i18nify": "^3.1.7",
     "react-scripts": "3.4.1",
     "react-toastify": "^6.0.8",
     "react-virtualized": "^9.21.2",
