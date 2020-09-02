@@ -108,7 +108,7 @@ const Waveform = React.memo(
             wf.on('render', setRender);
             wf.on('decodeing', setDecodeing);
             wf.on('fileSize', setFileSize);
-            wf.on('audiobuffer', audiobuffer => setChannelNum(audiobuffer.numberOfChannels));
+            wf.on('audiobuffer', (audiobuffer) => setChannelNum(audiobuffer.numberOfChannels));
             sleep(1000).then(() => wf.load(options.videoUrl));
         }, [player, $waveform, options.videoUrl, setDecodeing, setFileSize, setChannelNum, setRender]);
         return <div className="waveform" ref={$waveform} />;
@@ -116,11 +116,12 @@ const Waveform = React.memo(
     (prevProps, nextProps) => prevProps.options.videoUrl === nextProps.options.videoUrl,
 );
 
-export default function(props) {
+export default function (props) {
     const [decodeing, setDecodeing] = useState(0);
     const [fileSize, setFileSize] = useState(0);
     const [channelNum, setChannelNum] = useState(1);
     const [metronome, setMetronome] = useState(false);
+    const [autoAlign, setAutoAlign] = useState(true);
     const [render, setRender] = useState({
         padding: 5,
         duration: 10,
@@ -140,7 +141,7 @@ export default function(props) {
                             <input
                                 defaultChecked={true}
                                 type="checkbox"
-                                onChange={event => {
+                                onChange={(event) => {
                                     if (!wf) return;
                                     wf.setOptions({
                                         wave: event.target.checked,
@@ -172,7 +173,7 @@ export default function(props) {
                         <div className="value">
                             <select
                                 defaultValue={0}
-                                onChange={event => {
+                                onChange={(event) => {
                                     if (!wf) return;
                                     wf.changeChannel(Number(event.target.value || 0));
                                 }}
@@ -189,6 +190,21 @@ export default function(props) {
                     </div>
                     <div className="item">
                         <div className="name">
+                            <Translate value="auto-align" />
+                        </div>
+                        <div className="value">
+                            <input
+                                checked={autoAlign}
+                                type="checkbox"
+                                onChange={() => {
+                                    if (!wf) return;
+                                    setAutoAlign(!autoAlign);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="item">
+                        <div className="name">
                             <Translate value="unit-duration" />
                         </div>
                         <div className="value">
@@ -198,7 +214,7 @@ export default function(props) {
                                 min="5"
                                 max="20"
                                 step="1"
-                                onChange={event => {
+                                onChange={(event) => {
                                     if (!wf) return;
                                     wf.setOptions({
                                         duration: Number(event.target.value || 10),
@@ -218,7 +234,7 @@ export default function(props) {
                                 min="0.1"
                                 max="2"
                                 step="0.1"
-                                onChange={event => {
+                                onChange={(event) => {
                                     if (!wf) return;
                                     wf.setOptions({
                                         waveScale: Number(event.target.value || 1),
@@ -264,7 +280,7 @@ export default function(props) {
                     />
                 ) : null}
                 <Metronome {...props} render={render} metronome={metronome} setMetronome={setMetronome} />
-                <Block {...props} render={render} />
+                <Block {...props} render={render} autoAlign={autoAlign} />
             </div>
         </Footer>
     );

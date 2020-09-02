@@ -134,6 +134,7 @@ export default React.memo(
         player,
         subtitles,
         render,
+        autoAlign,
         currentTime,
         checkSubtitle,
         removeSubtitle,
@@ -196,6 +197,24 @@ export default React.memo(
             lastWidth = parseFloat(lastTarget.style.width);
         };
 
+        const onDoubleClick = (sub, event) => {
+            const $subs = event.currentTarget;
+            const index = hasSubtitle(lastSub);
+            const previou = subtitles[index - 1];
+            const next = subtitles[index + 1];
+            if (previou && next) {
+                const width = (next.startTime - previou.endTime) * 10 * gridGap;
+                $subs.style.width = `${width}px`;
+                const start = secondToTime(previou.endTime);
+                const end = secondToTime(next.startTime);
+                updateSubtitle(lastSub, {
+                    start,
+                    end,
+                });
+                player.seek = previou.endTime;
+            }
+        };
+
         const onDocumentMouseMove = useCallback((event) => {
             if (isDroging && lastTarget) {
                 lastDiffX = event.pageX - lastX;
@@ -216,8 +235,12 @@ export default React.memo(
                 const index = hasSubtitle(lastSub);
                 const previou = subtitles[index - 1];
                 const next = subtitles[index + 1];
-                const startTime = magnetically(lastSub.startTime + timeDiff, previou ? previou.endTime : 0);
-                const endTime = magnetically(lastSub.endTime + timeDiff, next ? next.startTime : 0);
+
+                const startTime = magnetically(
+                    lastSub.startTime + timeDiff,
+                    previou && autoAlign ? previou.endTime : null,
+                );
+                const endTime = magnetically(lastSub.endTime + timeDiff, next && autoAlign ? next.startTime : null);
                 const width = (endTime - startTime) * 10 * gridGap;
 
                 if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
@@ -265,7 +288,7 @@ export default React.memo(
             lastWidth = 0;
             lastDiffX = 0;
             isDroging = false;
-        }, [gridGap, hasSubtitle, player, subtitles, updateSubtitle]);
+        }, [gridGap, hasSubtitle, player, subtitles, updateSubtitle, autoAlign]);
 
         const onKeyDown = useCallback(
             (event) => {
@@ -337,6 +360,7 @@ export default React.memo(
                                     }
                                 }}
                                 onContextMenu={(event) => onContextMenu(sub, event)}
+                                onDoubleClick={(event) => onDoubleClick(sub, event)}
                             >
                                 <div
                                     className="sub-handle"
@@ -407,7 +431,8 @@ export default React.memo(
         return (
             isEqual(prevProps.subtitles, nextProps.subtitles) &&
             isEqual(prevProps.render, nextProps.render) &&
-            prevProps.currentTime === nextProps.currentTime
+            prevProps.currentTime === nextProps.currentTime &&
+            prevProps.autoAlign === nextProps.autoAlign
         );
     },
 );

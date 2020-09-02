@@ -55,6 +55,7 @@ const en = {
     'subtitle-text': '[Subtitle Text]',
     'time-offset': 'Time Offset:',
     'google-translate': 'Google Translate:',
+    'auto-align': 'Auto Align:',
 };
 
 const zh = {
@@ -113,6 +114,7 @@ const zh = {
     'subtitle-text': '[字幕文字]',
     'time-offset': '时间偏移:',
     'google-translate': '谷歌翻译:',
+    'auto-align': '自动对齐:',
 };
 
 export default {
