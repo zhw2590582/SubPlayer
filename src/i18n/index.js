@@ -55,6 +55,10 @@ const en = {
     'subtitle-text': '[Subtitle Text]',
     'time-offset': 'Time Offset:',
     'google-translate': 'Google Translate:',
+    'subtitle-style': 'Subtitle Style:',
+    'subtitle-size': 'Size',
+    'subtitle-bottom': 'Bottom',
+    'subtitle-color': 'Color',
     'auto-align': 'Auto Align:',
 };
 
@@ -114,6 +118,10 @@ const zh = {
     'subtitle-text': '[字幕文字]',
     'time-offset': '时间偏移:',
     'google-translate': '谷歌翻译:',
+    'subtitle-style': '字幕样式:',
+    'subtitle-size': '大小',
+    'subtitle-bottom': '底部',
+    'subtitle-color': '颜色',
     'auto-align': '自动对齐:',
 };
 

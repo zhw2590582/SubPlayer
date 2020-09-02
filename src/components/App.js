@@ -301,6 +301,7 @@ export default function() {
 
     const props = {
         player,
+        storage,
         options,
         language,
         subtitles,
