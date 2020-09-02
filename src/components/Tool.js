@@ -254,7 +254,7 @@ export default function ({ player, storage, language, options, setOption, transl
                             <input
                                 defaultValue={bottom}
                                 type="range"
-                                min="40"
+                                min="0"
                                 max="100"
                                 step="1"
                                 onChange={(event) => {
