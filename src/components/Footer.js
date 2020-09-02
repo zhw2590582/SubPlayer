@@ -136,7 +136,7 @@ export default function (props) {
                 <div className="timeline-header-left">
                     <div className="item">
                         <div className="name">
-                            <Translate value="audio-waveform" />
+                            <Translate value="waveform" />
                         </div>
                         <div className="value">
                             <input
@@ -153,7 +153,7 @@ export default function (props) {
                     </div>
                     <div className="item">
                         <div className="name">
-                            <Translate value="file-size" />
+                            <Translate value="size" />
                         </div>
                         <div className="value" style={{ color: '#FF5722' }}>
                             {((fileSize || 0) / 1024 / 1024).toFixed(2)} M
@@ -161,7 +161,7 @@ export default function (props) {
                     </div>
                     <div className="item">
                         <div className="name">
-                            <Translate value="decoding-progress" />
+                            <Translate value="decode" />
                         </div>
                         <div className="value" style={{ color: '#FF5722' }}>
                             {((decodeing || 0) * 100).toFixed(2)}%
@@ -169,7 +169,7 @@ export default function (props) {
                     </div>
                     <div className="item">
                         <div className="name">
-                            <Translate value="render-channel" />
+                            <Translate value="channel" />
                         </div>
                         <div className="value">
                             <select
@@ -223,7 +223,7 @@ export default function (props) {
                     </div>
                     <div className="item">
                         <div className="name">
-                            <Translate value="unit-duration" />
+                            <Translate value="duration" />
                         </div>
                         <div className="value">
                             <input
@@ -243,7 +243,7 @@ export default function (props) {
                     </div>
                     <div className="item">
                         <div className="name">
-                            <Translate value="height-zoom" />
+                            <Translate value="zoom" />
                         </div>
                         <div className="value">
                             <input
@@ -263,7 +263,7 @@ export default function (props) {
                     </div>
                     <div className="item">
                         <div className="name">
-                            <Translate value="space-metronome" />
+                            <Translate value="metronome" />
                         </div>
                         <div className="value">
                             {metronome ? (
@@ -282,7 +282,7 @@ export default function (props) {
                                 wf.exportImage();
                             }}
                         >
-                            <Translate value="export-image" />
+                            <Translate value="export" />
                         </div>
                     </div>
                 </div>
