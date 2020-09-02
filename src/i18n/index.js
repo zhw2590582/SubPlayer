@@ -60,6 +60,7 @@ const en = {
     'subtitle-bottom': 'Bottom',
     'subtitle-color': 'Color',
     'auto-align': 'Auto Align:',
+    'loop-playback': 'Loop Playback:',
 };
 
 const zh = {
@@ -123,6 +124,7 @@ const zh = {
     'subtitle-bottom': '底部',
     'subtitle-color': '颜色',
     'auto-align': '自动对齐:',
+    'loop-playback': '循环播放:',
 };
 
 export default {
@@ -137,7 +139,7 @@ export const names = {
     zh: '中',
 };
 
-export const getName = key => {
+export const getName = (key) => {
     return (
         {
             en: 'en',

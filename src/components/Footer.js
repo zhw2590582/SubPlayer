@@ -122,6 +122,7 @@ export default function (props) {
     const [channelNum, setChannelNum] = useState(1);
     const [metronome, setMetronome] = useState(false);
     const [autoAlign, setAutoAlign] = useState(true);
+    const [loopPlayback, setLoopPlayback] = useState(true);
     const [render, setRender] = useState({
         padding: 5,
         duration: 10,
@@ -197,8 +198,25 @@ export default function (props) {
                                 checked={autoAlign}
                                 type="checkbox"
                                 onChange={() => {
-                                    if (!wf) return;
                                     setAutoAlign(!autoAlign);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="item">
+                        <div className="name">
+                            <Translate value="loop-playback" />
+                        </div>
+                        <div className="value">
+                            <input
+                                checked={loopPlayback}
+                                type="checkbox"
+                                onChange={() => {
+                                    const value = !loopPlayback;
+                                    setLoopPlayback(value);
+                                    if (!value) {
+                                        props.player.loop = [];
+                                    }
                                 }}
                             />
                         </div>
@@ -280,7 +298,7 @@ export default function (props) {
                     />
                 ) : null}
                 <Metronome {...props} render={render} metronome={metronome} setMetronome={setMetronome} />
-                <Block {...props} render={render} autoAlign={autoAlign} />
+                <Block {...props} render={render} autoAlign={autoAlign} loopPlayback={loopPlayback} />
             </div>
         </Footer>
     );

@@ -135,6 +135,7 @@ export default React.memo(
         subtitles,
         render,
         autoAlign,
+        loopPlayback,
         currentTime,
         checkSubtitle,
         removeSubtitle,
@@ -250,6 +251,7 @@ export default React.memo(
                         if (startTime >= 0 && startTime < lastSub.endTime) {
                             const start = secondToTime(startTime);
                             updateSubtitle(lastSub, 'start', start);
+                            player.loop = loopPlayback ? [startTime, endTime] : [];
                             player.seek = startTime;
                         } else {
                             lastTarget.style.width = `${width}px`;
@@ -259,6 +261,7 @@ export default React.memo(
                         if (endTime >= 0 && endTime > lastSub.startTime) {
                             const end = secondToTime(endTime);
                             updateSubtitle(lastSub, 'end', end);
+                            player.loop = loopPlayback ? [startTime, endTime] : [];
                             player.seek = startTime;
                         } else {
                             lastTarget.style.width = `${width}px`;
@@ -272,6 +275,7 @@ export default React.memo(
                                 start,
                                 end,
                             });
+                            player.loop = loopPlayback ? [startTime, endTime] : [];
                             player.seek = startTime;
                         } else {
                             lastTarget.style.width = `${width}px`;
@@ -288,7 +292,7 @@ export default React.memo(
             lastWidth = 0;
             lastDiffX = 0;
             isDroging = false;
-        }, [gridGap, hasSubtitle, player, subtitles, updateSubtitle, autoAlign]);
+        }, [gridGap, hasSubtitle, player, subtitles, updateSubtitle, autoAlign, loopPlayback]);
 
         const onKeyDown = useCallback(
             (event) => {
@@ -432,7 +436,8 @@ export default React.memo(
             isEqual(prevProps.subtitles, nextProps.subtitles) &&
             isEqual(prevProps.render, nextProps.render) &&
             prevProps.currentTime === nextProps.currentTime &&
-            prevProps.autoAlign === nextProps.autoAlign
+            prevProps.autoAlign === nextProps.autoAlign &&
+            prevProps.loopPlayback === nextProps.loopPlayback
         );
     },
 );
