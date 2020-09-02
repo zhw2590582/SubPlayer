@@ -157,6 +157,7 @@ export default function({
                             onClick={() => {
                                 player.pause = true;
                                 if (player.duration >= props.rowData.startTime) {
+                                    player.loop = [];
                                     player.seek = props.rowData.startTime + 0.001;
                                 }
                             }}

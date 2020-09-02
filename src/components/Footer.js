@@ -122,7 +122,7 @@ export default function (props) {
     const [channelNum, setChannelNum] = useState(1);
     const [metronome, setMetronome] = useState(false);
     const [autoAlign, setAutoAlign] = useState(true);
-    const [loopPlayback, setLoopPlayback] = useState(true);
+    const [loopPlayback, setLoopPlayback] = useState(false);
     const [render, setRender] = useState({
         padding: 5,
         duration: 10,

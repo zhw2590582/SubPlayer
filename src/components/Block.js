@@ -200,7 +200,7 @@ export default React.memo(
 
         const onDoubleClick = (sub, event) => {
             const $subs = event.currentTarget;
-            const index = hasSubtitle(lastSub);
+            const index = hasSubtitle(sub);
             const previou = subtitles[index - 1];
             const next = subtitles[index + 1];
             if (previou && next) {
@@ -208,10 +208,11 @@ export default React.memo(
                 $subs.style.width = `${width}px`;
                 const start = secondToTime(previou.endTime);
                 const end = secondToTime(next.startTime);
-                updateSubtitle(lastSub, {
+                updateSubtitle(sub, {
                     start,
                     end,
                 });
+                player.loop = loopPlayback ? [previou.endTime, next.startTime] : [];
                 player.seek = previou.endTime;
             }
         };
@@ -305,6 +306,7 @@ export default React.memo(
                                 start: secondToTime(sub.startTime - 0.1),
                                 end: secondToTime(sub.endTime - 0.1),
                             });
+                            player.loop = [];
                             player.seek = sub.startTime - 0.1;
                             break;
                         case 39:
@@ -312,6 +314,7 @@ export default React.memo(
                                 start: secondToTime(sub.startTime + 0.1),
                                 end: secondToTime(sub.endTime + 0.1),
                             });
+                            player.loop = [];
                             player.seek = sub.startTime + 0.1;
                             break;
                         case 8:
@@ -360,6 +363,7 @@ export default React.memo(
                                 onClick={() => {
                                     setContextMenu(false);
                                     if (player.duration >= sub.startTime) {
+                                        player.loop = loopPlayback ? [sub.startTime, sub.endTime] : [];
                                         player.seek = sub.startTime + 0.001;
                                     }
                                 }}

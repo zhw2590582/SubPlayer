@@ -39,7 +39,7 @@ function findIndex(subs, startTime) {
 }
 
 let isDroging = false;
-export default function({ render, metronome, currentTime, subtitles, addSubtitle, player, setMetronome }) {
+export default function({ render, metronome, currentTime, subtitles, addSubtitle, player, setMetronome, loopPlayback }) {
     const [metronomeStartTime, setMetronomeStartTime] = useState(0);
     const [drogStartTime, setDrogStartTime] = useState(0);
     const [drogEndTime, setDrogEndTime] = useState(0);
@@ -81,6 +81,7 @@ export default function({ render, metronome, currentTime, subtitles, addSubtitle
     const onMouseDown = useCallback(
         event => {
             const clickTime = getEventTime(event);
+            player.loop = [];
             player.seek = clickTime;
             isDroging = true;
             setDrogStartTime(clickTime);

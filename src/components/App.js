@@ -245,6 +245,7 @@ export default function() {
         history.length = 0;
         storage.set('subtitles', []);
         removeSubtitles();
+        player.loop = [];
         player.seek = 0;
         notify(t('clear-success'));
     }, [player, removeSubtitles]);
