@@ -29,6 +29,26 @@ const Right = styled.div`
     display: flex;
     align-items: center;
     height: 100%;
+
+    .aimu {
+        display: flex;
+        align-items: center;
+        color: #FFEB3B;
+        padding-right: 30px;
+        font-size: 14px;
+        text-decoration: none;
+        animation: animation 3s infinite;
+
+        img {
+            margin-right: 10px;
+        }
+
+        @keyframes animation {
+            50% {
+                color: #00bcd4;
+            }
+        }
+    }
 `;
 
 const Logo = styled.a`
@@ -92,7 +112,7 @@ const I18n = styled.div`
     }
 `;
 
-export default function(props) {
+export default function (props) {
     return (
         <Header>
             <Left>
@@ -134,10 +154,14 @@ export default function(props) {
                 </Menu>
             </Left>
             <Right>
+                <a className="aimu" href="https://online.aimu-app.com">
+                    <img src="/aimu.png" alt="爱幕" width={15} />
+                    全新版本的字幕编辑器《爱幕》来了，点击马上体验
+                </a>
                 <I18n>
                     <i className="icon-language"></i>
-                    <select value={getName(props.language)} onChange={event => props.updateLang(event.target.value)}>
-                        {Object.keys(names).map(key => (
+                    <select value={getName(props.language)} onChange={(event) => props.updateLang(event.target.value)}>
+                        {Object.keys(names).map((key) => (
                             <option key={key} value={key}>
                                 {names[key]}
                             </option>
