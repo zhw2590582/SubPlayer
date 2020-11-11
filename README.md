@@ -1,3 +1,20 @@
+# 全新版本来了
+
+> 适用于中文用户的在线字幕编辑器
+
+-   语音自动转文字
+-   字幕翻译 + 双语字幕
+-   常见字幕格式导出
+-   支持字幕样式调整
+-   在线视频格式转换
+-   字幕 + 视频一键压制
+-   更多等你来发现...
+-   And more...
+
+[https://online.aimu-app.com](https://online.aimu-app.com)
+
+![https://online.aimu-app.com](./images/screenshot4.png)
+
 # SubPlayer
 
 [![Build Status](https://www.travis-ci.org/zhw2590582/SubPlayer.svg?branch=master)](https://www.travis-ci.org/zhw2590582/SubPlayer)
