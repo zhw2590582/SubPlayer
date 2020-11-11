@@ -7,11 +7,15 @@
 -   常见字幕格式导出
 -   支持字幕样式调整
 -   在线视频格式转换
+-   云端解码生成波形图
 -   字幕 + 视频一键压制
 -   更多等你来发现...
--   And more...
+
+## 官网
 
 [https://online.aimu-app.com](https://online.aimu-app.com)
+
+## 截图
 
 ![https://online.aimu-app.com](./images/screenshot4.png)
 
