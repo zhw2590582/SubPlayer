@@ -17,7 +17,7 @@
 
 ## 截图
 
-![https://online.aimu-app.com](./images/screenshot4.png)
+![https://online.aimu-app.com](./images/screenshot5.png)
 
 # SubPlayer
 
