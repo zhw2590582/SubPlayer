@@ -384,6 +384,10 @@ export default function Header({
             .then((res) => {
                 setLoading('');
                 setSubtitle(formatSub(res));
+                notify({
+                    message: t('TRANSLAT_SUCCESS'),
+                    level: 'success',
+                });
             })
             .catch((err) => {
                 setLoading('');
