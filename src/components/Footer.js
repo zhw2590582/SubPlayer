@@ -143,16 +143,7 @@ const Waveform = memo(
                 },
             });
 
-            fetch('/sample.pcm')
-                .then((res) => res.arrayBuffer())
-                .then((buffer) => {
-                    waveform.load({
-                        sampleRate: 44100,
-                        getChannelData() {
-                            return new Float32Array(buffer);
-                        },
-                    });
-                });
+            waveform.load('/sample.mp3');
         }, [player, $waveform, setWaveform, setRender]);
 
         return <div className="waveform" ref={$waveform} />;
