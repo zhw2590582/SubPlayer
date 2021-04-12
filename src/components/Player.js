@@ -186,6 +186,7 @@ export default function Player(props) {
                             onClick={onClick}
                             onFocus={onFocus}
                             onBlur={onBlur}
+                            onKeyDown={onFocus}
                             spellCheck={false}
                         />
                     </div>
