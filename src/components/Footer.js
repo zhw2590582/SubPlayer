@@ -1,305 +1,345 @@
-import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import WF from '../waveform';
-import { sleep } from '../utils';
-import Block from './Block';
+import DT from 'duration-time-conversion';
+import React, { useState, useEffect, useCallback, createRef, memo } from 'react';
+import WFPlayer from '../libs/WFPlayer';
+import clamp from 'lodash/clamp';
+import throttle from 'lodash/throttle';
+import Timeline from './Timeline';
 import Metronome from './Metronome';
-import { Translate } from 'react-i18nify';
 
-const Footer = styled.div`
+const Style = styled.div`
+    position: relative;
     display: flex;
     flex-direction: column;
-    height: 200px;
 
-    .timeline-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 35px;
-        font-size: 12px;
-        border-bottom: 1px solid #000;
-        color: rgba(255, 255, 255, 0.5);
-        background-color: rgba(0, 0, 0, 0.3);
+    .progress {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -12px;
+        z-index: 11;
+        width: 100%;
+        height: 12px;
+        user-select: none;
+        border-top: 1px solid rgb(255 255 255 / 20%);
+        background-color: rgb(0 0 0 / 50%);
 
-        .timeline-header-left {
-            display: flex;
-            align-items: center;
+        .bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0%;
             height: 100%;
-            .item {
-                display: flex;
-                padding: 0 10px;
-                height: 100%;
-                border-right: 1px solid #000;
+            display: inline-block;
+            background-color: #730000;
+            overflow: hidden;
 
-                .name {
-                    display: flex;
-                    align-items: center;
-                    margin-right: 10px;
-                }
-
-                .value {
-                    display: flex;
-                    align-items: center;
-
-                    input[type='checkbox'] {
-                        outline: none;
-                    }
-
-                    input[type='range'] {
-                        height: 3px;
-                        width: 100px;
-                        outline: none;
-                        appearance: none;
-                        background-color: rgba(255, 255, 255, 0.2);
-                    }
-
-                    select {
-                        outline: none;
-                    }
-                }
+            .handle {
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 10px;
+                cursor: ew-resize;
+                background-color: #ff9800;
             }
         }
 
-        .timeline-header-right {
-            display: flex;
-            align-items: center;
+        .subtitle {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 100%;
             height: 100%;
-            padding: 0 15px;
-            border-left: 1px solid #000;
+            pointer-events: none;
+
+            span {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                height: 100%;
+                background-color: rgb(255 255 255 / 20%);
+            }
         }
     }
 
-    .timeline-body {
-        position: relative;
-        flex: 1;
+    .duration {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -40px;
+        z-index: 12;
+        width: 100%;
+        font-size: 18px;
+        color: rgb(255 255 255 / 75%);
+        text-shadow: 0 1px 2px rgb(0 0 0 / 75%);
+        text-align: center;
+        user-select: none;
+        pointer-events: none;
+    }
 
-        .waveform {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            user-select: none;
-            pointer-events: none;
+    .waveform {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    .grab {
+        position: relative;
+        z-index: 11;
+        cursor: grab;
+        height: 20%;
+        user-select: none;
+        background-color: rgb(33 150 243 / 20%);
+        border-top: 1px solid rgb(33 150 243 / 30%);
+        border-bottom: 1px solid rgb(33 150 243 / 30%);
+
+        &.grabbing {
+            cursor: grabbing;
         }
     }
 `;
 
-let wf = null;
-const Waveform = React.memo(
-    ({ options, player, setDecodeing, setFileSize, setChannelNum, setRender }) => {
-        const $waveform = React.createRef();
+const Waveform = memo(
+    ({ player, setWaveform, setRender }) => {
+        const $waveform = createRef();
 
         useEffect(() => {
-            if (wf) wf.destroy();
+            [...WFPlayer.instances].forEach((item) => item.destroy());
 
-            wf = new WF({
+            const waveform = new WFPlayer({
+                duration: 10,
+                padding: 1,
+                wave: true,
+                pixelRatio: 2,
                 container: $waveform.current,
-                mediaElement: player.template.$video,
-                backgroundColor: 'rgb(20, 23, 38)',
-                waveColor: 'rgba(255, 255, 255, 0.1)',
+                mediaElement: player,
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                waveColor: 'rgba(255, 255, 255, 0.2)',
                 progressColor: 'rgba(255, 255, 255, 0.5)',
                 gridColor: 'rgba(255, 255, 255, 0.05)',
                 rulerColor: 'rgba(255, 255, 255, 0.5)',
+                paddingColor: 'rgba(0, 0, 0, 0)',
             });
 
-            wf.on('render', setRender);
-            wf.on('decodeing', setDecodeing);
-            wf.on('fileSize', setFileSize);
-            wf.on('audiobuffer', (audiobuffer) => setChannelNum(audiobuffer.numberOfChannels));
-            sleep(1000).then(() => wf.load(options.videoUrl));
-        }, [player, $waveform, options.videoUrl, setDecodeing, setFileSize, setChannelNum, setRender]);
+            setWaveform(waveform);
+            waveform.on('render', setRender);
+
+            waveform.load({
+                sampleRate: 44100,
+                getChannelData() {
+                    return new Float32Array();
+                },
+            });
+
+            fetch('/sample.pcm')
+                .then((res) => res.arrayBuffer())
+                .then((buffer) => {
+                    waveform.load({
+                        sampleRate: 44100,
+                        getChannelData() {
+                            return new Float32Array(buffer);
+                        },
+                    });
+                });
+        }, [player, $waveform, setWaveform, setRender]);
+
         return <div className="waveform" ref={$waveform} />;
     },
-    (prevProps, nextProps) => prevProps.options.videoUrl === nextProps.options.videoUrl,
+    () => true,
 );
 
-export default function (props) {
-    const [decodeing, setDecodeing] = useState(0);
-    const [fileSize, setFileSize] = useState(0);
-    const [channelNum, setChannelNum] = useState(1);
-    const [metronome, setMetronome] = useState(false);
-    const [autoAlign, setAutoAlign] = useState(true);
-    const [loopPlayback, setLoopPlayback] = useState(false);
-    const [render, setRender] = useState({
-        padding: 5,
-        duration: 10,
-        gridNum: 110,
-        beginTime: 0,
-    });
+const Grab = (props) => {
+    const [grabStartX, setGrabStartX] = useState(0);
+    const [grabStartTime, setGrabStartTime] = useState(0);
+    const [grabbing, setGrabbing] = useState(false);
+
+    const onGrabDown = useCallback(
+        (event) => {
+            if (event.button !== 0) return;
+            setGrabStartX(event.pageX);
+            setGrabStartTime(props.player.currentTime);
+            setGrabbing(true);
+        },
+        [props.player],
+    );
+
+    const onGrabUp = () => {
+        setGrabStartX(0);
+        setGrabStartTime(0);
+        setGrabbing(false);
+    };
+
+    const onGrabMove = useCallback(
+        (event) => {
+            if (grabbing && props.player && props.waveform) {
+                const currentTime = clamp(
+                    grabStartTime - ((event.pageX - grabStartX) / document.body.clientWidth) * 10,
+                    0,
+                    props.player.duration,
+                );
+                props.player.currentTime = currentTime;
+                props.waveform.seek(currentTime);
+            }
+        },
+        [grabbing, props.player, props.waveform, grabStartX, grabStartTime],
+    );
+
+    useEffect(() => {
+        document.addEventListener('mouseup', onGrabUp);
+        return () => document.removeEventListener('mouseup', onGrabUp);
+    }, []);
 
     return (
-        <Footer>
-            <div className="timeline-header">
-                <div className="timeline-header-left">
-                    <div className="item">
-                        <div className="name">
-                            <Translate value="waveform" />
-                        </div>
-                        <div className="value">
-                            <input
-                                defaultChecked={true}
-                                type="checkbox"
-                                onChange={(event) => {
-                                    if (!wf) return;
-                                    wf.setOptions({
-                                        wave: event.target.checked,
-                                    });
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="name">
-                            <Translate value="size" />
-                        </div>
-                        <div className="value" style={{ color: '#FF5722' }}>
-                            {((fileSize || 0) / 1024 / 1024).toFixed(2)} M
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="name">
-                            <Translate value="decode" />
-                        </div>
-                        <div className="value" style={{ color: '#FF5722' }}>
-                            {((decodeing || 0) * 100).toFixed(2)}%
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="name">
-                            <Translate value="channel" />
-                        </div>
-                        <div className="value">
-                            <select
-                                defaultValue={0}
-                                onChange={(event) => {
-                                    if (!wf) return;
-                                    wf.changeChannel(Number(event.target.value || 0));
-                                }}
-                            >
-                                {Array(channelNum)
-                                    .fill()
-                                    .map((_, index) => (
-                                        <option key={index} value={index}>
-                                            {index + 1}
-                                        </option>
-                                    ))}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="name">
-                            <Translate value="auto-align" />
-                        </div>
-                        <div className="value">
-                            <input
-                                checked={autoAlign}
-                                type="checkbox"
-                                onChange={() => {
-                                    setAutoAlign(!autoAlign);
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="name">
-                            <Translate value="loop-playback" />
-                        </div>
-                        <div className="value">
-                            <input
-                                checked={loopPlayback}
-                                type="checkbox"
-                                onChange={() => {
-                                    const value = !loopPlayback;
-                                    setLoopPlayback(value);
-                                    if (!value) {
-                                        props.player.loop = [];
-                                    }
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="name">
-                            <Translate value="duration" />
-                        </div>
-                        <div className="value">
-                            <input
-                                defaultValue="10"
-                                type="range"
-                                min="5"
-                                max="20"
-                                step="1"
-                                onChange={(event) => {
-                                    if (!wf) return;
-                                    wf.setOptions({
-                                        duration: Number(event.target.value || 10),
-                                    });
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="name">
-                            <Translate value="zoom" />
-                        </div>
-                        <div className="value">
-                            <input
-                                defaultValue="1"
-                                type="range"
-                                min="0.1"
-                                max="2"
-                                step="0.1"
-                                onChange={(event) => {
-                                    if (!wf) return;
-                                    wf.setOptions({
-                                        waveScale: Number(event.target.value || 1),
-                                    });
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="name">
-                            <Translate value="metronome" />
-                        </div>
-                        <div className="value">
-                            {metronome ? (
-                                <span style={{ color: '#4CAF50' }}>ON</span>
-                            ) : (
-                                <span style={{ color: '#FF5722' }}>OFF</span>
-                            )}
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div
-                            style={{ cursor: 'pointer' }}
-                            className="value"
-                            onClick={() => {
-                                if (!wf) return;
-                                wf.exportImage();
+        <div className={`grab ${grabbing ? 'grabbing' : ''}`} onMouseDown={onGrabDown} onMouseMove={onGrabMove}></div>
+    );
+};
+
+const Progress = (props) => {
+    const [grabbing, setGrabbing] = useState(false);
+
+    const onProgressClick = useCallback(
+        (event) => {
+            if (event.button !== 0) return;
+            const currentTime = (event.pageX / document.body.clientWidth) * props.player.duration;
+            props.player.currentTime = currentTime;
+            props.waveform.seek(currentTime);
+        },
+        [props],
+    );
+
+    const onGrabDown = useCallback(
+        (event) => {
+            if (event.button !== 0) return;
+            setGrabbing(true);
+        },
+        [setGrabbing],
+    );
+
+    const onGrabMove = useCallback(
+        (event) => {
+            if (grabbing) {
+                const currentTime = (event.pageX / document.body.clientWidth) * props.player.duration;
+                props.player.currentTime = currentTime;
+            }
+        },
+        [grabbing, props.player],
+    );
+
+    const onDocumentMouseUp = useCallback(() => {
+        if (grabbing) {
+            setGrabbing(false);
+            props.waveform.seek(props.player.currentTime);
+        }
+    }, [grabbing, props.waveform, props.player.currentTime]);
+
+    useEffect(() => {
+        document.addEventListener('mouseup', onDocumentMouseUp);
+        document.addEventListener('mousemove', onGrabMove);
+        return () => {
+            document.removeEventListener('mouseup', onDocumentMouseUp);
+            document.removeEventListener('mousemove', onGrabMove);
+        };
+    }, [onDocumentMouseUp, onGrabMove]);
+
+    return (
+        <div className="progress" onClick={onProgressClick}>
+            <div className="bar" style={{ width: `${(props.currentTime / props.player.duration) * 100}%` }}>
+                <div className="handle" onMouseDown={onGrabDown}></div>
+            </div>
+            <div className="subtitle">
+                {props.subtitle.map((item, index) => {
+                    const { duration } = props.player;
+                    return (
+                        <span
+                            key={index}
+                            className="item"
+                            style={{
+                                left: `${(item.startTime / duration) * 100}%`,
+                                width: `${(item.duration / duration) * 100}%`,
                             }}
-                        >
-                            <Translate value="export" />
-                        </div>
-                    </div>
-                </div>
+                        ></span>
+                    );
+                })}
             </div>
-            <div className="timeline-body">
-                {props.player ? (
-                    <Waveform
-                        {...props}
-                        setDecodeing={setDecodeing}
-                        setFileSize={setFileSize}
-                        setChannelNum={setChannelNum}
-                        setRender={setRender}
-                    />
-                ) : null}
-                <Metronome {...props} render={render} metronome={metronome} setMetronome={setMetronome} />
-                <Block {...props} render={render} autoAlign={autoAlign} loopPlayback={loopPlayback} />
-            </div>
-        </Footer>
+        </div>
+    );
+};
+
+const Duration = (props) => {
+    const getDuration = useCallback((time) => {
+        time = time === Infinity ? 0 : time;
+        return DT.d2t(time).split('.')[0];
+    }, []);
+
+    return (
+        <div className="duration">
+            <span>
+                {getDuration(props.currentTime)} / {getDuration(props.player.duration || 0)}
+            </span>
+        </div>
+    );
+};
+
+export default function Footer(props) {
+    const $footer = createRef();
+    const [render, setRender] = useState({
+        padding: 2,
+        duration: 10,
+        gridGap: 10,
+        gridNum: 110,
+        beginTime: -5,
+    });
+
+    const onWheel = useCallback(
+        (event) => {
+            if (
+                !props.player ||
+                !props.waveform ||
+                props.player.playing ||
+                !$footer.current ||
+                !$footer.current.contains(event.target)
+            ) {
+                return;
+            }
+
+            const deltaY = Math.sign(event.deltaY) / 5;
+            const currentTime = clamp(props.player.currentTime + deltaY, 0, props.player.duration);
+            props.player.currentTime = currentTime;
+            props.waveform.seek(currentTime);
+        },
+        [props.waveform, props.player, $footer],
+    );
+
+    useEffect(() => {
+        const onWheelThrottle = throttle(onWheel, 100);
+        window.addEventListener('wheel', onWheelThrottle);
+        return () => window.removeEventListener('wheel', onWheelThrottle);
+    }, [onWheel]);
+
+    return (
+        <Style className="footer" ref={$footer}>
+            {props.player ? (
+                <React.Fragment>
+                    <Progress {...props} />
+                    <Duration {...props} />
+                    <Waveform {...props} setRender={setRender} />
+                    <Grab {...props} render={render} />
+                    <Metronome {...props} render={render} />
+                    <Timeline {...props} render={render} />
+                </React.Fragment>
+            ) : null}
+        </Style>
     );
 }

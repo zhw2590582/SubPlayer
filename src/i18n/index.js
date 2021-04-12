@@ -1,151 +1,58 @@
 const en = {
-    open: 'Open',
-    save: 'Save',
-    undo: 'Undo',
-    clear: 'Clear',
-    help: 'Help',
-    donate: 'Donate',
-    confirm: 'Confirm',
-    delete: 'Delete',
-    insert: 'Insert Next',
-    merge: 'Merge Next',
-
-    'open-subtitle': 'Open Subtitle',
-    'open-subtitle-supports': 'Supports opening .vtt, .srt and .ass subtitle',
-    'open-subtitle-success': 'Open subtitles successfully',
-    'open-subtitle-error': 'Failed to open subtitles',
-
-    'open-video': 'Open Video',
-    'open-video-supports': 'Supports opening .mp4, .webm and .ogg video',
-    'open-video-warning':
-        'The files are opened locally and no data is uploaded. When creating an audio waveform, the browser may be blocked for a short time due to audio decoding, so it is not suitable for opening too large video files.',
-    'open-video-success': 'Open video successfully',
-    'open-video-error': 'Failed to open video',
-
-    'clear-warning': 'This step cannot be rolled back. Are you sure ?',
-    'clear-success': 'Clear all subtitles data successfully',
-
-    'help-info':
-        'This editor is suitable for video with small volume and simple subtitle effect. For large file videos or more subtitle effect, please use professional desktop software.',
-    'help-issue': 'You can ask any questions on Github Issue:',
-    'help-email': 'Or contact me via email:',
-
-    'donate-info':
-        'Or you can buy me a cup of coffee to encourage me to continue to update and improve the subtitle editor.',
-    'donate-weChatPay': 'WeChat Pay:',
-    'donate-alipay': 'Alipay:',
-
-    'history-rollback': 'History rollback successful',
-    'history-empty': 'History is empty',
-
-    'translation-success': 'Translation successful',
-    'translation-progress': 'Translation in progress',
-    'translation-limit': 'Limit 1000 translations per batch',
-
-    waveform: 'Waveform:',
-    size: 'Size:',
-    decode: 'Decode:',
-    channel: 'Channel:',
-    duration: 'Duration:',
-    zoom: 'Zoom:',
-    metronome: 'Metronome:',
-    export: 'Export',
-    'parameter-error': 'Parameter error',
-    'keep-one': 'Please keep at least one subtitle',
-    'subtitle-text': '[Subtitle Text]',
-    'time-offset': 'Time Offset:',
-    'google-translate': 'Google Translate:',
-    'subtitle-style': 'Subtitle Style:',
-    'subtitle-size': 'Size',
-    'subtitle-bottom': 'Bottom',
-    'subtitle-color': 'Color',
-    'auto-align': 'Auto Align:',
-    'loop-playback': 'Loop Playback:',
+    LOADING: 'Loading...',
+    SUB_TEXT: 'Subtitle Text',
+    OPEN_VIDEO: 'Open Video',
+    OPEN_SUB: 'Open Subtitle',
+    EXPORT_ASS: 'Export ASS',
+    EXPORT_SRT: 'Export SRT',
+    EXPORT_VTT: 'Export VTT',
+    TRANSLATE: 'Translation',
+    TRANSLATING: 'Translation...',
+    DECODE_START: 'Start decoding audio',
+    DECODE_SUCCESS: 'Decoding audio success',
+    DECODE_ERROR: 'Decoding audio failed',
+    VIDEO_EXT_ERR: 'Unable to open this video format',
+    SUB_EXT_ERR: 'Unable to open this subtitle format',
+    MOBILE_TIP: 'Please use computer access',
+    HOTKEY_01: 'Space: Play / Pause',
+    HOTKEY_02: 'Ctrl + Z: Undo',
+    CLEAR: 'Clear',
+    UNDO: 'Undo',
+    DELETE: 'Delete Subtitle',
+    MERGE: 'Merge Next',
+    SPLIT: 'Split Subtitle',
 };
 
 const zh = {
-    open: '打开',
-    save: '保存',
-    undo: '回退',
-    clear: '清除',
-    help: '帮助',
-    donate: '捐助',
-    confirm: '确定',
-
-    delete: '删除',
-    insert: '插入下一条',
-    merge: '合并下一条',
-
-    'open-subtitle': '打开字幕',
-    'open-subtitle-supports': '支持打开 .vtt, .srt 和 .ass 字幕',
-    'open-subtitle-success': '打开字幕成功',
-    'open-subtitle-error': '打开字幕失败',
-
-    'open-video': '打开视频',
-    'open-video-supports': '支持打开 .mp4, .webm 和 .ogg 视频',
-    'open-video-warning':
-        '文件均为本地打开，不会上传任何数据。创建音频波形时，浏览器可能会由于音频解码而在短时间内被阻塞，所以不适合打开过大的视频文件。',
-    'open-video-success': '打开视频成功',
-    'open-video-error': '打开视频失败',
-
-    'clear-warning': '此步骤无法回退，确定吗?',
-    'clear-success': '清除所有字幕数据成功',
-
-    'help-info': '该编辑器适用于体积小，字幕效果简单的视频。对于大文件视频或更多字幕效果，请使用专业的桌面软件。',
-    'help-issue': '您可以在Github问题上提出任何问题:',
-    'help-email': '或通过电子邮件与我联系:',
-
-    'donate-info': '或者，您可以给我买杯咖啡，以鼓励我继续更新和改进字幕编辑器。',
-    'donate-weChatPay': '微信支付:',
-    'donate-alipay': '支付宝:',
-
-    'history-rollback': '历史回退成功',
-    'history-empty': '历史是空的',
-
-    'translation-success': '翻译成功',
-    'translation-progress': '翻译正在进行',
-    'translation-limit': '每此限制1000条翻译',
-
-    waveform: '波形图:',
-    size: '大小:',
-    decode: '解码:',
-    channel: '声道:',
-    duration: '时长:',
-    zoom: '缩放:',
-    metronome: '节拍器:',
-    export: '导出',
-    'parameter-error': '参数错误',
-    'keep-one': '请至少保留一个字幕',
-    'subtitle-text': '[字幕文字]',
-    'time-offset': '时间偏移:',
-    'google-translate': '谷歌翻译:',
-    'subtitle-style': '字幕样式:',
-    'subtitle-size': '大小',
-    'subtitle-bottom': '底部',
-    'subtitle-color': '颜色',
-    'auto-align': '自动对齐:',
-    'loop-playback': '循环播放:',
+    LOADING: '加载中...',
+    SUB_TEXT: '字幕文本',
+    OPEN_VIDEO: '打开视频',
+    OPEN_SUB: '打开字幕',
+    EXPORT_ASS: '导出 ASS',
+    EXPORT_SRT: '导出 SRT',
+    EXPORT_VTT: '导出 VTT',
+    TRANSLATE: '批量翻译',
+    TRANSLATING: '翻译中...',
+    DECODE_START: '开始解码音频',
+    DECODE_SUCCESS: '解码音频成功',
+    DECODE_ERROR: '解码音频失败',
+    VIDEO_EXT_ERR: '无法打开该视频格式',
+    SUB_EXT_ERR: '无法打开该字幕格式',
+    MOBILE_TIP: '请使用电脑访问',
+    HOTKEY_01: '空格键: 播放 / 暂停',
+    HOTKEY_02: 'Ctrl + Z: 撤销',
+    CLEAR: '清空',
+    UNDO: '撤销',
+    DELETE: '删除字幕',
+    MERGE: '合并下一个',
+    SPLIT: '拆分字幕',
 };
 
-export default {
+const i18n = {
     en,
     zh,
     'zh-cn': zh,
     'zh-tw': zh,
 };
 
-export const names = {
-    en: 'EN',
-    zh: '中',
-};
-
-export const getName = (key) => {
-    return (
-        {
-            en: 'en',
-            zh: 'zh',
-            'zh-cn': 'zh',
-            'zh-tw': 'zh',
-        }[key] || 'en'
-    );
-};
+export default i18n;
