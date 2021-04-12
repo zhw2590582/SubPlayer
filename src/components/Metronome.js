@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import Sub from '../subtitle/sub';
-import { secondToTime, getKeyCode } from '../utils';
+import DT from 'duration-time-conversion';
 import { t } from 'react-i18nify';
 
 const Metronome = styled.div`
@@ -13,6 +12,7 @@ const Metronome = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
+    cursor: ew-resize;
     user-select: none;
 
     .templet {
@@ -39,123 +39,69 @@ function findIndex(subs, startTime) {
 }
 
 let isDroging = false;
-export default function({ render, metronome, currentTime, subtitles, addSubtitle, player, setMetronome, loopPlayback }) {
-    const [metronomeStartTime, setMetronomeStartTime] = useState(0);
+export default function Component({ render, subtitle, newSub, addSub, player, playing }) {
     const [drogStartTime, setDrogStartTime] = useState(0);
     const [drogEndTime, setDrogEndTime] = useState(0);
-
     const gridGap = document.body.clientWidth / render.gridNum;
-    const $metronomeRef = React.createRef();
-
-    const onKeyDown = useCallback(
-        event => {
-            if (metronome) {
-                const keyCode = getKeyCode(event);
-                if (keyCode === 32) {
-                    event.preventDefault();
-
-                    if (!metronomeStartTime) {
-                        setMetronomeStartTime(currentTime);
-                    }
-
-                    if (metronomeStartTime && metronome && currentTime - metronomeStartTime >= 0.2) {
-                        const index = findIndex(subtitles, metronomeStartTime) + 1;
-                        const start = secondToTime(metronomeStartTime);
-                        const end = secondToTime(currentTime);
-                        addSubtitle(index, new Sub(start, end, t('subtitle-text')));
-                        setMetronomeStartTime(0);
-                    }
-                }
-            }
-        },
-        [addSubtitle, currentTime, metronome, metronomeStartTime, subtitles],
-    );
 
     const getEventTime = useCallback(
-        event => {
+        (event) => {
             return (event.pageX - render.padding * gridGap) / gridGap / 10 + render.beginTime;
         },
         [gridGap, render],
     );
 
     const onMouseDown = useCallback(
-        event => {
+        (event) => {
+            if (event.button !== 0) return;
             const clickTime = getEventTime(event);
-            player.loop = [];
-            player.seek = clickTime;
             isDroging = true;
             setDrogStartTime(clickTime);
         },
-        [getEventTime, player],
+        [getEventTime],
     );
 
     const onMouseMove = useCallback(
-        event => {
+        (event) => {
             if (isDroging) {
-                player.pause = true;
+                if (playing) player.pause();
                 setDrogEndTime(getEventTime(event));
             }
         },
-        [setDrogEndTime, getEventTime, player],
+        [playing, player, getEventTime],
     );
 
     const onDocumentMouseUp = useCallback(() => {
         if (isDroging) {
-            setMetronome(false);
-            setMetronomeStartTime(0);
-            if (drogStartTime && drogEndTime && drogEndTime - drogStartTime >= 0.2) {
-                const index = findIndex(subtitles, drogStartTime) + 1;
-                const start = secondToTime(drogStartTime);
-                const end = secondToTime(drogEndTime);
-                addSubtitle(index, new Sub(start, end, t('subtitle-text')));
+            if (drogStartTime > 0 && drogEndTime > 0 && drogEndTime - drogStartTime >= 0.2) {
+                const index = findIndex(subtitle, drogStartTime) + 1;
+                const start = DT.d2t(drogStartTime);
+                const end = DT.d2t(drogEndTime);
+                addSub(
+                    index,
+                    newSub({
+                        start,
+                        end,
+                        text: t('SUB_TEXT'),
+                    }),
+                );
             }
         }
         isDroging = false;
         setDrogStartTime(0);
         setDrogEndTime(0);
-    }, [addSubtitle, drogEndTime, drogStartTime, setMetronome, subtitles]);
-
-    const onDocumentClick = useCallback(
-        event => {
-            if (event.composedPath) {
-                const composedPath = event.composedPath() || [];
-                if (player.playing && composedPath.includes($metronomeRef.current)) {
-                    setMetronome(true);
-                    isDroging = false;
-                    setDrogStartTime(0);
-                    setDrogEndTime(0);
-                } else {
-                    setMetronome(false);
-                    setMetronomeStartTime(0);
-                }
-            }
-        },
-        [player, $metronomeRef, setMetronome],
-    );
+    }, [addSub, newSub, drogEndTime, drogStartTime, subtitle]);
 
     useEffect(() => {
-        window.addEventListener('keydown', onKeyDown);
-        document.addEventListener('click', onDocumentClick);
         document.addEventListener('mouseup', onDocumentMouseUp);
         return () => {
-            window.removeEventListener('keydown', onKeyDown);
-            document.removeEventListener('click', onDocumentClick);
             document.removeEventListener('mouseup', onDocumentMouseUp);
         };
-    }, [onKeyDown, onDocumentClick, onDocumentMouseUp]);
+    }, [onDocumentMouseUp]);
 
     return (
-        <Metronome onMouseDown={onMouseDown} onMouseMove={onMouseMove} ref={$metronomeRef}>
-            {player && player.playing && metronomeStartTime && metronome && currentTime > metronomeStartTime ? (
-                <div
-                    className="templet"
-                    style={{
-                        left: render.padding * gridGap + (metronomeStartTime - render.beginTime) * gridGap * 10,
-                        width: (currentTime - metronomeStartTime) * gridGap * 10,
-                    }}
-                ></div>
-            ) : null}
-            {player && !player.playing && drogStartTime && drogEndTime && drogEndTime > drogStartTime ? (
+        <Metronome onMouseDown={onMouseDown} onMouseMove={onMouseMove}>
+            {player && !playing && drogStartTime && drogEndTime && drogEndTime > drogStartTime ? (
                 <div
                     className="templet"
                     style={{

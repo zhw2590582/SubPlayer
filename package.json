@@ -1,34 +1,32 @@
 {
   "name": "subplayer",
-  "version": "2.0.0",
-  "description": "SubPlayer is a online subtitle editor",
-  "homepage": "https://subplayer.js.org",
+  "version": "3.0.0",
+  "private": true,
   "dependencies": {
-    "artplayer-react": "^3.5.27",
-    "duration-time-conversion": "^1.0.2",
-    "lodash": "^4.17.20",
+    "@ffmpeg/ffmpeg": "^0.9.7",
+    "core-js": "^3.10.1",
+    "duration-time-conversion": "^1.0.5",
+    "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
-    "nprogress": "^0.2.0",
     "option-validator": "^2.0.6",
-    "react": "^17.0.1",
-    "react-color": "^2.19.3",
-    "react-dom": "^17.0.1",
-    "react-i18nify": "^3.3.0",
-    "react-scripts": "4.0.2",
-    "react-toastify": "^7.0.3",
-    "react-virtualized": "^9.22.3",
-    "reactcss": "^1.2.3",
-    "styled-components": "^5.2.1"
+    "react": "^17.0.2",
+    "react-contextmenu": "^2.14.0",
+    "react-dom": "^17.0.2",
+    "react-i18nify": "^4.0.1",
+    "react-notification-system": "^0.4.0",
+    "react-scripts": "4.0.3",
+    "react-textarea-autosize": "^8.3.2",
+    "styled-components": "^5.2.3"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf docs && mv build docs",
-    "lint": "npx eslint src",
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -d build"
+    "build": "react-scripts build && rm -rf docs && mv build docs"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [

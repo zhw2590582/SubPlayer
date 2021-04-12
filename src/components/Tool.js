@@ -1,270 +1,462 @@
-import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import languages from '../translate/languages';
-import { Translate } from 'react-i18nify';
+import languages from '../libs/languages';
+import { t, Translate } from 'react-i18nify';
+import React, { useState, useCallback, useEffect } from 'react';
+import { getExt, download } from '../utils';
+import { file2sub, sub2vtt, sub2srt, sub2txt } from '../libs/readSub';
+import sub2ass from '../libs/readSub/sub2ass';
+import googleTranslate from '../libs/googleTranslate';
+import FFmpeg from '@ffmpeg/ffmpeg';
 
-import reactCSS from 'reactcss';
-import { ChromePicker } from 'react-color';
+const reader = new FileReader();
+const { createFFmpeg, fetchFile } = FFmpeg;
+const ffmpeg = createFFmpeg({ log: true });
 
-class SketchExample extends React.Component {
-    state = {
-        displayColorPicker: false,
-        color: this.props.color,
-    };
-
-    handleClick = () => {
-        this.setState({ displayColorPicker: !this.state.displayColorPicker });
-    };
-
-    handleClose = () => {
-        this.setState({ displayColorPicker: false });
-    };
-
-    handleChange = (color) => {
-        this.setState({ color: color.rgb });
-        const { $subtitle } = this.props.player.template;
-        $subtitle.style.color = `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, ${color.rgb.a})`;
-        this.props.storage.set('color', color.rgb);
-    };
-
-    render() {
-        const styles = reactCSS({
-            default: {
-                color: {
-                    width: '30px',
-                    height: '14px',
-                    borderRadius: '2px',
-                    background: `rgba(${this.state.color.r}, ${this.state.color.g}, ${this.state.color.b}, ${this.state.color.a})`,
-                    border: `1px solid rgba(255, 255, 255, 0.5)`,
-                },
-                swatch: {
-                    borderRadius: '5px',
-                    boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
-                    cursor: 'pointer',
-                },
-                popover: {
-                    position: 'absolute',
-                    zIndex: '999',
-                },
-                cover: {
-                    position: 'fixed',
-                    top: '0px',
-                    right: '0px',
-                    bottom: '0px',
-                    left: '0px',
-                },
-            },
-        });
-
-        return (
-            <div>
-                <div style={styles.swatch} onClick={this.handleClick}>
-                    <div style={styles.color} />
-                </div>
-                {this.state.displayColorPicker ? (
-                    <div style={styles.popover}>
-                        <div style={styles.cover} onClick={this.handleClose} />
-                        <ChromePicker color={this.state.color} onChange={this.handleChange} />
-                    </div>
-                ) : null}
-            </div>
-        );
-    }
-}
-
-const Tool = styled.div`
-    flex: 1;
-    width: 100%;
+const Style = styled.div`
     display: flex;
     flex-direction: column;
-    font-size: 13px;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    position: relative;
+    box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
+    background-color: rgb(0 0 0 / 100%);
 
-    .item {
+    .import {
         display: flex;
-        align-items: center;
-        padding: 5px 10px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
-        .title {
-            margin-right: 15px;
+        .btn {
+            position: relative;
+            opacity: 0.85;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 48%;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            background-color: #3f51b5;
+            transition: all 0.2s ease 0s;
+
+            &:hover {
+                opacity: 1;
+            }
         }
 
-        .value {
+        .file {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+    }
+
+    .export {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+
+        .btn {
+            position: relative;
+            opacity: 0.85;
             display: flex;
+            justify-content: center;
             align-items: center;
+            height: 35px;
+            width: 31%;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            background-color: #009688;
+            transition: all 0.2s ease 0s;
 
-            select {
-                outline: none;
-                margin-right: 15px;
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .operate {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+
+        .btn {
+            position: relative;
+            opacity: 0.85;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 48%;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            background-color: #009688;
+            transition: all 0.2s ease 0s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .translate {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+
+        select {
+            width: 65%;
+            outline: none;
+            padding: 0 5px;
+            border-radius: 3px;
+        }
+
+        .btn {
+            opacity: 0.85;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 33%;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            background-color: #673ab7;
+            transition: all 0.2s ease 0s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .hotkey {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+
+        span {
+            width: 49%;
+            font-size: 13px;
+            padding: 5px 0;
+            border-radius: 3px;
+            text-align: center;
+            color: rgb(255 255 255 / 75%);
+            background-color: rgb(255 255 255 / 20%);
+        }
+    }
+
+    .bottom {
+        padding: 10px;
+        a {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgb(255 255 255 / 30%);
+            text-decoration: none;
+
+            .title {
+                color: #ffeb3b;
+                padding: 5px 10px;
+                animation: animation 3s infinite;
+                border-bottom: 1px solid rgb(255 255 255 / 30%);
             }
 
-            button {
-                height: 25px;
-                border: none;
-                padding: 0 10px;
-                margin-right: 15px;
-                outline: none;
-                cursor: pointer;
-                font-size: 12px;
-                color: #fff;
-                border-radius: 3px;
-                background-color: rgb(26, 83, 109);
-                transition: all 0.2s ease;
-                &:hover {
-                    color: #fff;
-                    background-color: #2196f3;
+            @keyframes animation {
+                50% {
+                    color: #00bcd4;
                 }
-                i {
-                    margin-right: 5px;
-                }
             }
 
-            input[type='checkbox'] {
-                outline: none;
+            img {
+                max-width: 100%;
             }
+        }
+    }
 
-            input[type='range'] {
-                height: 3px;
-                width: 100px;
-                outline: none;
-                appearance: none;
-                background-color: rgba(255, 255, 255, 0.2);
-            }
+    .progress {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        z-index: 9;
+        height: 2px;
+        background-color: rgb(0 0 0 / 50%);
 
-            .sub-item {
-                display: flex;
-                margin-right: 15px;
-
-                .sub-title {
-                    display: flex;
-                    align-items: center;
-                    margin-right: 5px;
-                    font-size: 12px;
-                    color: #888;
-                }
-
-                .sub-value {
-                    display: flex;
-                    align-items: center;
-                }
-            }
+        span {
+            display: inline-block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            height: 100%;
+            background-color: #ff9800;
+            transition: all 0.2s ease 0s;
         }
     }
 `;
 
-export default function ({ player, storage, language, options, setOption, translateSubtitles, timeOffsetSubtitles }) {
-    const fontSize = storage.get('fontSize') || 20;
-    const bottom = storage.get('bottom') || 40;
-    const color = storage.get('color') || {
-        r: '255',
-        g: '255',
-        b: '255',
-        a: '1',
-    };
+export default function Header({
+    player,
+    waveform,
+    newSub,
+    undoSubs,
+    clearSubs,
+    language,
+    subtitle,
+    setLoading,
+    formatSub,
+    setSubtitle,
+    notify,
+}) {
+    const [progress, setProgress] = useState(0);
+    const [translate, setTranslate] = useState('en');
 
-    const onChangeSize = (value) => {
-        const { $subtitle } = player.template;
-        $subtitle.style.fontSize = `${value}px`;
-        storage.set('fontSize', value);
-    };
-
-    const onChangeBottom = (value) => {
-        const { $subtitle } = player.template;
-        $subtitle.style.bottom = `${value}px`;
-        storage.set('bottom', value);
-    };
+    const transcode = useCallback(
+        async (file) => {
+            if (file.size > 256 * 1024 * 1024) return;
+            try {
+                notify({
+                    message: t('DECODE_START'),
+                    level: 'info',
+                });
+                await ffmpeg.load();
+                ffmpeg.FS('writeFile', file.name, await fetchFile(file));
+                const output = `${Date.now()}.mp3`;
+                await ffmpeg.run('-i', file.name, '-ac', '1', '-ar', '8000', output);
+                const uint8 = ffmpeg.FS('readFile', output);
+                await waveform.decoder.decodeAudioData(uint8);
+                // download(URL.createObjectURL(new Blob([waveform.decoder.channelData])), `${Date.now()}.pcm`);
+                waveform.drawer.update();
+                setProgress(0);
+                notify({
+                    message: t('DECODE_SUCCESS'),
+                    level: 'success',
+                });
+            } catch (error) {
+                setProgress(0);
+                notify({
+                    message: t('DECODE_ERROR'),
+                    level: 'error',
+                });
+            }
+        },
+        [waveform, notify],
+    );
 
     useEffect(() => {
-        if (player) {
-            const { $subtitle } = player.template;
-            $subtitle.style.fontSize = `${fontSize}px`;
-            $subtitle.style.bottom = `${bottom}px`;
-            $subtitle.style.color = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+        if (waveform && !reader.onload) {
+            reader.onload = (event) => {
+                waveform.decoder.destroy();
+                waveform.drawer.update();
+                waveform.load({
+                    sampleRate: 44100,
+                    getChannelData() {
+                        return new Float32Array(event.target.result);
+                    },
+                });
+            };
         }
-    }, [bottom, fontSize, player, storage, color]);
+    }, [waveform]);
+
+    useEffect(() => {
+        ffmpeg.setProgress(({ ratio }) => {
+            setProgress(ratio);
+        });
+    }, []);
+
+    const onVideoChange = useCallback(
+        (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const ext = getExt(file.name);
+                const canPlayType = player.canPlayType(file.type);
+                if (canPlayType === 'maybe' || canPlayType === 'probably') {
+                    transcode(file);
+                    const url = URL.createObjectURL(new Blob([file]));
+                    waveform.decoder.destroy();
+                    waveform.drawer.update();
+                    waveform.seek(0);
+                    player.currentTime = 0;
+                    clearSubs();
+                    setSubtitle([
+                        newSub({
+                            start: '00:00:00.000',
+                            end: '00:00:01.000',
+                            text: t('SUB_TEXT'),
+                        }),
+                    ]);
+                    player.src = url;
+                } else if (ext === 'pcm') {
+                    reader.readAsArrayBuffer(file);
+                } else {
+                    notify({
+                        message: `${t('VIDEO_EXT_ERR')}: ${file.type || ext}`,
+                        level: 'error',
+                    });
+                }
+            }
+        },
+        [newSub, notify, player, setSubtitle, waveform, clearSubs, transcode],
+    );
+
+    const onSubtitleChange = useCallback(
+        (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const ext = getExt(file.name);
+                if (['ass', 'vtt', 'srt', 'json'].includes(ext)) {
+                    file2sub(file)
+                        .then((res) => {
+                            clearSubs();
+                            setSubtitle(res);
+                        })
+                        .catch((err) => {
+                            notify({
+                                message: err.message,
+                                level: 'error',
+                            });
+                        });
+                } else {
+                    notify({
+                        message: `${t('SUB_EXT_ERR')}: ${ext}`,
+                        level: 'error',
+                    });
+                }
+            }
+        },
+        [notify, setSubtitle, clearSubs],
+    );
+
+    const onInputClick = useCallback((event) => {
+        event.target.value = '';
+    }, []);
+
+    const downloadSub = useCallback(
+        (type) => {
+            let text = '';
+            const name = `${Date.now()}.${type}`;
+            switch (type) {
+                case 'vtt':
+                    text = sub2vtt(subtitle);
+                    break;
+                case 'srt':
+                    text = sub2srt(subtitle);
+                    break;
+                case 'ass':
+                    text = sub2ass(subtitle);
+                    break;
+                case 'txt':
+                    text = sub2txt(subtitle);
+                    break;
+                case 'json':
+                    text = JSON.stringify(subtitle);
+                    break;
+                default:
+                    break;
+            }
+            const url = URL.createObjectURL(new Blob([text]));
+            download(url, name);
+        },
+        [subtitle],
+    );
+
+    const onTranslate = useCallback(() => {
+        setLoading(t('TRANSLATING'));
+        googleTranslate(formatSub(subtitle), translate)
+            .then((res) => {
+                setLoading('');
+                setSubtitle(formatSub(res));
+            })
+            .catch((err) => {
+                setLoading('');
+                notify({
+                    message: err.message,
+                    level: 'error',
+                });
+            });
+    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify]);
 
     return (
-        <Tool>
-            <div className="item">
-                <div className="title">
-                    <Translate value="google-translate" />
+        <Style className="tool">
+            {![0, 1].includes(progress) ? (
+                <div className="progress">
+                    <span style={{ width: `${progress * 100}%` }}></span>
                 </div>
-                <div className="value">
-                    <select
-                        value={options.translationLanguage}
-                        onChange={(event) => setOption({ translationLanguage: event.target.value })}
-                    >
+            ) : null}
+            <div className="top">
+                <div className="import">
+                    <div className="btn">
+                        <Translate value="OPEN_VIDEO" />
+                        <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
+                    </div>
+                    <div className="btn">
+                        <Translate value="OPEN_SUB" />
+                        <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
+                    </div>
+                </div>
+                <div className="export">
+                    <div className="btn" onClick={() => downloadSub('ass')}>
+                        <Translate value="EXPORT_ASS" />
+                    </div>
+                    <div className="btn" onClick={() => downloadSub('srt')}>
+                        <Translate value="EXPORT_SRT" />
+                    </div>
+                    <div className="btn" onClick={() => downloadSub('vtt')}>
+                        <Translate value="EXPORT_VTT" />
+                    </div>
+                </div>
+                <div className="operate">
+                    <div className="btn" onClick={clearSubs}>
+                        <Translate value="CLEAR" />
+                    </div>
+                    <div className="btn" onClick={undoSubs}>
+                        <Translate value="UNDO" />
+                    </div>
+                </div>
+                <div className="translate">
+                    <select value={translate} onChange={(event) => setTranslate(event.target.value)}>
                         {(languages[language] || languages.en).map((item) => (
                             <option key={item.key} value={item.key}>
                                 {item.name}
                             </option>
                         ))}
                     </select>
-                    <button onClick={() => translateSubtitles()}>
-                        <Translate value="confirm" />
-                    </button>
-                </div>
-            </div>
-            <div className="item">
-                <div className="title">
-                    <Translate value="time-offset" />
-                </div>
-                <div className="value">
-                    <button onClick={() => timeOffsetSubtitles(-0.1)}>-100ms</button>
-                    <button onClick={() => timeOffsetSubtitles(0.1)}>+100ms</button>
-                    <button onClick={() => timeOffsetSubtitles(-1)}>-1000ms</button>
-                    <button onClick={() => timeOffsetSubtitles(1)}>+1000ms</button>
-                </div>
-            </div>
-            <div className="item">
-                <div className="title">
-                    <Translate value="subtitle-style" />
-                </div>
-                <div className="value">
-                    <div className="sub-item">
-                        <div className="sub-title">
-                            <Translate value="subtitle-color" />
-                        </div>
-                        <div className="sub-value">
-                            <SketchExample storage={storage} player={player} color={color} />
-                        </div>
-                    </div>
-                    <div className="sub-item">
-                        <div className="sub-title">
-                            <Translate value="subtitle-size" />
-                        </div>
-                        <div className="sub-value">
-                            <input
-                                defaultValue={fontSize}
-                                type="range"
-                                min="20"
-                                max="50"
-                                step="1"
-                                onChange={(event) => {
-                                    onChangeSize(event.target.value);
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className="sub-item">
-                        <div className="sub-title">
-                            <Translate value="subtitle-bottom" />
-                        </div>
-                        <div className="sub-value">
-                            <input
-                                defaultValue={bottom}
-                                type="range"
-                                min="0"
-                                max="100"
-                                step="1"
-                                onChange={(event) => {
-                                    onChangeBottom(event.target.value);
-                                }}
-                            />
-                        </div>
+                    <div className="btn" onClick={onTranslate}>
+                        <Translate value="TRANSLATE" />
                     </div>
                 </div>
+                <div className="hotkey">
+                    <span>
+                        <Translate value="HOTKEY_01" />
+                    </span>
+                    <span>
+                        <Translate value="HOTKEY_02" />
+                    </span>
+                </div>
             </div>
-        </Tool>
+            <div className="bottom">
+                <a href="https://online.aimu-app.com/">
+                    <div className="title">全新字幕编辑器来了，点击这里体验</div>
+                    <img src="/aimu.png" alt="aimu" />
+                </a>
+            </div>
+        </Style>
     );
 }
