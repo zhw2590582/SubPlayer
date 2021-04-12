@@ -15,7 +15,7 @@ const Metronome = styled.div`
     cursor: ew-resize;
     user-select: none;
 
-    .templet {
+    .template {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -38,8 +38,8 @@ function findIndex(subs, startTime) {
     });
 }
 
-let isDroging = false;
 export default function Component({ render, subtitle, newSub, addSub, player, playing }) {
+    const [isDroging, setIsDroging] = useState(false);
     const [drogStartTime, setDrogStartTime] = useState(0);
     const [drogEndTime, setDrogEndTime] = useState(0);
     const gridGap = document.body.clientWidth / render.gridNum;
@@ -55,7 +55,7 @@ export default function Component({ render, subtitle, newSub, addSub, player, pl
         (event) => {
             if (event.button !== 0) return;
             const clickTime = getEventTime(event);
-            isDroging = true;
+            setIsDroging(true);
             setDrogStartTime(clickTime);
         },
         [getEventTime],
@@ -68,7 +68,7 @@ export default function Component({ render, subtitle, newSub, addSub, player, pl
                 setDrogEndTime(getEventTime(event));
             }
         },
-        [playing, player, getEventTime],
+        [isDroging, playing, player, getEventTime],
     );
 
     const onDocumentMouseUp = useCallback(() => {
@@ -87,23 +87,21 @@ export default function Component({ render, subtitle, newSub, addSub, player, pl
                 );
             }
         }
-        isDroging = false;
+        setIsDroging(false);
         setDrogStartTime(0);
         setDrogEndTime(0);
-    }, [addSub, newSub, drogEndTime, drogStartTime, subtitle]);
+    }, [isDroging, drogStartTime, drogEndTime, subtitle, addSub, newSub]);
 
     useEffect(() => {
         document.addEventListener('mouseup', onDocumentMouseUp);
-        return () => {
-            document.removeEventListener('mouseup', onDocumentMouseUp);
-        };
+        return () => document.removeEventListener('mouseup', onDocumentMouseUp);
     }, [onDocumentMouseUp]);
 
     return (
         <Metronome onMouseDown={onMouseDown} onMouseMove={onMouseMove}>
             {player && !playing && drogStartTime && drogEndTime && drogEndTime > drogStartTime ? (
                 <div
-                    className="templet"
+                    className="template"
                     style={{
                         left: render.padding * gridGap + (drogStartTime - render.beginTime) * gridGap * 10,
                         width: (drogEndTime - drogStartTime) * gridGap * 10,
