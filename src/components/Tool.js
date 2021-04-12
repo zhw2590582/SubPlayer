@@ -8,10 +8,6 @@ import sub2ass from '../libs/readSub/sub2ass';
 import googleTranslate from '../libs/googleTranslate';
 import FFmpeg from '@ffmpeg/ffmpeg';
 
-const reader = new FileReader();
-const { createFFmpeg, fetchFile } = FFmpeg;
-const ffmpeg = createFFmpeg({ log: true });
-
 const Style = styled.div`
     display: flex;
     flex-direction: column;
@@ -212,6 +208,7 @@ const Style = styled.div`
     }
 `;
 
+const reader = new FileReader();
 export default function Header({
     player,
     waveform,
@@ -236,6 +233,9 @@ export default function Header({
                     message: t('DECODE_START'),
                     level: 'info',
                 });
+                const { createFFmpeg, fetchFile } = FFmpeg;
+                const ffmpeg = createFFmpeg({ log: true });
+                ffmpeg.setProgress(({ ratio }) => setProgress(ratio));
                 await ffmpeg.load();
                 ffmpeg.FS('writeFile', file.name, await fetchFile(file));
                 const output = `${Date.now()}.mp3`;
@@ -246,6 +246,7 @@ export default function Header({
                 // download(URL.createObjectURL(new Blob([waveform.decoder.channelData])), `${Date.now()}.pcm`);
                 waveform.drawer.update();
                 setProgress(0);
+                ffmpeg.setProgress(() => null);
                 notify({
                     message: t('DECODE_SUCCESS'),
                     level: 'success',
@@ -275,12 +276,6 @@ export default function Header({
             };
         }
     }, [waveform]);
-
-    useEffect(() => {
-        ffmpeg.setProgress(({ ratio }) => {
-            setProgress(ratio);
-        });
-    }, []);
 
     const onVideoChange = useCallback(
         (event) => {
