@@ -14,8 +14,8 @@ const Style = styled.div`
     justify-content: space-between;
     padding-bottom: 20px;
     position: relative;
-    box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
+    border-left: 1px solid rgb(255 255 255 / 20%);
 
     .import {
         display: flex;

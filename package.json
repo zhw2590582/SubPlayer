@@ -16,6 +16,7 @@
     "react-notification-system": "^0.4.0",
     "react-scripts": "4.0.3",
     "react-textarea-autosize": "^8.3.2",
+    "react-virtualized": "^9.22.3",
     "styled-components": "^5.2.3"
   },
   "scripts": {

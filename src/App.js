@@ -4,6 +4,7 @@ import DT from 'duration-time-conversion';
 import isEqual from 'lodash/isEqual';
 import styled from 'styled-components';
 import Tool from './components/Tool';
+import Subtitles from './components/Subtitles';
 import Player from './components/Player';
 import Footer from './components/Footer';
 import Loading from './components/Loading';
@@ -20,6 +21,10 @@ const Style = styled.div`
 
         .player {
             flex: 1;
+        }
+
+        .subtitles {
+            width: 250px;
         }
 
         .tool {
@@ -301,6 +306,7 @@ export default function App({ defaultLang }) {
         <Style>
             <div className="main">
                 <Player {...props} />
+                <Subtitles {...props} />
                 <Tool {...props} />
             </div>
             <Footer {...props} />
