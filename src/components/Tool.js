@@ -55,6 +55,33 @@ const Style = styled.div`
         }
     }
 
+    .burn {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+
+        .btn {
+            position: relative;
+            opacity: 0.85;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 100%;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            background-color: #673ab7;
+            transition: all 0.2s ease 0s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
     .export {
         display: flex;
         justify-content: space-between;
@@ -224,6 +251,7 @@ export default function Header({
     notify,
 }) {
     const [translate, setTranslate] = useState('en');
+    const [videoFile, setVideoFile] = useState(null);
 
     const decodeAudioData = useCallback(
         async (file) => {
@@ -245,7 +273,6 @@ export default function Header({
                 const uint8 = ffmpeg.FS('readFile', output);
                 // download(URL.createObjectURL(new Blob([uint8])), `${output}`);
                 await waveform.decoder.decodeAudioData(uint8);
-                // download(URL.createObjectURL(new Blob([waveform.decoder.channelData])), `${Date.now()}.pcm`);
                 waveform.drawer.update();
                 setProcessing(0);
                 ffmpeg.setProgress(() => null);
@@ -263,6 +290,47 @@ export default function Header({
         },
         [waveform, notify, setProcessing, setLoading],
     );
+
+    const burnSubtitles = useCallback(async () => {
+        if (!videoFile) {
+            return notify({
+                message: t('OPEN_VIDEO_ERROR'),
+                level: 'error',
+            });
+        }
+        try {
+            const { createFFmpeg, fetchFile } = FFmpeg;
+            const ffmpeg = createFFmpeg({ log: true });
+            ffmpeg.setProgress(({ ratio }) => setProcessing(ratio * 100));
+            setLoading(t('LOADING_FFMPEG'));
+            await ffmpeg.load();
+            setLoading('');
+            notify({
+                message: t('BURN_START'),
+                level: 'info',
+            });
+            ffmpeg.FS('writeFile', videoFile.name, await fetchFile(videoFile));
+            const subtitleFile = new File([new Blob([sub2ass(subtitle)])], 'tmp.ass');
+            ffmpeg.FS('writeFile', 'tmp.ass', await fetchFile(subtitleFile));
+            // ffmpeg.FS('writeFile', `font/arial`, Arial.ttf);
+            const output = `${Date.now()}.mp4`;
+            await ffmpeg.run('-i', videoFile.name, '-vf', 'subtitles=tmp.ass', '-preset', 'superfast', output);
+            const uint8 = ffmpeg.FS('readFile', output);
+            download(URL.createObjectURL(new Blob([uint8])), `${output}`);
+            setProcessing(0);
+            ffmpeg.setProgress(() => null);
+            notify({
+                message: t('BURN_SUCCESS'),
+                level: 'success',
+            });
+        } catch (error) {
+            setProcessing(0);
+            notify({
+                message: t('BURN_ERROR'),
+                level: 'error',
+            });
+        }
+    }, [notify, setProcessing, setLoading, videoFile, subtitle]);
 
     useEffect(() => {
         if (waveform && !reader.onload) {
@@ -286,6 +354,7 @@ export default function Header({
                 const ext = getExt(file.name);
                 const canPlayType = player.canPlayType(file.type);
                 if (canPlayType === 'maybe' || canPlayType === 'probably') {
+                    setVideoFile(file);
                     decodeAudioData(file);
                     const url = URL.createObjectURL(new Blob([file]));
                     waveform.decoder.destroy();
@@ -406,6 +475,11 @@ export default function Header({
                         <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
                     </div>
                 </div>
+                <div className="burn" onClick={burnSubtitles}>
+                    <div className="btn">
+                        <Translate value="EXPORT_VIDEO" />
+                    </div>
+                </div>
                 <div className="export">
                     <div className="btn" onClick={() => downloadSub('ass')}>
                         <Translate value="EXPORT_ASS" />
@@ -418,7 +492,15 @@ export default function Header({
                     </div>
                 </div>
                 <div className="operate">
-                    <div className="btn" onClick={clearSubs}>
+                    <div
+                        className="btn"
+                        onClick={() => {
+                            if (window.confirm(t('CLEAR_TIP')) === true) {
+                                clearSubs();
+                                window.location.reload();
+                            }
+                        }}
+                    >
                         <Translate value="CLEAR" />
                     </div>
                     <div className="btn" onClick={undoSubs}>

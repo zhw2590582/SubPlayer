@@ -24,6 +24,11 @@ const en = {
     MERGE: 'Merge Next',
     SPLIT: 'Split Subtitle',
     LOADING_FFMPEG: 'Loading decoding module',
+    CLEAR_TIP: 'Confirm that all data is cleared',
+    BURN_ERROR: 'Burn subtitles failed',
+    BURN_START: 'Start burn subtitles',
+    BURN_SUCCESS: 'Burn subtitles success',
+    OPEN_VIDEO_ERROR: 'Please open the video first',
 };
 
 const zh = {
@@ -52,6 +57,11 @@ const zh = {
     MERGE: '合并下一个',
     SPLIT: '拆分字幕',
     LOADING_FFMPEG: '加载解码模块中',
+    CLEAR_TIP: '确认清空所有数据吗',
+    BURN_ERROR: '合成字幕失败',
+    BURN_START: '开始合成字幕',
+    BURN_SUCCESS: '合成字幕成功',
+    OPEN_VIDEO_ERROR: '请先打开视频',
 };
 
 const i18n = {
