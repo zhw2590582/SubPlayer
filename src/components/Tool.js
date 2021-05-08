@@ -220,23 +220,25 @@ export default function Header({
     setLoading,
     formatSub,
     setSubtitle,
+    setProcessing,
     notify,
 }) {
-    const [progress, setProgress] = useState(0);
     const [translate, setTranslate] = useState('en');
 
-    const transcode = useCallback(
+    const decodeAudioData = useCallback(
         async (file) => {
             if (file.size > 256 * 1024 * 1024) return;
             try {
+                const { createFFmpeg, fetchFile } = FFmpeg;
+                const ffmpeg = createFFmpeg({ log: true });
+                ffmpeg.setProgress(({ ratio }) => setProcessing(ratio * 100));
+                setLoading(t('LOADING_FFMPEG'));
+                await ffmpeg.load();
+                setLoading('');
                 notify({
                     message: t('DECODE_START'),
                     level: 'info',
                 });
-                const { createFFmpeg, fetchFile } = FFmpeg;
-                const ffmpeg = createFFmpeg({ log: true });
-                ffmpeg.setProgress(({ ratio }) => setProgress(ratio));
-                await ffmpeg.load();
                 ffmpeg.FS('writeFile', file.name, await fetchFile(file));
                 const output = `${Date.now()}.mp3`;
                 await ffmpeg.run('-i', file.name, '-ac', '1', '-ar', '8000', output);
@@ -245,21 +247,21 @@ export default function Header({
                 await waveform.decoder.decodeAudioData(uint8);
                 // download(URL.createObjectURL(new Blob([waveform.decoder.channelData])), `${Date.now()}.pcm`);
                 waveform.drawer.update();
-                setProgress(0);
+                setProcessing(0);
                 ffmpeg.setProgress(() => null);
                 notify({
                     message: t('DECODE_SUCCESS'),
                     level: 'success',
                 });
             } catch (error) {
-                setProgress(0);
+                setProcessing(0);
                 notify({
                     message: t('DECODE_ERROR'),
                     level: 'error',
                 });
             }
         },
-        [waveform, notify],
+        [waveform, notify, setProcessing, setLoading],
     );
 
     useEffect(() => {
@@ -284,7 +286,7 @@ export default function Header({
                 const ext = getExt(file.name);
                 const canPlayType = player.canPlayType(file.type);
                 if (canPlayType === 'maybe' || canPlayType === 'probably') {
-                    transcode(file);
+                    decodeAudioData(file);
                     const url = URL.createObjectURL(new Blob([file]));
                     waveform.decoder.destroy();
                     waveform.drawer.update();
@@ -299,8 +301,6 @@ export default function Header({
                         }),
                     ]);
                     player.src = url;
-                } else if (ext === 'pcm') {
-                    reader.readAsArrayBuffer(file);
                 } else {
                     notify({
                         message: `${t('VIDEO_EXT_ERR')}: ${file.type || ext}`,
@@ -309,7 +309,7 @@ export default function Header({
                 }
             }
         },
-        [newSub, notify, player, setSubtitle, waveform, clearSubs, transcode],
+        [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData],
     );
 
     const onSubtitleChange = useCallback(
@@ -395,11 +395,6 @@ export default function Header({
 
     return (
         <Style className="tool">
-            {![0, 1].includes(progress) ? (
-                <div className="progress">
-                    <span style={{ width: `${progress * 100}%` }}></span>
-                </div>
-            ) : null}
             <div className="top">
                 <div className="import">
                     <div className="btn">

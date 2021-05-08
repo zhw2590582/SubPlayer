@@ -23,6 +23,7 @@ const en = {
     DELETE: 'Delete Subtitle',
     MERGE: 'Merge Next',
     SPLIT: 'Split Subtitle',
+    LOADING_FFMPEG: 'Loading decoding module',
 };
 
 const zh = {
@@ -50,6 +51,7 @@ const zh = {
     DELETE: '删除字幕',
     MERGE: '合并下一个',
     SPLIT: '拆分字幕',
+    LOADING_FFMPEG: '加载解码模块中',
 };
 
 const i18n = {
