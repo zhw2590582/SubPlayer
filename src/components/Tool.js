@@ -281,6 +281,7 @@ export default function Header({
                     level: 'success',
                 });
             } catch (error) {
+                setLoading('');
                 setProcessing(0);
                 notify({
                     message: t('DECODE_ERROR'),
@@ -292,12 +293,6 @@ export default function Header({
     );
 
     const burnSubtitles = useCallback(async () => {
-        if (!videoFile) {
-            return notify({
-                message: t('OPEN_VIDEO_ERROR'),
-                level: 'error',
-            });
-        }
         try {
             const { createFFmpeg, fetchFile } = FFmpeg;
             const ffmpeg = createFFmpeg({ log: true });
@@ -305,16 +300,28 @@ export default function Header({
             setLoading(t('LOADING_FFMPEG'));
             await ffmpeg.load();
             ffmpeg.FS('writeFile', `tmp/Microsoft-YaHei.ttf`, await fetchFile('Microsoft-YaHei.ttf'));
-            ffmpeg.FS('writeFile', videoFile.name, await fetchFile(videoFile));
-            const subtitleFile = new File([new Blob([sub2ass(subtitle)])], 'tmp.ass');
-            ffmpeg.FS('writeFile', 'tmp.ass', await fetchFile(subtitleFile));
+            ffmpeg.FS(
+                'writeFile',
+                videoFile ? videoFile.name : 'sample.mp4',
+                await fetchFile(videoFile || 'sample.mp4'),
+            );
+            const subtitleFile = new File([new Blob([sub2ass(subtitle)])], 'subtitle.ass');
+            ffmpeg.FS('writeFile', subtitleFile.name, await fetchFile(subtitleFile));
             setLoading('');
             notify({
                 message: t('BURN_START'),
                 level: 'info',
             });
             const output = `${Date.now()}.mp4`;
-            await ffmpeg.run('-i', videoFile.name, '-vf', 'ass=tmp.ass:fontsdir=/tmp', '-preset', 'superfast', output);
+            await ffmpeg.run(
+                '-i',
+                videoFile ? videoFile.name : 'sample.mp4',
+                '-vf',
+                `ass=${subtitleFile.name}:fontsdir=/tmp`,
+                '-preset',
+                'superfast',
+                output,
+            );
             const uint8 = ffmpeg.FS('readFile', output);
             download(URL.createObjectURL(new Blob([uint8])), `${output}`);
             setProcessing(0);
@@ -324,6 +331,7 @@ export default function Header({
                 level: 'success',
             });
         } catch (error) {
+            setLoading('');
             setProcessing(0);
             notify({
                 message: t('BURN_ERROR'),
