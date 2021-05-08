@@ -8,6 +8,7 @@ import Subtitles from './components/Subtitles';
 import Player from './components/Player';
 import Footer from './components/Footer';
 import Loading from './components/Loading';
+import ProgressBar from './components/ProgressBar';
 import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
 
@@ -42,6 +43,7 @@ export default function App({ defaultLang }) {
     const notificationSystem = useRef(null);
     const [player, setPlayer] = useState(null);
     const [loading, setLoading] = useState('');
+    const [processing, setProcessing] = useState(0);
     const [language, setLanguage] = useState(defaultLang);
     const [subtitle, setSubtitleOriginal] = useState([]);
     const [waveform, setWaveform] = useState(null);
@@ -286,6 +288,7 @@ export default function App({ defaultLang }) {
         setLanguage,
         loading,
         setLoading,
+        setProcessing,
         subtitleHistory,
 
         notify,
@@ -311,6 +314,7 @@ export default function App({ defaultLang }) {
             </div>
             <Footer {...props} />
             {loading ? <Loading loading={loading} /> : null}
+            {processing > 0 && processing < 100 ? <ProgressBar processing={processing} /> : null}
             <NotificationSystem ref={notificationSystem} allowHTML={true} />
         </Style>
     );

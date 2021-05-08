@@ -6,6 +6,7 @@ const en = {
     EXPORT_ASS: 'Export ASS',
     EXPORT_SRT: 'Export SRT',
     EXPORT_VTT: 'Export VTT',
+    EXPORT_VIDEO: 'Export Video',
     TRANSLATE: 'Translation',
     TRANSLATING: 'Translation...',
     TRANSLAT_SUCCESS: 'Translation success',
@@ -22,6 +23,12 @@ const en = {
     DELETE: 'Delete Subtitle',
     MERGE: 'Merge Next',
     SPLIT: 'Split Subtitle',
+    LOADING_FFMPEG: 'Loading decoding module',
+    CLEAR_TIP: 'Confirm that all data is cleared',
+    BURN_ERROR: 'Burn subtitles failed',
+    BURN_START: 'Start burn subtitles',
+    BURN_SUCCESS: 'Burn subtitles success',
+    OPEN_VIDEO_ERROR: 'Please open the video first',
 };
 
 const zh = {
@@ -32,6 +39,7 @@ const zh = {
     EXPORT_ASS: '导出 ASS',
     EXPORT_SRT: '导出 SRT',
     EXPORT_VTT: '导出 VTT',
+    EXPORT_VIDEO: '导出视频',
     TRANSLATE: '批量翻译',
     TRANSLATING: '翻译中...',
     TRANSLAT_SUCCESS: '翻译成功',
@@ -48,6 +56,12 @@ const zh = {
     DELETE: '删除字幕',
     MERGE: '合并下一个',
     SPLIT: '拆分字幕',
+    LOADING_FFMPEG: '加载解码模块中',
+    CLEAR_TIP: '确认清空所有数据吗',
+    BURN_ERROR: '合成字幕失败',
+    BURN_START: '开始合成字幕',
+    BURN_SUCCESS: '合成字幕成功',
+    OPEN_VIDEO_ERROR: '请先打开视频',
 };
 
 const i18n = {

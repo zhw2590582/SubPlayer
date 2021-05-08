@@ -55,6 +55,33 @@ const Style = styled.div`
         }
     }
 
+    .burn {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+
+        .btn {
+            position: relative;
+            opacity: 0.85;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 100%;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            background-color: #673ab7;
+            transition: all 0.2s ease 0s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
     .export {
         display: flex;
         justify-content: space-between;
@@ -220,47 +247,97 @@ export default function Header({
     setLoading,
     formatSub,
     setSubtitle,
+    setProcessing,
     notify,
 }) {
-    const [progress, setProgress] = useState(0);
     const [translate, setTranslate] = useState('en');
+    const [videoFile, setVideoFile] = useState(null);
 
-    const transcode = useCallback(
+    const decodeAudioData = useCallback(
         async (file) => {
-            if (file.size > 256 * 1024 * 1024) return;
             try {
+                const { createFFmpeg, fetchFile } = FFmpeg;
+                const ffmpeg = createFFmpeg({ log: true });
+                ffmpeg.setProgress(({ ratio }) => setProcessing(ratio * 100));
+                setLoading(t('LOADING_FFMPEG'));
+                await ffmpeg.load();
+                ffmpeg.FS('writeFile', file.name, await fetchFile(file));
+                setLoading('');
                 notify({
                     message: t('DECODE_START'),
                     level: 'info',
                 });
-                const { createFFmpeg, fetchFile } = FFmpeg;
-                const ffmpeg = createFFmpeg({ log: true });
-                ffmpeg.setProgress(({ ratio }) => setProgress(ratio));
-                await ffmpeg.load();
-                ffmpeg.FS('writeFile', file.name, await fetchFile(file));
                 const output = `${Date.now()}.mp3`;
                 await ffmpeg.run('-i', file.name, '-ac', '1', '-ar', '8000', output);
                 const uint8 = ffmpeg.FS('readFile', output);
                 // download(URL.createObjectURL(new Blob([uint8])), `${output}`);
                 await waveform.decoder.decodeAudioData(uint8);
-                // download(URL.createObjectURL(new Blob([waveform.decoder.channelData])), `${Date.now()}.pcm`);
                 waveform.drawer.update();
-                setProgress(0);
+                setProcessing(0);
                 ffmpeg.setProgress(() => null);
                 notify({
                     message: t('DECODE_SUCCESS'),
                     level: 'success',
                 });
             } catch (error) {
-                setProgress(0);
+                setLoading('');
+                setProcessing(0);
                 notify({
                     message: t('DECODE_ERROR'),
                     level: 'error',
                 });
             }
         },
-        [waveform, notify],
+        [waveform, notify, setProcessing, setLoading],
     );
+
+    const burnSubtitles = useCallback(async () => {
+        try {
+            const { createFFmpeg, fetchFile } = FFmpeg;
+            const ffmpeg = createFFmpeg({ log: true });
+            ffmpeg.setProgress(({ ratio }) => setProcessing(ratio * 100));
+            setLoading(t('LOADING_FFMPEG'));
+            await ffmpeg.load();
+            ffmpeg.FS('writeFile', `tmp/Microsoft-YaHei.ttf`, await fetchFile('Microsoft-YaHei.ttf'));
+            ffmpeg.FS(
+                'writeFile',
+                videoFile ? videoFile.name : 'sample.mp4',
+                await fetchFile(videoFile || 'sample.mp4'),
+            );
+            const subtitleFile = new File([new Blob([sub2ass(subtitle)])], 'subtitle.ass');
+            ffmpeg.FS('writeFile', subtitleFile.name, await fetchFile(subtitleFile));
+            setLoading('');
+            notify({
+                message: t('BURN_START'),
+                level: 'info',
+            });
+            const output = `${Date.now()}.mp4`;
+            await ffmpeg.run(
+                '-i',
+                videoFile ? videoFile.name : 'sample.mp4',
+                '-vf',
+                `ass=${subtitleFile.name}:fontsdir=/tmp`,
+                '-preset',
+                videoFile ? 'fast' : 'ultrafast',
+                output,
+            );
+            const uint8 = ffmpeg.FS('readFile', output);
+            download(URL.createObjectURL(new Blob([uint8])), `${output}`);
+            setProcessing(0);
+            ffmpeg.setProgress(() => null);
+            notify({
+                message: t('BURN_SUCCESS'),
+                level: 'success',
+            });
+        } catch (error) {
+            setLoading('');
+            setProcessing(0);
+            notify({
+                message: t('BURN_ERROR'),
+                level: 'error',
+            });
+        }
+    }, [notify, setProcessing, setLoading, videoFile, subtitle]);
 
     useEffect(() => {
         if (waveform && !reader.onload) {
@@ -284,7 +361,8 @@ export default function Header({
                 const ext = getExt(file.name);
                 const canPlayType = player.canPlayType(file.type);
                 if (canPlayType === 'maybe' || canPlayType === 'probably') {
-                    transcode(file);
+                    setVideoFile(file);
+                    decodeAudioData(file);
                     const url = URL.createObjectURL(new Blob([file]));
                     waveform.decoder.destroy();
                     waveform.drawer.update();
@@ -299,8 +377,6 @@ export default function Header({
                         }),
                     ]);
                     player.src = url;
-                } else if (ext === 'pcm') {
-                    reader.readAsArrayBuffer(file);
                 } else {
                     notify({
                         message: `${t('VIDEO_EXT_ERR')}: ${file.type || ext}`,
@@ -309,7 +385,7 @@ export default function Header({
                 }
             }
         },
-        [newSub, notify, player, setSubtitle, waveform, clearSubs, transcode],
+        [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData],
     );
 
     const onSubtitleChange = useCallback(
@@ -395,11 +471,6 @@ export default function Header({
 
     return (
         <Style className="tool">
-            {![0, 1].includes(progress) ? (
-                <div className="progress">
-                    <span style={{ width: `${progress * 100}%` }}></span>
-                </div>
-            ) : null}
             <div className="top">
                 <div className="import">
                     <div className="btn">
@@ -409,6 +480,11 @@ export default function Header({
                     <div className="btn">
                         <Translate value="OPEN_SUB" />
                         <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
+                    </div>
+                </div>
+                <div className="burn" onClick={burnSubtitles}>
+                    <div className="btn">
+                        <Translate value="EXPORT_VIDEO" />
                     </div>
                 </div>
                 <div className="export">
@@ -423,7 +499,15 @@ export default function Header({
                     </div>
                 </div>
                 <div className="operate">
-                    <div className="btn" onClick={clearSubs}>
+                    <div
+                        className="btn"
+                        onClick={() => {
+                            if (window.confirm(t('CLEAR_TIP')) === true) {
+                                clearSubs();
+                                window.location.reload();
+                            }
+                        }}
+                    >
                         <Translate value="CLEAR" />
                     </div>
                     <div className="btn" onClick={undoSubs}>

@@ -250,19 +250,21 @@ const Progress = (props) => {
                 <div className="handle" onMouseDown={onGrabDown}></div>
             </div>
             <div className="subtitle">
-                {props.subtitle.map((item, index) => {
-                    const { duration } = props.player;
-                    return (
-                        <span
-                            key={index}
-                            className="item"
-                            style={{
-                                left: `${(item.startTime / duration) * 100}%`,
-                                width: `${(item.duration / duration) * 100}%`,
-                            }}
-                        ></span>
-                    );
-                })}
+                {props.subtitle.length <= 200
+                    ? props.subtitle.map((item, index) => {
+                          const { duration } = props.player;
+                          return (
+                              <span
+                                  key={index}
+                                  className="item"
+                                  style={{
+                                      left: `${(item.startTime / duration) * 100}%`,
+                                      width: `${(item.duration / duration) * 100}%`,
+                                  }}
+                              ></span>
+                          );
+                      })
+                    : null}
             </div>
         </div>
     );
