@@ -255,7 +255,6 @@ export default function Header({
 
     const decodeAudioData = useCallback(
         async (file) => {
-            if (file.size > 256 * 1024 * 1024) return;
             try {
                 const { createFFmpeg, fetchFile } = FFmpeg;
                 const ffmpeg = createFFmpeg({ log: true });
