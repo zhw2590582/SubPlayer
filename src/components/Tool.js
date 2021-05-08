@@ -252,6 +252,7 @@ export default function Header({
 }) {
     const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
+    const [subtitleFile, setSubtitleFile] = useState(null);
 
     const decodeAudioData = useCallback(
         async (file) => {
@@ -262,12 +263,12 @@ export default function Header({
                 ffmpeg.setProgress(({ ratio }) => setProcessing(ratio * 100));
                 setLoading(t('LOADING_FFMPEG'));
                 await ffmpeg.load();
+                ffmpeg.FS('writeFile', file.name, await fetchFile(file));
                 setLoading('');
                 notify({
                     message: t('DECODE_START'),
                     level: 'info',
                 });
-                ffmpeg.FS('writeFile', file.name, await fetchFile(file));
                 const output = `${Date.now()}.mp3`;
                 await ffmpeg.run('-i', file.name, '-ac', '1', '-ar', '8000', output);
                 const uint8 = ffmpeg.FS('readFile', output);
@@ -304,17 +305,25 @@ export default function Header({
             ffmpeg.setProgress(({ ratio }) => setProcessing(ratio * 100));
             setLoading(t('LOADING_FFMPEG'));
             await ffmpeg.load();
+            ffmpeg.FS('writeFile', `fonts/Microsoft-YaHei.ttf`, await fetchFile('/Microsoft-YaHei.ttf'));
+            ffmpeg.FS('writeFile', videoFile.name, await fetchFile(videoFile));
+            const subtitleFile = new File([new Blob([sub2ass(subtitle)])], 'tmp.ass');
+            ffmpeg.FS('writeFile', 'tmp.ass', await fetchFile(subtitleFile));
             setLoading('');
             notify({
                 message: t('BURN_START'),
                 level: 'info',
             });
-            ffmpeg.FS('writeFile', videoFile.name, await fetchFile(videoFile));
-            const subtitleFile = new File([new Blob([sub2ass(subtitle)])], 'tmp.ass');
-            ffmpeg.FS('writeFile', 'tmp.ass', await fetchFile(subtitleFile));
-            // ffmpeg.FS('writeFile', `font/arial`, Arial.ttf);
             const output = `${Date.now()}.mp4`;
-            await ffmpeg.run('-i', videoFile.name, '-vf', 'subtitles=tmp.ass', '-preset', 'superfast', output);
+            await ffmpeg.run(
+                '-i',
+                videoFile.name,
+                '-vf',
+                'ass=tmp.ass:fontsdir=/fonts',
+                '-preset',
+                'superfast',
+                output,
+            );
             const uint8 = ffmpeg.FS('readFile', output);
             download(URL.createObjectURL(new Blob([uint8])), `${output}`);
             setProcessing(0);
@@ -387,6 +396,7 @@ export default function Header({
             if (file) {
                 const ext = getExt(file.name);
                 if (['ass', 'vtt', 'srt', 'json'].includes(ext)) {
+                    setSubtitleFile(file);
                     file2sub(file)
                         .then((res) => {
                             clearSubs();
