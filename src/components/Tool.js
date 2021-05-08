@@ -319,7 +319,7 @@ export default function Header({
                 '-vf',
                 `ass=${subtitleFile.name}:fontsdir=/tmp`,
                 '-preset',
-                'superfast',
+                videoFile ? 'fast' : 'ultrafast',
                 output,
             );
             const uint8 = ffmpeg.FS('readFile', output);
