@@ -14,6 +14,7 @@ const Style = styled.div`
     justify-content: space-between;
     padding-bottom: 20px;
     position: relative;
+    overflow: hidden;
     background-color: rgb(0 0 0 / 100%);
     border-left: 1px solid rgb(255 255 255 / 20%);
 
