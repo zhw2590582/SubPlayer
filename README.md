@@ -2,7 +2,7 @@
 
 > SubPlayer is an online subtitle editor
 
-![Screenshot](./public/screenshot.png)
+![Screenshot](./images/screenshot6.png)
 
 ## Homepage
 
