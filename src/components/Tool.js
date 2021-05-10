@@ -299,13 +299,16 @@ export default function Header({
             ffmpeg.setProgress(({ ratio }) => setProcessing(ratio * 100));
             setLoading(t('LOADING_FFMPEG'));
             await ffmpeg.load();
+            setLoading(t('LOADING_FONT'));
             const fontUrl = 'https://cdn.jsdelivr.net/gh/zhw2590582/SubPlayer/docs/Microsoft-YaHei.ttf';
             ffmpeg.FS('writeFile', `tmp/Microsoft-YaHei.ttf`, await fetchFile(fontUrl));
+            setLoading(t('LOADING_VIDEO'));
             ffmpeg.FS(
                 'writeFile',
                 videoFile ? videoFile.name : 'sample.mp4',
                 await fetchFile(videoFile || 'sample.mp4'),
             );
+            setLoading(t('LOADING_SUB'));
             const subtitleFile = new File([new Blob([sub2ass(subtitle)])], 'subtitle.ass');
             ffmpeg.FS('writeFile', subtitleFile.name, await fetchFile(subtitleFile));
             setLoading('');
