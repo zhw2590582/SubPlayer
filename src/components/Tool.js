@@ -299,7 +299,8 @@ export default function Header({
             ffmpeg.setProgress(({ ratio }) => setProcessing(ratio * 100));
             setLoading(t('LOADING_FFMPEG'));
             await ffmpeg.load();
-            ffmpeg.FS('writeFile', `tmp/Microsoft-YaHei.ttf`, await fetchFile('Microsoft-YaHei.ttf'));
+            const fontUrl = 'https://cdn.jsdelivr.net/gh/zhw2590582/SubPlayer/docs/Microsoft-YaHei.ttf';
+            ffmpeg.FS('writeFile', `tmp/Microsoft-YaHei.ttf`, await fetchFile(fontUrl));
             ffmpeg.FS(
                 'writeFile',
                 videoFile ? videoFile.name : 'sample.mp4',
