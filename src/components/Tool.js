@@ -236,7 +236,6 @@ const Style = styled.div`
     }
 `;
 
-const reader = new FileReader();
 export default function Header({
     player,
     waveform,
@@ -343,21 +342,6 @@ export default function Header({
             });
         }
     }, [notify, setProcessing, setLoading, videoFile, subtitle]);
-
-    useEffect(() => {
-        if (waveform && !reader.onload) {
-            reader.onload = (event) => {
-                waveform.decoder.destroy();
-                waveform.drawer.update();
-                waveform.load({
-                    sampleRate: 44100,
-                    getChannelData() {
-                        return new Float32Array(event.target.result);
-                    },
-                });
-            };
-        }
-    }, [waveform]);
 
     const onVideoChange = useCallback(
         (event) => {
