@@ -44,7 +44,7 @@ const it = {
     EXPORT_VTT: "Esporta VTT",
     EXPORT_VIDEO: "Esporta video",
     TRADUZIONE: 'Traduzione',
-    TRADUZIONE: 'Traduzione...',
+    TRANSLATING: 'Traduzione...',
     TRANSLAT_SUCCESS: "Traduzione riuscita",
     DECODE_START: "Avvia decodifica audio",
     DECODE_SUCCESS: "Decodifica audio riuscita",

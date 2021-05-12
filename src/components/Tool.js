@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import languages from '../libs/languages';
 import { t, Translate } from 'react-i18nify';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { getExt, download } from '../utils';
 import { file2sub, sub2vtt, sub2srt, sub2txt } from '../libs/readSub';
 import sub2ass from '../libs/readSub/sub2ass';
@@ -35,7 +35,7 @@ const Style = styled.div`
             border-radius: 3px;
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             background-color: #3f51b5;
             transition: all 0.2s ease 0s;
 
@@ -73,7 +73,7 @@ const Style = styled.div`
             border-radius: 3px;
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             background-color: #673ab7;
             transition: all 0.2s ease 0s;
 
@@ -100,7 +100,7 @@ const Style = styled.div`
             border-radius: 3px;
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             background-color: #009688;
             transition: all 0.2s ease 0s;
 
@@ -127,7 +127,7 @@ const Style = styled.div`
             border-radius: 3px;
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             background-color: #009688;
             transition: all 0.2s ease 0s;
 
@@ -160,7 +160,7 @@ const Style = styled.div`
             border-radius: 3px;
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             background-color: #673ab7;
             transition: all 0.2s ease 0s;
 
