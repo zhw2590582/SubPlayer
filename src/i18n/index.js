@@ -34,6 +34,42 @@ const en = {
     OPEN_VIDEO_ERROR: 'Please open the video first',
 };
 
+const it = {
+    LOADING: "Caricamento in corso...",
+    SUB_TEXT: "Sottotitoli",
+    OPEN_VIDEO: "Apri video",
+    OPEN_SUB: "Apri sottotitoli",
+    EXPORT_ASS: "Esporta ASS",
+    EXPORT_SRT: "Esporta SRT",
+    EXPORT_VTT: "Esporta VTT",
+    EXPORT_VIDEO: "Esporta video",
+    TRADUZIONE: 'Traduzione',
+    TRADUZIONE: 'Traduzione...',
+    TRANSLAT_SUCCESS: "Traduzione riuscita",
+    DECODE_START: "Avvia decodifica audio",
+    DECODE_SUCCESS: "Decodifica audio riuscita",
+    DECODE_ERROR: "Decodifica audio non riuscita",
+    VIDEO_EXT_ERR: "Impossibile aprire questo formato video",
+    SUB_EXT_ERR: "Impossibile aprire questo formato di sottotitoli",
+    MOBILE_TIP: "Utilizza l'accesso al computer",
+    HOTKEY_01: "Spazio: Riproduci / Pausa",
+    HOTKEY_02: "Ctrl + Z: Annulla",
+    CLEAR: "Pulisci",
+    ANNULLA: "Annulla",
+    ELIMINA: "Elimina sottotitoli",
+    UNISCI: "Unisci dopo",
+    SPLIT: "Dividi sottotitoli",
+    LOADING_FFMPEG: "Caricamento dipendenza in corso...",
+    LOADING_FONT: "Caricamento font in corso...",
+    LOADING_VIDEO: "Caricamento video in corso...",
+    LOADING_SUB: "Caricamento sottotitoli in corso...",
+    CLEAR_TIP: "Conferma che tutti i dati siano stati cancellati",
+    BURN_ERROR: "Masterizzazione sottotitoli non riuscita",
+    BURN_START: "Avvia masterizzazione sottotitoli",
+    BURN_SUCCESS: "Masterizzazione sottotitoli riuscita",
+    OPEN_VIDEO_ERROR: "Apri prima il video",
+};
+
 const zh = {
     LOADING: '加载中...',
     SUB_TEXT: '字幕文本',
@@ -72,6 +108,7 @@ const zh = {
 
 const i18n = {
     en,
+    it,
     zh,
     'zh-cn': zh,
     'zh-tw': zh,
