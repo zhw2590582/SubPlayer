@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import DT from 'duration-time-conversion';
 import React, { useState, useEffect, useCallback, createRef, memo } from 'react';
-import WFPlayer from '../libs/WFPlayer';
+import WFPlayer from 'wfplayer';
 import clamp from 'lodash/clamp';
 import throttle from 'lodash/throttle';
 import Timeline from './Timeline';
@@ -119,6 +119,8 @@ const Waveform = memo(
             [...WFPlayer.instances].forEach((item) => item.destroy());
 
             const waveform = new WFPlayer({
+                scrollable: true,
+                useWorker: false,
                 duration: 10,
                 padding: 1,
                 wave: true,
@@ -134,15 +136,7 @@ const Waveform = memo(
             });
 
             setWaveform(waveform);
-            waveform.on('render', setRender);
-
-            waveform.load({
-                sampleRate: 44100,
-                getChannelData() {
-                    return new Float32Array();
-                },
-            });
-
+            waveform.on('update', setRender);
             waveform.load('/sample.mp3');
         }, [player, $waveform, setWaveform, setRender]);
 

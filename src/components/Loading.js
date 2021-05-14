@@ -23,6 +23,7 @@ const Loading = styled.div`
         flex-direction: column;
         width: 200px;
         height: 200px;
+        padding: 0 10px;
         border-radius: 10px;
         color: #fff;
         background-color: rgb(34 36 60 / 95%);
