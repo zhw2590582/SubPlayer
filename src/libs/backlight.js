@@ -24,6 +24,7 @@ function getColors($canvas, $video, width, height) {
         const itemH = height / y;
         const itemX = xIndex * itemW;
         const itemY = yIndex * itemH;
+        if (itemW < 1 || itemH < 1) return { r: 0, g: 0, b: 0 };
         const { data } = ctx.getImageData(itemX, itemY, itemW, itemH);
         let r = 0;
         let g = 0;
