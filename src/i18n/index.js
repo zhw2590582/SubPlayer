@@ -70,6 +70,39 @@ const it = {
     OPEN_VIDEO_ERROR: "Apri prima il video",
 };
 
+const tr = {
+    LOADING: 'Loading...',
+    SUB_TEXT: 'Subtitle Text',
+    OPEN_VIDEO: 'Video Aç',
+    OPEN_SUB: 'Altyazı Aç',
+    EXPORT_ASS: 'ASS Çıkar',
+    EXPORT_SRT: 'SRT Çıkar',
+    EXPORT_VTT: 'VTT Çıkar',
+    EXPORT_VIDEO: 'Videoyu Çıkar',
+    TRANSLATE: 'Çevir',
+    TRANSLATING: 'Çevriliyor...',
+    TRANSLAT_SUCCESS: 'Çevirme başarılı',
+    DECODE_START: 'Ses çözümlemesi başladı',
+    DECODE_SUCCESS: 'Ses çözümlemesi başarılı',
+    DECODE_ERROR: 'Ses çözümlemesi başarısız',
+    VIDEO_EXT_ERR: 'Bu video biçimi açılamıyor',
+    SUB_EXT_ERR: 'Bu altyazı biçimi açılamıyor',
+    MOBILE_TIP: 'Lütfen bilgisayardan erişin',
+    HOTKEY_01: 'Boşluk: Oynat / Duraklat',
+    HOTKEY_02: 'Ctrl + Z: Geri Al',
+    CLEAR: 'Temizle',
+    UNDO: 'Geri Al',
+    DELETE: 'Altyazıyı Sil',
+    MERGE: 'Sonrakiyle Birleştir',
+    SPLIT: 'Altyazıyı Böl',
+    LOADING_FFMPEG: 'Bağımlılık yükleniyor...',
+    CLEAR_TIP: 'Tüm verilerin silineceğini onaylıyor musunuz?',
+    BURN_ERROR: 'Altyazı gömme başarısız',
+    BURN_START: 'Altyazı gömmeyi başlat',
+    BURN_SUCCESS: 'Altyazı gömme başarılı',
+    OPEN_VIDEO_ERROR: 'Lütfen önce videoyu açın',
+};
+
 const zh = {
     LOADING: '加载中...',
     SUB_TEXT: '字幕文本',
@@ -112,6 +145,7 @@ const i18n = {
     zh,
     'zh-cn': zh,
     'zh-tw': zh,
+    tr,
 };
 
 export default i18n;
