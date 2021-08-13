@@ -485,11 +485,13 @@ export default function Header({
                         <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
                     </div>
                 </div>
-                <div className="burn" onClick={burnSubtitles}>
-                    <div className="btn">
-                        <Translate value="EXPORT_VIDEO" />
+                {window.crossOriginIsolated ? (
+                    <div className="burn" onClick={burnSubtitles}>
+                        <div className="btn">
+                            <Translate value="EXPORT_VIDEO" />
+                        </div>
                     </div>
-                </div>
+                ) : null}
                 <div className="export">
                     <div className="btn" onClick={() => downloadSub('ass')}>
                         <Translate value="EXPORT_ASS" />
