@@ -5,7 +5,7 @@
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.10.1",
     "@forlagshuset/simple-fs": "^0.5.0",
-    "core-js": "^3.15.0",
+    "core-js": "^3.18.0",
     "duration-time-conversion": "^1.0.5",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
@@ -13,12 +13,12 @@
     "react": "^17.0.2",
     "react-contextmenu": "^2.14.0",
     "react-dom": "^17.0.2",
-    "react-i18nify": "^4.1.0",
+    "react-i18nify": "^4.2.1",
     "react-notification-system": "^0.4.0",
     "react-scripts": "4.0.3",
     "react-textarea-autosize": "^8.3.3",
     "react-virtualized": "^9.22.3",
-    "styled-components": "^5.3.0",
+    "styled-components": "^5.3.1",
     "wfplayer": "^2.1.0"
   },
   "scripts": {
