@@ -1,3 +1,7 @@
+# SubPlayer is no longer maintained, please consider Aimu
+
+[https://aimu.app](https://aimu.app/)
+
 # SubPlayer
 
 > SubPlayer is an online subtitle editor
